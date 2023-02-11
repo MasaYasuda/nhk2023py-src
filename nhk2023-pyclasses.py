@@ -92,22 +92,8 @@ class Motor:
       self.__roller_enc_gear_ratio = gear_ratio
       
     def calc_roller_speed(self,spin): # spin: -1~1
-      self.roller_speed[i]=self.__max_spin_speed * spin *30000 / self.__roller_diameter /math.pi # N[rpm]=30*v[m/s]/(r[mm]*pi)
+      self.roller_speed=self.__max_spin_speed * spin *30000 / self.__roller_diameter /math.pi # N[rpm]=30*v[m/s]/(r[mm]*pi)
       return
     def calc_roller_enc_target(self):
       self.roller_enc_target = self.__roller_enc_gear_ratio * self.roller_speed
       return
-      
-    
-    
-      
-    
-      
-      
-      
-    
-    
-    
-      
-  
-  
