@@ -10,25 +10,27 @@ print("コントローラのボタンを押してください")
 try:
     while True:
         events = pygame.event.get()
-        print("十字キー座標")
-        print("("+str((j.get_hat(0))[0])+","+str((j.get_hat(0))[1])+")")
+        print("右スティック座標")
+        print("("+str(j.get_axis(2))+","+ str(j.get_axis(3))+")")
+        x=j.get_axis(0)
+        y=j.get_axis(1)*(-1)
+        rot=0
+        v=nhk23.Vector
+        v.calc_move(v,x,y)
+        v.calc_rot(v,rot)
+
+        m=nhk23.Motor("omni")
+        m.omni_setup(100,500,1,1,1000,1)
+        m.calc_move_speed(v.move)
+        m.calc_rot_speed(v.rot)
+        m.compression_speed()
+        print(m.omni_speed)
         time.sleep(0.1)
+        
 except KeyboardInterrupt:
     print("プログラムを終了します")
     j.quit()
-x=0.6
-y=0.8
-rot=0
-v=nhk23.Vector
-v.calc_move(v,x,y)
-v.calc_rot(v,rot)
 
-m=nhk23.Motor("omni")
-m.omni_setup(100,500,1,1,1000,1)
-m.calc_move_speed(v.move)
-m.calc_rot_speed(v.rot)
-m.compression_speed()
-print(m.omni_speed)
 
 
 
