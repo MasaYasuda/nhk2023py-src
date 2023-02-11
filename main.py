@@ -15,7 +15,7 @@ try:
         x=j.get_axis(0)
         y=j.get_axis(1)*(-1)
         rot=0
-        v=nhk23.Vector
+        v=nhk23.Vector()
         v.calc_move(v,x,y)
         v.calc_rot(v,rot)
 
