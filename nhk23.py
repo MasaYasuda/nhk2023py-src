@@ -209,8 +209,8 @@ class Transmitter (serial.Serial):
     # 1Byte目は固定値0xFF
     # 2Byte目は1Byteデータ（数値）
     # 3~6Byte目はfloat型数値
-    data = [0xFF, hex(motor_num),self.target_values[motor_num]]
-    packet = struct.pack('BBf', *data)
+    data = [0xFF, motor_num.to_bytes(1,"big"),self.target_values[motor_num]]
+    packet = struct.pack('>Bcf', *data)
     self.write(packet)
     print(data)
     return data
