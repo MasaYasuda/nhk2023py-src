@@ -10,7 +10,7 @@ print("コントローラのボタンを押してください")
 try:
     vector=nhk23.Vector() # make instance
     motor=nhk23.Motor("omni") # make instance
-    motor.omni_setup(100,500,1,1,1000,1)
+    motor.omni_setup(100,500,1,1,1000,[1,1,1,1])
     motor2=nhk23.Motor("roller") # make instance
     motor2.roller_setup(50,1000,1)
     transmitter = nhk23.Transmitter("/dev/ttyACM0", 115200)
@@ -29,7 +29,7 @@ try:
         y=j.get_axis(1)*(-1)
         rotation=j.get_axis(3)
         spin=(j.get_axis(5)+1)/2
-        if spin<0.2:
+        if spin<0.0:
             spin=0
         
         move,rot = vector.calc_vector(x,y,rotation)  # calc.vector using  x,y,rotation
