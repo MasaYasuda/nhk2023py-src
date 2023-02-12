@@ -1,5 +1,6 @@
 import math
-
+import serial
+import struct
 class Vector:
   '''
   HOW TO USE Vector class
@@ -163,3 +164,58 @@ class Motor:
     self.calc_roller_speed(spin)
     self.calc_roller_enc_target()
     return self.roller_enc_target
+  
+  
+class Transmitter (serial.Serial):
+  """
+  HOW TO USE Transmiter class
+  
+  ## AUTOMATIC
+
+  transmitter = nhk23.Transmitter("COM3", 115200)
+  motor_num_array=[0,1,2,3,4,5]
+  values=[10,10,10,10,10,10]
+  transmitter.write_all_auto(motor_num_array,values)
+  
+  ## SINGLE ORDER
+  
+  transmitter = nhk23.Transmitter("COM3", 115200)
+  motor_num=3
+  value=10
+  transmitter.store_single_target_values(motor_num,value)
+  transmitter.write_single(motor_num)
+  
+  """
+  def __init__(self, port, baudrate):
+        super().__init__(port, baudrate) # 基底クラスのコンストラクタをオーバーライド
+        self.target_values = [0,0,0,0]
+        
+  def store_single_target_values(self,motor_num,value):  # motor_num starts 0 (max 5)
+    self.target_values[motor_num]=float(value)
+    
+  def store_all_taget_values(self,motor_num_array,values):
+    for i in range(0,len(motor_num_array)):
+      self.target_values[motor_num_array[i]]=float(values[i])
+      
+  def write_single(self,motor_num):
+    # 1Byte目は固定値0xFF
+    # 2Byte目は1Byteデータ（数値）
+    # 3~6Byte目はfloat型数値
+    data = [0xFF, int(motor_num),self.target_values[motor_num]]
+    packet = struct.pack('>Bif', *data)
+    self.write(packet)
+    print(data)
+    return data
+  
+  def write_all(self):
+    for i in range(0,6):
+      self.write_single(self,int(i))
+      
+  def write_all_auto(self,motor_num_array,values):
+    self.store_all_taget_values(motor_num_array,values)
+    self.write_all()
+  
+  
+    
+    
+  
