@@ -5,11 +5,12 @@ class Vector:
   HOW TO USE Vector class
   
   vector=nhk23.Vector() # make instance
-  vector.calc_vector(x,y,rot)  # calc.vector using  x,y,rot
+  move,rot = vector.calc_vector(x,y,rot)  # calc.vector using  x,y,rot
   
-  -> vector.move[X,Y,Z,W]
-     vector.rot[ROT,ROT,ROT,ROT]
-  
+  ********
+  move : [a1,a2,a3,a4] -1~1
+  rot : [ROT,ROT,ROT,ROT] -1~1
+  ********
   '''
   def __init__ (self):
     self.move =[0]
@@ -37,7 +38,7 @@ class Vector:
   def calc_vector(self,x,y,rot):
     self.calc_move(x,y)
     self.calc_rot(rot)
-    
+    return self.move , self.rot
   
 class Motor:
   '''
