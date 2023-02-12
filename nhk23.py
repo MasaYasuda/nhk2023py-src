@@ -5,7 +5,7 @@ class Vector:
   HOW TO USE Vector class
   
   vector=nhk23.Vector() # make instance
-  move,rot = vector.calc_vector(x,y,rot)  # calc.vector using  x,y,rot
+  move,rot = vector.calc_vector(x,y,rotation)  # calc.vector using  x,y,rotation
   
   ********
   move : [a1,a2,a3,a4] -1~1
@@ -66,7 +66,7 @@ class Motor:
   ########## For roller(single) ##########
   
   motor=nhk23.Motor("roller") # make instance
-  motor.roller_setup(self,diamiter,max_spin,gear_ratio)
+  motor.roller_setup(diamiter,max_spin,gear_ratio)
   output = motor.calc_roller_output(spin) # spin: -1~1 
 
   ********
