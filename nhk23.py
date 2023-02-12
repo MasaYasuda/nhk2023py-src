@@ -176,6 +176,13 @@ class Transmitter (serial.Serial):
   motor_num_array=[0,1,2,3,4,5]
   values=[10,10,10,10,10,10]
   transmitter.write_all_auto(motor_num_array,values)
+  transmitter.close()  ## DON'T FORGET!!
+  
+  ************
+  # 1Byte目は固定値0xFF
+  # 2Byte目は1Byteデータ（数値）
+  # 3~6Byte目はfloat型数値
+  ************
   
   ## SINGLE ORDER
   
@@ -184,11 +191,12 @@ class Transmitter (serial.Serial):
   value=10
   transmitter.store_single_target_values(motor_num,value)
   transmitter.write_single(motor_num)
+  transmitter.close()   ## DON'T FORGET!!
   
   """
   def __init__(self, port, baudrate):
         super().__init__(port, baudrate) # 基底クラスのコンストラクタをオーバーライド
-        self.target_values = [0,0,0,0]
+        self.target_values = [0,0,0,0,0,0]
         
   def store_single_target_values(self,motor_num,value):  # motor_num starts 0 (max 5)
     self.target_values[motor_num]=float(value)
@@ -201,19 +209,20 @@ class Transmitter (serial.Serial):
     # 1Byte目は固定値0xFF
     # 2Byte目は1Byteデータ（数値）
     # 3~6Byte目はfloat型数値
-    data = [0xFF, int(motor_num),self.target_values[motor_num]]
-    packet = struct.pack('>Bif', *data)
+    data = [0xFF, hex(motor_num),self.target_values[motor_num]]
+    packet = struct.pack('BBf', *data)
     self.write(packet)
     print(data)
     return data
   
   def write_all(self):
     for i in range(0,6):
-      self.write_single(self,int(i))
+      self.write_single(self,i)
       
   def write_all_auto(self,motor_num_array,values):
     self.store_all_taget_values(motor_num_array,values)
     self.write_all()
+    return self.target_values
   
   
     
