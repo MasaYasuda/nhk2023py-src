@@ -11,6 +11,7 @@ void loop(){
   if (Serial.read() == 0xFF)
     {
       int data1 = int(Serial.read());
+      printf("%d",data1);
       order_rpm[data1] = Serial.parseFloat();
       if(order_rpm[data1]>1){order_rpm[data1]=1;}
       else if(order_rpm[data1]<1){order_rpm[data1]=-1;}
