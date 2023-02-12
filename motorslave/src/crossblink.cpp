@@ -1,32 +1,42 @@
 #include <Arduino.h>
+#include <Wire.h>
 
-void setup(){
-  Serial.begin(11520);
-}
-float order_rpm[4]={0};
-const int pinPWM[4]={2,3,4,5};
-int output_value[4]={0,0,0,0};
-
-void loop(){
-  if (Serial.read() == 0xFF)
-    {
-      int data1 = int(Serial.read());
-      printf("%d",data1);
-      order_rpm[data1] = Serial.parseFloat();
-      if(order_rpm[data1]>1){order_rpm[data1]=1;}
-      else if(order_rpm[data1]<1){order_rpm[data1]=-1;}
-      output_value[data1]=int(order_rpm[data1]*255);
-      analogWrite(pinPWM[data1],order_rpm[data1]);
-
-    }
-
-  printf("[");
-  for (int i=0;i<4;i++){
-    printf("%f",order_rpm[i]);
-    if(i==3){
-      break;
-    }
-    printf(",");
+const int motorCount = 6;
+float motorSpeeds[motorCount];
+int pinPWM[4] = {2, 3, 4, 5};
+void setup()
+{
+  Serial.begin(115200);
+  for (int i = 0; i < motorCount; i++)
+  {
+    motorSpeeds[i] = 0;
   }
-  printf("]");
+}
+
+void loop()
+{
+  if (Serial.available() >= 6) {
+    Serial.println("RECEIVED");
+    byte header = Serial.read();
+    if (header == 0xFF) {
+      byte motorNumber = Serial.read();
+      if (motorNumber >= 0 && motorNumber < motorCount) {
+        float speed = 0;
+        speed = Serial.read() | (Serial.read() << 8) | (Serial.read() << 16) | (Serial.read() << 24);
+        motorSpeeds[motorNumber] = speed;
+        Serial.print("Motor: ");
+        Serial.print(motorNumber);
+        Serial.print(", Speed: ");
+        Serial.println(motorSpeeds[motorNumber]);
+        /*
+        if (abs(motorSpeeds[motorNumber]) > 1)
+        {
+          motorSpeeds[motorNumber] = 0;
+        }
+        int output_value = 240 * (motorSpeeds[motorNumber]);
+        analogWrite(pinPWM[motorNumber], output_value);
+        */
+      }
+    }
+  }
 }
