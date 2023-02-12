@@ -4,6 +4,7 @@ import nhk23
 import time
 
 transmitter = nhk23.Transmitter("/dev/ttyACM0", 115200)
+
 try:
   while True:
     motor_num=3

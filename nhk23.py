@@ -143,7 +143,7 @@ class Motor:
     self.calc_move_speed(move)
     self.calc_rot_speed(rot)
     self.compression_speed()
-    self.calc_omni_enc_target(self)
+    self.calc_omni_enc_target()
     return self.omni_enc_target
   
   ## FOR ROLLER #########################

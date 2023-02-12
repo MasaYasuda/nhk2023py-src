@@ -8,6 +8,13 @@ j = pygame.joystick.Joystick(0)
 j.init()
 print("コントローラのボタンを押してください")
 try:
+    vector=nhk23.Vector() # make instance
+    motor=nhk23.Motor("omni") # make instance
+    motor.omni_setup(100,500,1,1,1000,1)
+    motor2=nhk23.Motor("roller") # make instance
+    motor2.roller_setup(50,1000,1)
+    transmitter = nhk23.Transmitter("/dev/ttyACM0", 115200)
+    
     while True:
         ## Get Inputs
         events = pygame.event.get()
@@ -25,17 +32,13 @@ try:
         if spin<0.2:
             spin=0
         
-        vector=nhk23.Vector() # make instance
         move,rot = vector.calc_vector(x,y,rotation)  # calc.vector using  x,y,rotation
-        
-        motor=nhk23.Motor("omni") # make instance
-        motor.omni_setup(100,500,1,1,1000,1)
         omni_output = motor.calc_omni_output(move,rot)  # move,rot is "Vector.move","Vector.rot"
         print(omni_output)
+        motor2.calc_roller_output(spin) # spin: -1~1 
         
-        motor2=nhk23.Motor("roller") # make instance
-        motor2.roller_setup(50,1000,1)
-        output = motor2.calc_roller_output(spin) # spin: -1~1 
+        transmitter.store_single_target_values(0,motor2.roller_enc_target)
+        transmitter.write_single(0)
         
         time.sleep(0.1)
         
