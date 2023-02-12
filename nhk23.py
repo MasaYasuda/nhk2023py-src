@@ -189,8 +189,7 @@ class Transmitter (serial.Serial):
   transmitter = nhk23.Transmitter("COM3", 115200)
   motor_num=3
   value=10
-  transmitter.store_single_target_values(motor_num,value)
-  transmitter.write_single(motor_num)
+  transmitter.write_single_auto(motor_num,value)
   transmitter.close()   ## DON'T FORGET!!
   
   """
@@ -217,12 +216,17 @@ class Transmitter (serial.Serial):
   
   def write_all(self):
     for i in range(0,6):
-      self.write_single(self,i)
+      self.write_single(i)
       
   def write_all_auto(self,motor_num_array,values):
     self.store_all_taget_values(motor_num_array,values)
     self.write_all()
-    return self.target_values
+    return 
+  
+  def write_single_auto(self,motor_num,value):
+    self.store_single_target_values(motor_num,value)
+    self.write_single(motor_num)
+    return 
   
   
     

@@ -12,7 +12,7 @@ try:
     motor=nhk23.Motor("omni") # make instance
     motor.omni_setup(100,500,1,1,1000,[1,1,1,1])
     motor2=nhk23.Motor("roller") # make instance
-    motor2.roller_setup(50,1000,1)
+    motor2.roller_setup(50,1,1)
     transmitter = nhk23.Transmitter("/dev/ttyACM0", 115200)
     
     while True:
@@ -29,22 +29,25 @@ try:
         y=j.get_axis(1)*(-1)
         rotation=j.get_axis(3)
         spin=(j.get_axis(5)+1)/2
-        if spin<0.0:
+        if spin<0.2:
             spin=0
         
         move,rot = vector.calc_vector(x,y,rotation)  # calc.vector using  x,y,rotation
         omni_output = motor.calc_omni_output(move,rot)  # move,rot is "Vector.move","Vector.rot"
         print(omni_output)
-        motor2.calc_roller_output(spin) # spin: -1~1 
+        spin_output = motor2.calc_roller_output(spin) # spin: -1~1 
+        print(spin_output)
         
-        transmitter.store_single_target_values(0,motor2.roller_enc_target)
-        transmitter.write_single(0)
+        transmitter.write_all_auto([0,1,2,3],motor.omni_enc_target)
+        transmitter.write_single_auto(5,motor2.roller_enc_target)
         
-        time.sleep(0.1)
+        time.sleep(0.01)
         
 except KeyboardInterrupt:
     print("プログラムを終了します")
     j.quit()
+    transmitter.close()
+    
 
 
 
