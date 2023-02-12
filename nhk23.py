@@ -212,6 +212,7 @@ class Transmitter (serial.Serial):
     packet = struct.pack('>Bcf', *data)
     self.write(packet)
     print(data)
+    print(str(packet))
     return data
   
   def write_all(self):
