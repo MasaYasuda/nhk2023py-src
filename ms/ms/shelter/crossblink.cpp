@@ -21,6 +21,10 @@ void loop()
     if (header == 0xFF) {
       byte motorNumber = Serial.read();
       if (motorNumber >= 0 && motorNumber < motorCount) {
+        order_rpm[motorNumber] = Serial.parseFloat();   
+
+        
+        /*
         float speed = 0;
         speed = Serial.read() | (Serial.read() << 8) | (Serial.read() << 16) | (Serial.read() << 24);
         motorSpeeds[motorNumber] = speed;
@@ -28,7 +32,7 @@ void loop()
         Serial.print(motorNumber);
         Serial.print(", Speed: ");
         Serial.println(motorSpeeds[motorNumber]);
-        /*
+        
         if (abs(motorSpeeds[motorNumber]) > 1)
         {
           motorSpeeds[motorNumber] = 0;
@@ -36,6 +40,9 @@ void loop()
         int output_value = 240 * (motorSpeeds[motorNumber]);
         analogWrite(pinPWM[motorNumber], output_value);
         */
+        
+        
+        
       }
     }
   }
