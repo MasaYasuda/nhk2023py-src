@@ -229,7 +229,141 @@ class Transmitter (serial.Serial):
     self.write_single(motor_num)
     return 
   
+class Dynamixel: ## This class is specified in X_series
+  def __init__(self,port,baudrate,id):
+    import os
+    if os.name == 'nt':
+        import msvcrt
+        def getch():
+            return msvcrt.getch().decode()
+    else:
+        import sys, tty, termios
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        def getch():
+            try:
+                tty.setraw(sys.stdin.fileno())
+                ch = sys.stdin.read(1)
+            finally:
+                termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+            return ch
+
+    from dynamixel_sdk import * # Uses Dynamixel SDK library
+
+    #********* DYNAMIXEL Model definition *********
+    #***** (Use only one definition at a time) *****
+    self.__MY_DXL = 'X_SERIES'       # X330 (5.0 V recommended), X430, X540, 2X430
+    self.__ADDR_TORQUE_ENABLE          = 64
+    self.__ADDR_GOAL_POSITION          = 116
+    self.__ADDR_PRESENT_POSITION       = 132
+    self.__DXL_MINIMUM_POSITION_VALUE  = 0         # Refer to the Minimum Position Limit of product eManual
+    self.__DXL_MAXIMUM_POSITION_VALUE  = 4095      # Refer to the Maximum Position Limit of product eManual
+    self.__BAUDRATE                    = baudrate
+    # DYNAMIXEL Protocol Version (1.0 / 2.0)
+    # https://emanual.robotis.com/docs/en/dxl/protocol2/
+    self.__PROTOCOL_VERSION            = 2.0
+
+    # Factory default ID of all DYNAMIXEL is 1
+    self.__DXL_ID                      = 1
+
+    # Use the actual port assigned to the U2D2.
+    # ex) Windows: "COM*", Linux: "/dev/ttyUSB*", Mac: "/dev/tty.usbserial-*"
+    self.__DEVICENAME                  = port
+
+    self.__TORQUE_ENABLE               = 1     # Value for enabling the torque
+    self.__TORQUE_DISABLE              = 0     # Value for disabling the torque
+    self.__DXL_MOVING_STATUS_THRESHOLD = 20    # Dynamixel moving status threshold
+
+    self.__index = 0
+    self.__dxl_goal_position = [self.__DXL_MINIMUM_POSITION_VALUE, self.__DXL_MAXIMUM_POSITION_VALUE]         # Goal position
+    self.__now_goal_position=0
+    self.__now_goal_position_value=0
+
+
+    # Initialize PortHandler instance
+    # Set the port path
+    # Get methods and members of PortHandlerLinux or PortHandlerWindows
+    self.__portHandler = PortHandler(DEVICENAME)
+
+    # Initialize PacketHandler instance
+    # Set the protocol version
+    # Get methods and members of Protocol1PacketHandler or Protocol2PacketHandler
+    self.__packetHandler = PacketHandler(PROTOCOL_VERSION)
+
+    # Open port
+    if self.__portHandler.openPort():
+        print("Succeeded to open the port")
+    else:
+        print("Failed to open the port")
+        print("Press any key to terminate...")
+        getch()
+        quit()
+
+
+    # Set port baudrate
+    if self.__portHandler.setBaudRate(self.__BAUDRATE):
+        print("Succeeded to change the baudrate")
+    else:
+        print("Failed to change the baudrate")
+        print("Press any key to terminate...")
+        getch()
+        quit()
+
+  def enable_torque(self):
+    # Enable Dynamixel Torque
+    dxl_comm_result, dxl_error = self.__packetHandler.write1ByteTxRx(self.__portHandler, self.__DXL_ID, self.__ADDR_TORQUE_ENABLE, self.__TORQUE_ENABLE)
+    if dxl_comm_result != COMM_SUCCESS:
+        print("%s" % self.__packetHandler.getTxRxResult(dxl_comm_result))
+    elif dxl_error != 0:
+        print("%s" % self.__packetHandler.getRxPacketError(dxl_error))
+    else:
+        print("Dynamixel has been successfully connected")
   
-    
-    
+  def disable_torque(self):
+    dxl_comm_result, dxl_error = self.__packetHandler.write1ByteTxRx(self.__portHandler, self.__DXL_ID, self.__ADDR_TORQUE_ENABLE, self.__TORQUE_DISABLE)
+    if dxl_comm_result != COMM_SUCCESS:
+        print("%s" % self.__packetHandler.getTxRxResult(dxl_comm_result))
+    elif dxl_error != 0:
+        print("%s" % self.__packetHandler.getRxPacketError(dxl_error))   
   
+  def attach_id(self,new_id):
+    NEW_DXL_ID                      = new_id
+    BROADCAST_DXL_ID                = 254
+
+    # ID変更
+    dxl_comm_result, dxl_error = self.__packetHandler.write1ByteTxRx(self.__portHandler, BROADCAST_DXL_ID, self.__ADDR_ID, NEW_DXL_ID)
+    if dxl_comm_result != COMM_SUCCESS:
+        print("%s" % self.__packetHandler.getTxRxResult(dxl_comm_result))
+    elif dxl_error != 0:
+        print("%s" % self.__packetHandler.getRxPacketError(dxl_error))
+    else:
+        print("Dynamixel has been successfully changed ID")
+
+    # IDを確認
+    dxl_id , dxl_comm_result, dxl_error = self.__packetHandler.read1ByteTxRx(self.__portHandler, NEW_DXL_ID, self.__ADDR_ID )
+    if dxl_comm_result != COMM_SUCCESS:
+        print("%s" % self.__packetHandler.getTxRxResult(dxl_comm_result))
+    elif dxl_error != 0:
+        print("%s" % self.__packetHandler.getRxPacketError(dxl_error))
+    print("ID:%d " % dxl_id)
+   
+  def write_position(self,value):
+    self.__now_goal_position_value = max(0, min(value, 1)) # value: 0~1
+    self.__now_goal_position = int(self.__DXL_MAXIMUM_POSITION_VALUE*value)  # position: 0~4095
+    dxl_comm_result, dxl_error = self.__packetHandler.write4ByteTxRx(self.__portHandler, self.__DXL_ID, self.__ADDR_GOAL_POSITION, self.__dxl_goal_position[value])
+    if dxl_comm_result != COMM_SUCCESS:
+        print("%s" % self.__packetHandler.getTxRxResult(dxl_comm_result))
+    elif dxl_error != 0:
+        print("%s" % self.__packetHandler.getRxPacketError(dxl_error))
+        
+  def read_position(self): 
+    dxl_present_position, dxl_comm_result, dxl_error = self.__packetHandler.read4ByteTxRx(self.__portHandler, self.__DXL_ID, self.__ADDR_PRESENT_POSITION)
+    if dxl_comm_result != COMM_SUCCESS:
+        print("%s" % self.__packetHandler.getTxRxResult(dxl_comm_result))
+    elif dxl_error != 0:
+        print("%s" % self.__packetHandler.getRxPacketError(dxl_error))
+        
+    present_position_value=dxl_present_position/self.__DXL_MAXIMUM_POSITION_VALUE
+    print("[ID:%03d]  GoalPos:%03d  PresPos:%03d  Value:%03f" % (self.__DXL_ID, self.__now_goal_position, dxl_present_position,present_position_value))
+    
+    return dxl_present_position,present_position_value
