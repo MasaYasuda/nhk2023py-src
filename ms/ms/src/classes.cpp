@@ -2,6 +2,57 @@
 #include <TimerOne.h>
 #include "classes.h"
 
+int dt_ms=20;
+int count[6];
+int count_past[6];
+float speed_now[6];
+const int EncoderA[6] ={22,23,24,25,26,27};
+const int EncoderB[6] ={2,3,18,19,20,21}; //ArduinoMegaMotrSlaveは物理的なピン配置上B相割込みとなっている
+// Function For pinInterrupt
+void pinInterrupt0R(){if(digitalRead(EncoderA[0])==1){count[0]++;}else{count[0]--;}}
+void pinInterrupt1R(){if(digitalRead(EncoderA[1])==1){count[1]++;}else{count[1]--;}}
+void pinInterrupt2R(){if(digitalRead(EncoderA[2])==1){count[2]++;}else{count[2]--;}}
+void pinInterrupt3R(){if(digitalRead(EncoderA[3])==1){count[3]++;}else{count[3]--;}}
+void pinInterrupt4R(){if(digitalRead(EncoderA[4])==1){count[4]++;}else{count[4]--;}}
+void pinInterrupt5R(){if(digitalRead(EncoderA[5])==1){count[5]++;}else{count[5]--;}}
+
+void pinInterrupt0F(){if(digitalRead(EncoderA[0])==0){count[0]++;}else{count[0]--;}}
+void pinInterrupt1F(){if(digitalRead(EncoderA[1])==0){count[1]++;}else{count[1]--;}}
+void pinInterrupt2F(){if(digitalRead(EncoderA[2])==0){count[2]++;}else{count[2]--;}}
+void pinInterrupt3F(){if(digitalRead(EncoderA[3])==0){count[3]++;}else{count[3]--;}}
+void pinInterrupt4F(){if(digitalRead(EncoderA[4])==0){count[4]++;}else{count[4]--;}}
+void pinInterrupt5F(){if(digitalRead(EncoderA[5])==0){count[5]++;}else{count[5]--;}}
+
+void encoderSetup(){
+  attachInterrupt(EncoderB[0], pinInterrupt0R, RISING);
+  attachInterrupt(EncoderB[1], pinInterrupt1R, RISING);
+  attachInterrupt(EncoderB[2], pinInterrupt2R, RISING);
+  attachInterrupt(EncoderB[3], pinInterrupt3R, RISING);
+  attachInterrupt(EncoderB[4], pinInterrupt4R, RISING);
+  attachInterrupt(EncoderB[5], pinInterrupt5R, RISING);
+
+  attachInterrupt(EncoderB[0], pinInterrupt0F, FALLING);
+  attachInterrupt(EncoderB[1], pinInterrupt1F, FALLING);
+  attachInterrupt(EncoderB[2], pinInterrupt2F, FALLING);
+  attachInterrupt(EncoderB[3], pinInterrupt3F, FALLING);
+  attachInterrupt(EncoderB[4], pinInterrupt4F, FALLING);
+  attachInterrupt(EncoderB[5], pinInterrupt5F, FALLING);
+}
+
+
+//Function Fot Timer Interrupt
+void timer_setup(){
+  Timer1.initialize(dt_ms*000); // 20msごとに割込み
+  Timer1.attachInterrupt(calc_speed);
+}
+void calc_speed(){
+    for(int i=0;i<6;i++){
+        int dif=count[i]-count_past[i];
+        speed_now[i]=dif*1000*60/2048/dt_ms; //rpm
+    }
+}
+
+
 //  コンストラクタ
 Receiver::Receiver(int baudrate){
     Serial.begin(baudrate);
@@ -31,65 +82,16 @@ void Receiver::read_order(){
 }
 
 
-Encoder::Encoder(){
-    //ArduinoMegaMotrSlaveは物理的なピン配置上B相割込みとなっていることに注意
-    int encA[6]= {22,23,24,25,26,27};
-    memcpy(EncoderA,encA,6);
-    int encB[6]= {2,3,18,19,20,21};
-    memcpy(EncoderB,encB,6);   
-    count[6]={0};
-    attachInterrupt(EncoderB[0], pinInterrupt0R, RISING);
-    attachInterrupt(EncoderB[1], pinInterrupt1R, RISING);
-    attachInterrupt(EncoderB[2], pinInterrupt2R, RISING);
-    attachInterrupt(EncoderB[3], pinInterrupt3R, RISING);
-    attachInterrupt(EncoderB[4], pinInterrupt4R, RISING);
-    attachInterrupt(EncoderB[5], pinInterrupt5R, RISING);
-
-    attachInterrupt(EncoderB[0], pinInterrupt0F, FALLING);
-    attachInterrupt(EncoderB[1], pinInterrupt1F, FALLING);
-    attachInterrupt(EncoderB[2], pinInterrupt2F, FALLING);
-    attachInterrupt(EncoderB[3], pinInterrupt3F, FALLING);
-    attachInterrupt(EncoderB[4], pinInterrupt4F, FALLING);
-    attachInterrupt(EncoderB[5], pinInterrupt5F, FALLING);
-}
-void Encoder::pinInterrupt0R(){if(digitalRead(EncoderA[0])==1){count[0]++;}else{count[0]--;}}
-void Encoder::pinInterrupt1R(){if(digitalRead(EncoderA[1])==1){count[1]++;}else{count[1]--;}}
-void Encoder::pinInterrupt2R(){if(digitalRead(EncoderA[2])==1){count[2]++;}else{count[2]--;}}
-void Encoder::pinInterrupt3R(){if(digitalRead(EncoderA[3])==1){count[3]++;}else{count[3]--;}}
-void Encoder::pinInterrupt4R(){if(digitalRead(EncoderA[4])==1){count[4]++;}else{count[4]--;}}
-void Encoder::pinInterrupt5R(){if(digitalRead(EncoderA[5])==1){count[5]++;}else{count[5]--;}}
-
-void Encoder::pinInterrupt0F(){if(digitalRead(EncoderA[0])==0){count[0]++;}else{count[0]--;}}
-void Encoder::pinInterrupt1F(){if(digitalRead(EncoderA[1])==0){count[1]++;}else{count[1]--;}}
-void Encoder::pinInterrupt2F(){if(digitalRead(EncoderA[2])==0){count[2]++;}else{count[2]--;}}
-void Encoder::pinInterrupt3F(){if(digitalRead(EncoderA[3])==0){count[3]++;}else{count[3]--;}}
-void Encoder::pinInterrupt4F(){if(digitalRead(EncoderA[4])==0){count[4]++;}else{count[4]--;}}
-void Encoder::pinInterrupt5F(){if(digitalRead(EncoderA[5])==0){count[5]++;}else{count[5]--;}}
-
-
-TimerPID::TimerPID(int RESOLUTION,float KP,float KI ,float KD)
-{
-    dt_ms = 20;
-    count_past[6]={0};
-    resolution=RESOLUTION;
-    speed_now[6]={0};
+Pid::Pid(float KP,float KI ,float KD)
+{   
     Kp=KP;
     Ki=KI;
     Kd=KD;
     dev_past[6]={0};
     integral[6]={0};
     power_rate[6]={0};
-
-    Timer1.initialize(dt_ms*1000); // 20msごとに割込み
-    Timer1.attachInterrupt(timer_calc_auto);
 }
-void TimerPID::calc_speed(int *count){
-    for(int i=0;i<6;i++){
-        int dif=count[i]-count_past[i];
-        speed_now[i]=dif*1000*60/resolution/20; //rpm
-    }
-}
-void TimerPID::calc_pid(float *order_speed){
+void Pid::calc_pid(float *order_speed){
     for(int i=0;i<6;i++){
         float dev=order_speed[i]-speed_now[i];
         float P=Kp*dev;
@@ -100,12 +102,6 @@ void TimerPID::calc_pid(float *order_speed){
         float power_rate_raw=(float)(P+I-D);
         power_rate[i]=constrain(power_rate_raw,-1,1);
     }
-}
-void TimerPID::timer_calc_auto(Encoder e,Receiver r){
-    int *cnt = e.getCount();
-    calc_speed(cnt);
-    float *order_sp = r.getOrder_speed();
-    calc_pid(order_sp);
 }
 
 
@@ -127,7 +123,7 @@ Power::Power()
         analogWrite(pin_pwm[i], 0);
     }
 }
-void Power::output(TimerPID t)
+void Power::output(Pid t)
 {
     float *pr= t.getPower_rate();
     for (int i = 0; i < 6; i++)
