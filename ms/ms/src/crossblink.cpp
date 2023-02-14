@@ -28,18 +28,17 @@ void loop()
       byte motorNumber = Serial.read();
       Serial.println(motorNumber);
       if (motorNumber >= 0 && motorNumber < motorCount) {
-        float speed = 0;
-        byte bytes[4];
-        Serial.readBytes(bytes, 4);
-        speed = a*((float*)bytes); 
+        uf speed;
+        for(int i=3;i>-1;i--)
+        speed.binary[i]=Serial.read();
 
-        motorSpeeds[motorNumber] = speed;
+        motorSpeeds[motorNumber] = speed.val;
         Serial.print("Motor: ");
         Serial.print(motorNumber);
         Serial.print(", Speed: ");
         Serial.println(motorSpeeds[motorNumber]);
 
-        int count=(int)(speed);
+        int count=(int)(speed.val);
         for(int i=0;i<count;i++){
             digitalWrite(13,HIGH);
             delay(200);
