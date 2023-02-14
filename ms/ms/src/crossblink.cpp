@@ -29,9 +29,8 @@ void loop()
       Serial.println(motorNumber);
       if (motorNumber >= 0 && motorNumber < motorCount) {
         uf speed;
-        for(int i=3;i>-1;i--)
-        speed.binary[i]=Serial.read();
-
+        for(int i=3;i>-1;i--)//little indian
+ speed.binary[i]=Serial.read(); 
         motorSpeeds[motorNumber] = speed.val;
         Serial.print("Motor: ");
         Serial.print(motorNumber);
