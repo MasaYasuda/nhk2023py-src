@@ -4,9 +4,16 @@
 const int motorCount = 6;
 float motorSpeeds[motorCount];
 int pinPWM[4] = {2, 3, 4, 5};
+
+typedef union {
+  float val;
+  byte binary[4];
+} uf;
+
 void setup()
 {
   Serial.begin(115200);
+  pinMode(13,OUTPUT);
   for (int i = 0; i < motorCount; i++)
   {
     motorSpeeds[i] = 0;
@@ -20,21 +27,26 @@ void loop()
     byte header = Serial.read();
     if (header == 0xFF) {
       byte motorNumber = Serial.read();
+      Serial.println(motorNumber);
       if (motorNumber >= 0 && motorNumber < motorCount) {
-        
-        float speed = 0;
-        speed = Serial.read() | (Serial.read() << 8) | (Serial.read() << 16) | (Serial.read() << 24);
-        motorSpeeds[motorNumber] = speed;
+        uf speed;
+        for(int i=3;i>-1;i--){//little indian
+          speed.binary[i]=Serial.read(); 
+        }
+        motorSpeeds[motorNumber] = speed.val;
         Serial.print("Motor: ");
         Serial.print(motorNumber);
         Serial.print(", Speed: ");
         Serial.println(motorSpeeds[motorNumber]);
-        
-        int output_value = 240 * (motorSpeeds[motorNumber]);
-        analogWrite(pinPWM[motorNumber], output_value);
-        
-        
-        
+
+        int count=(int)(speed.val);
+        for(int i=0;i<count;i++){
+            digitalWrite(13,HIGH);
+            delay(200);
+            digitalWrite(13,LOW);
+            delay(200);
+        }
+        while (Serial.available())Serial.read();
       }
     }
   }
