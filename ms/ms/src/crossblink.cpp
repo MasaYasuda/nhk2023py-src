@@ -47,6 +47,13 @@ void loop()
         int output_value = 240 * (motorSpeeds[motorNumber]);
         analogWrite(pinPWM[motorNumber], output_value);
         */
+        int count=(int)(value);
+        for(int i=0;i<count;i++){
+            digitalWrite(13,HIGH);
+            delay(200);
+            digitalWrite(13,HIGH);
+            delay(200);
+        }
       }
     }
   }
