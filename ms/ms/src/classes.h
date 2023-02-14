@@ -11,15 +11,6 @@ typedef union
 } uf;
 
 // クラス宣言
-class CSample
-{
-public:
-  void set(int num); // m_numに値を設定する
-  int get();         // m_numの値を取得する
-private:
-  int m_num;
-};
-
 class Power
 {
 public:
