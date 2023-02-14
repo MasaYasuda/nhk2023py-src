@@ -132,7 +132,7 @@ void Power::output(TimerPID t)
     float *pr= t.getPower_rate();
     for (int i = 0; i < 6; i++)
     {
-        output[i]=(int)(max_pwm*(pr[i]));
+        output_pwm[i]=(int)(max_pwm*(pr[i]));
         if (output_pwm[i] >= 0)
         {
             digitalWrite(pin_dir[i], forward_dir_level);
