@@ -10,63 +10,23 @@ typedef union
 } uf;
 
 // クラス宣言
-class Power
+class Receiver
 {
 public:
-  //  コンストラクタ
-  Power();
-  void output(float power_rate[6]);
-  int *getOutput_dir();
-  int *getOutput_pwm();
-
-
-  int output_dir[6];
-  int output_pwm[6];
+  Receiver(int baudrate);
+  float *getOrder_speed(){return order_speed;};
+  void read_order();
 
 private:
-  int pin_dir[6];
-  int pin_pwm[6];
-  int max_pwm;
-  int forward_dir_level;
-};
-
-class TimerPID
-{
-public:
-  TimerPID(int RESOLUTION,float KP,float KI ,float KD);
-  void calc_speed(int *count);
-  void calc_pid(float *order_speed);
-  void timer_calc_auto();
-  float *getPower_rate();
-
-  float speed_now[6];
-  float power_rate[6];
-
-private:
-  int dt_ms;
-  int count_past[6];
-  int resolution;
-  float Kp;
-  float Ki;
-  float Kd;
-  int dev_past[6];
-  int integral[6];
-  
+  float order_speed[6];
 };
 
 class Encoder
 {
 public:
   Encoder();
-  int* getCount();
-  
-  int EncoderA[6];
-  int EncoderB[6];
-  int count[6];
-  
-private:
-};
-void pinInterrupt0R();
+  int *getCount(){return count;};
+  void pinInterrupt0R();
   void pinInterrupt1R();
   void pinInterrupt2R();
   void pinInterrupt3R();
@@ -79,16 +39,52 @@ void pinInterrupt0R();
   void pinInterrupt3F();
   void pinInterrupt4F();
   void pinInterrupt5F();
+  
+private:
+  int EncoderA[6];
+  int EncoderB[6];
+  int count[6];
+};
 
-class Receiver
+
+class TimerPID
 {
 public:
-  Receiver(int baudrate);
-  float *getOrder_speed();
-  void read_order();
+  TimerPID(int RESOLUTION,float KP,float KI ,float KD);
+  void calc_speed(int *count);
+  void calc_pid(float *order_speed);
+  void timer_calc_auto(Encoder e, Receiver r);
+  float *getPower_rate(){return power_rate;};
 
 private:
-
-  float order_speed[6];
+  int dt_ms;
+  int count_past[6];
+  int resolution;
+  float Kp;
+  float Ki;
+  float Kd;
+  int dev_past[6];
+  int integral[6];
+  float speed_now[6];
+  float power_rate[6];
 };
+class Power
+{
+public:
+  //  コンストラクタ
+  Power();
+  void output(TimerPID t);
+  int *getOutput_dir(){return output_dir;};
+  int *getOutput_pwm(){return output_pwm;};
+
+private:
+  int pin_dir[6];
+  int pin_pwm[6];
+  int output_dir[6];
+  int output_pwm[6];
+  int max_pwm;
+  int forward_dir_level;
+};
+
+
 #endif //_CLASSES_H_
