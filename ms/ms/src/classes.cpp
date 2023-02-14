@@ -6,24 +6,26 @@
 Power::Power()
 {
     // DIR_LEVEL : Cytron=0 , Polulu=1
-    const int pin_dir[6] = {28, 29, 30, 31, 32, 33};
-    const int pin_pwm[6] = {4, 5, 6, 7, 8, 9};
-    int output_dir[6] = {0};
-    int output_pwm[6] = {0};
-    const int max_pwm = 240;
-    int forward_dir_level = 0;
-    for (int i = 0; i < 4; i++)
+    int PIN_DIR[6]={28, 29, 30, 31, 32, 33};
+    memcpy(pin_dir,PIN_DIR,6);
+    int PIN_PWM[6]={4, 5, 6, 7, 8, 9};
+    memcpy(pin_pwm,PIN_PWM,6);
+    output_dir[6] = {0};
+    output_pwm[6] = {0};
+    max_pwm = 240;
+    forward_dir_level = 0;
+    for (int i = 0; i < 6; i++)
     {
         pinMode(pin_dir[i], OUTPUT);
         digitalWrite(pin_dir[i], LOW);
         analogWrite(pin_pwm[i], 0);
     }
 }
-void Power::output(float pid_rate[6])
+void Power::output(float power_rate[6])
 {
     for (int i = 0; i < 6; i++)
     {
-        output_pwm[i] = max_pwm * pid_rate[i];
+        output_pwm[i] = max_pwm * power_rate[i];
         if (output_pwm[i] >= 0)
         {
             digitalWrite(pin_dir[i], forward_dir_level);
@@ -39,7 +41,7 @@ void Power::output(float pid_rate[6])
 }
 int *Power::getOutput_dir()
 {
-    return output_dir;
+    return Power::output_dir;
 }
 int *Power::getOutput_pwm()
 {
@@ -48,76 +50,113 @@ int *Power::getOutput_pwm()
 
 TimerPID::TimerPID(int RESOLUTION,float KP,float KI ,float KD)
 {
-    int count_past[6]={0};
-    int resolution=RESOLUTION;
-    float speed_now[6]={0};
-    float Kp=KP;
-    float Ki=KI;
-    float Kd=KD;
-    int dev_past[6]={0};
-    int integtal[6]={0};
-    float power_rate[6]={0};
+    dt_ms = 20;
+    count_past[6]={0};
+    resolution=RESOLUTION;
+    speed_now[6]={0};
+    Kp=KP;
+    Ki=KI;
+    Kd=KD;
+    dev_past[6]={0};
+    integral[6]={0};
+    power_rate[6]={0};
 
-    Timer1.initialize(20000); // 20msごとに割込み
-    Timer1.attachInterrupt(timerCalc);
+    Timer1.initialize(dt_ms*1000); // 20msごとに割込み
+    Timer1.attachInterrupt(timer_calc_auto);
 }
 float *TimerPID::getPower_rate(){
     return power_rate;
 }
-void TimerPID::calc_speed(int count[6]){
+void TimerPID::calc_speed(int *count){
     for(int i=0;i<6;i++){
         int dif=count[i]-count_past[i];
-        speed_now[i]=dif*1000*60/resolution/20 //rpm
+        speed_now[i]=dif*1000*60/resolution/20; //rpm
     }
 }
-void TimerPID::calc_pid(float order_speed[6]){
-
-}
-
-
-int count_past[6];
-int resolution;
-float speed_past[6];
-float Kp;
-float Ki;
-float Kd;
-int dev_past[6];
-int integtal[6];
-float power_rate[6];
-
-class Encoder
-{
-public:
-    Encoder::Encoder()
-    {
+void TimerPID::calc_pid(float *order_speed){
+    for(int i=0;i<6;i++){
+        float dev=order_speed[i]-speed_now[i];
+        float P=Kp*dev;
+        integral[i]+=dev;
+        float I=Ki*integral[i];
+        float D=Kd*(dev-dev_past[i])/dt_ms;
+        dev_past[i]=dev;
+        float power_rate_raw=(float)(P+I-D);
+        power_rate[i]=constrain(power_rate_raw,-1,1);
     }
-    int *getCount();
-    void pinInterrupt0R();
-    void pinInterrupt1R();
-    void pinInterrupt2R();
-    void pinInterrupt3R();
-    void pinInterrupt4R();
-    void pinInterrupt5R();
-
-    void pinInterrupt0F();
-    void pinInterrupt1F();
-    void pinInterrupt2F();
-    void pinInterrupt3F();
-    void pinInterrupt4F();
-    void pinInterrupt5F();
-
-private:
-    int count[6];
-};
-
-class Receiver : public Serial
-{
-public:
-    Receiver(int baudrate);
-    float *getOrder_speed();
-    void read_order();
-
-private
-    uf order_speed[6];
 }
-#endif //_CLASSES_H_
+void TimerPID::timer_calc_auto(){
+    int *cnt = getCount();
+    calc_speed(*cnt);
+    float *order_sp = getOrder_speed();
+    calc_pid(*order_sp);
+}
+
+Encoder::Encoder(){
+    //ArduinoMegaMotrSlaveは物理的なピン配置上B相割込みとなっていることに注意
+    int encA[6]= {22,23,24,25,26,27};
+    memcpy(EncoderA,encA,6);
+    int encB[6]= {2,3,18,19,20,21};
+    memcpy(EncoderB,encB,6);   
+    count[6]={0};
+    attachInterrupt(EncoderB[0], pinInterrupt0R, RISING);
+    attachInterrupt(EncoderB[1], pinInterrupt1R, RISING);
+    attachInterrupt(EncoderB[2], pinInterrupt2R, RISING);
+    attachInterrupt(EncoderB[3], pinInterrupt3R, RISING);
+    attachInterrupt(EncoderB[4], pinInterrupt4R, RISING);
+    attachInterrupt(EncoderB[5], pinInterrupt5R, RISING);
+
+    attachInterrupt(EncoderB[0], pinInterrupt0F, FALLING);
+    attachInterrupt(EncoderB[1], pinInterrupt1F, FALLING);
+    attachInterrupt(EncoderB[2], pinInterrupt2F, FALLING);
+    attachInterrupt(EncoderB[3], pinInterrupt3F, FALLING);
+    attachInterrupt(EncoderB[4], pinInterrupt4F, FALLING);
+    attachInterrupt(EncoderB[5], pinInterrupt5F, FALLING);
+}
+void pinInterrupt0R(){if(digitalRead(EncoderA[0])==1){count[0]++;}else{count[0]--;}}
+void pinInterrupt1R(){if(digitalRead(EncoderA[1])==1){count[1]++;}else{count[1]--;}}
+void pinInterrupt2R(){if(digitalRead(EncoderA[2])==1){count[2]++;}else{count[2]--;}}
+void pinInterrupt3R(){if(digitalRead(EncoderA[3])==1){count[3]++;}else{count[3]--;}}
+void pinInterrupt4R(){if(digitalRead(EncoderA[4])==1){count[4]++;}else{count[4]--;}}
+void pinInterrupt5R(){if(digitalRead(EncoderA[5])==1){count[5]++;}else{count[5]--;}}
+
+void pinInterrupt0F(){if(digitalRead(EncoderA[0])==0){count[0]++;}else{count[0]--;}}
+void pinInterrupt1F(){if(digitalRead(EncoderA[1])==0){count[1]++;}else{count[1]--;}}
+void pinInterrupt2F(){if(digitalRead(EncoderA[2])==0){count[2]++;}else{count[2]--;}}
+void pinInterrupt3F(){if(digitalRead(EncoderA[3])==0){count[3]++;}else{count[3]--;}}
+void pinInterrupt4F(){if(digitalRead(EncoderA[4])==0){count[4]++;}else{count[4]--;}}
+void pinInterrupt5F(){if(digitalRead(EncoderA[5])==0){count[5]++;}else{count[5]--;}}
+
+int* Encoder::getCount(){
+    return count;
+}
+
+Receiver::Receiver(int baudrate){
+    Serial.begin(baudrate);
+    order_speed[6]={0};    
+}
+
+float *Receiver::getOrder_speed(){
+    return order_speed;
+}
+void Receiver::read_order(){
+    if (Serial.available() >= 6) {
+    Serial.println("RECEIVED");
+    byte header = Serial.read();
+    if (header == 0xFF) {
+      byte motorNumber = Serial.read();
+      Serial.println(motorNumber);
+      if (motorNumber >= 0 && motorNumber < 6) {
+        uf speed;
+        for(int i=0;i<4;i++){//little indian
+          speed.binary[3-i]=Serial.read(); 
+        }
+        order_speed[motorNumber] = speed.val;
+        Serial.print("Motor: ");
+        Serial.print(motorNumber);
+        Serial.print(", Speed: ");
+        Serial.println(order_speed[motorNumber]);
+        }
+    }
+  }
+}

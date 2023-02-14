@@ -15,15 +15,17 @@ class Power
 public:
   //  コンストラクタ
   Power();
-  void output(float pid_rate[6]);
+  void output(float power_rate[6]);
   int *getOutput_dir();
   int *getOutput_pwm();
+
+
+  int output_dir[6];
+  int output_pwm[6];
 
 private:
   int pin_dir[6];
   int pin_pwm[6];
-  int output_dir[6];
-  int output_pwm[6];
   int max_pwm;
   int forward_dir_level;
 };
@@ -31,29 +33,40 @@ private:
 class TimerPID
 {
 public:
-  TimerPID();
-  void calc_speed(int count[6]);
-  void calc_pid(float order_speed[6]);
+  TimerPID(int RESOLUTION,float KP,float KI ,float KD);
+  void calc_speed(int *count);
+  void calc_pid(float *order_speed);
+  void timer_calc_auto();
   float *getPower_rate();
 
+  float speed_now[6];
+  float power_rate[6];
+
 private:
+  int dt_ms;
   int count_past[6];
   int resolution;
-  float speed_now[6];
   float Kp;
   float Ki;
   float Kd;
   int dev_past[6];
-  int integtal[6];
-  float power_rate[6];
+  int integral[6];
+  
 };
 
 class Encoder
 {
 public:
   Encoder();
-  int *getCount();
-  void pinInterrupt0R();
+  int* getCount();
+  
+  int EncoderA[6];
+  int EncoderB[6];
+  int count[6];
+  
+private:
+};
+void pinInterrupt0R();
   void pinInterrupt1R();
   void pinInterrupt2R();
   void pinInterrupt3R();
@@ -67,11 +80,7 @@ public:
   void pinInterrupt4F();
   void pinInterrupt5F();
 
-private:
-  int count[6];
-};
-
-class Receiver : public Serial
+class Receiver
 {
 public:
   Receiver(int baudrate);
@@ -79,6 +88,7 @@ public:
   void read_order();
 
 private:
-  uf order_speed[6];
+
+  float order_speed[6];
 };
 #endif //_CLASSES_H_
