@@ -13,6 +13,7 @@ typedef union {
 void setup()
 {
   Serial.begin(115200);
+  pinMode(13,OUTPUT);
   for (int i = 0; i < motorCount; i++)
   {
     motorSpeeds[i] = 0;
@@ -29,8 +30,9 @@ void loop()
       Serial.println(motorNumber);
       if (motorNumber >= 0 && motorNumber < motorCount) {
         uf speed;
-        for(int i=3;i>-1;i--)//little indian
- speed.binary[i]=Serial.read(); 
+        for(int i=3;i>-1;i--){//little indian
+          speed.binary[i]=Serial.read(); 
+        }
         motorSpeeds[motorNumber] = speed.val;
         Serial.print("Motor: ");
         Serial.print(motorNumber);
@@ -41,7 +43,7 @@ void loop()
         for(int i=0;i<count;i++){
             digitalWrite(13,HIGH);
             delay(200);
-            digitalWrite(13,HIGH);
+            digitalWrite(13,LOW);
             delay(200);
         }
         while (Serial.available())Serial.read();
