@@ -31,7 +31,7 @@ void loop()
         float speed = 0;
         byte bytes[4];
         Serial.readBytes(bytes, 4);
-        speed = *((float*)bytes); 
+        speed = a*((float*)bytes); 
 
         motorSpeeds[motorNumber] = speed;
         Serial.print("Motor: ");
