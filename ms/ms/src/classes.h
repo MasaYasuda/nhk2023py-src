@@ -1,7 +1,6 @@
 #ifndef _CLASSES_H_
 #define _CLASSES_H_
 
-#include <Arduino.h>
 
 // 構造体宣言
 typedef union
@@ -16,7 +15,7 @@ class Power
 public:
   //  コンストラクタ
   Power();
-  void output();
+  void output(float pid_rate[6]);
   int *getOutput_dir();
   int *getOutput_pwm();
 
@@ -24,7 +23,9 @@ private:
   int pin_dir[6];
   int pin_pwm[6];
   int output_dir[6];
-  int output_dir[6];
+  int output_pwm[6];
+  int max_pwm;
+  int forward_dir_level;
 };
 
 class TimerPID
@@ -38,7 +39,7 @@ public:
 private:
   int count_past[6];
   int resolution;
-  float speed_past[6];
+  float speed_now[6];
   float Kp;
   float Ki;
   float Kd;
@@ -77,7 +78,7 @@ public:
   float *getOrder_speed();
   void read_order();
 
-private
+private:
   uf order_speed[6];
-}
+};
 #endif //_CLASSES_H_
