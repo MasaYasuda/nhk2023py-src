@@ -228,7 +228,8 @@ class Transmitter (serial.Serial):
     self.store_single_target_values(motor_num,value)
     self.write_single(motor_num)
     return 
-  
+
+"""  
 class Dynamixel: ## This class is specified in X_series
   def __init__(self,port,baudrate,id):
     import os
@@ -367,3 +368,5 @@ class Dynamixel: ## This class is specified in X_series
     print("[ID:%03d]  GoalPos:%03d  PresPos:%03d  Value:%03f" % (self.__DXL_ID, self.__now_goal_position, dxl_present_position,present_position_value))
     
     return dxl_present_position,present_position_value
+    
+"""
