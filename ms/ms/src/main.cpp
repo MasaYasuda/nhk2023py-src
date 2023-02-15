@@ -14,5 +14,6 @@ void setup(){
 void loop(){
   receiver.read_order();//->order_speed[6]
   power.output(power_rate);
-  delay(50);
+  Serial.println(power_rate[0]);
+  delay(100);
 }
