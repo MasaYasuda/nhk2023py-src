@@ -8,7 +8,7 @@ const long dt_ms=20;
 const int EncoderA[6] ={22,23,24,25,26,27};
 const int EncoderB[6] ={0,1,5,4,3,2}; //ArduinoMegaMotrSlaveは物理的なピン配置上B相割込みとなっている
 
-const float Kp=0.0;
+const float Kp=0.01;
 const float Ki=0.0;
 const float Kd=0.0;
 
