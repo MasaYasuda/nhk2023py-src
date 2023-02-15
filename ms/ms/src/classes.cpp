@@ -12,7 +12,7 @@ const float Kp=0.01;
 const float Ki=0.0;
 const float Kd=0.0;
 
-int count_past[6]={0};
+long count_past[6]={0};
 float dev_past[6]={0};
 float integral[6]={0};
 

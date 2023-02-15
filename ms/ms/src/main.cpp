@@ -14,9 +14,5 @@ void setup(){
 void loop(){
   receiver.read_order();//->order_speed[6]
   power.output(power_rate);
-  int *pwm=power.getOutput_pwm();
-  for(int i=0;i<6;i++){
-    Serial.println(pwm[i]);
-  }
   delay(50);
 }

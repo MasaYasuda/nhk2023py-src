@@ -13,14 +13,14 @@ try:
     time.sleep(3)
 
     motor_num_array=[0,1,2,3,4,5]
-    values=[1400,0.2,0.4,0.6,0.8,1.0]
+    values=[140,0.2,0.4,0.6,0.8,1.0]
     transmitter.write_all_auto(motor_num_array,values)
-    time.sleep(5)
+    time.sleep(3)
 
     motor_num_array=[0,1,2,3,4,5]
-    values=[10,0.2,0.4,0.6,0.8,1.0]
+    values=[100,0.2,0.4,0.6,0.8,1.0]
     transmitter.write_all_auto(motor_num_array,values)
-    time.sleep(5)
+    time.sleep(3)
 
     
 
