@@ -1,4 +1,4 @@
-//
+////Successfully Moved [23/2/15]
 
 #include <Arduino.h>
 #include <TimerOne.h>
@@ -21,4 +21,5 @@ void loop(){
     Serial.println(speed_now[i]);
   }
   delay(1000);
+  
 }

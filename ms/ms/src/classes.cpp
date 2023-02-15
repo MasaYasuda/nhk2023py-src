@@ -3,9 +3,10 @@
 #include "classes.h"
 
 // global変数宣言　###############################
-const int dt_ms=200;
+const long dt_ms=20;
 const int EncoderA[6] ={22,23,24,25,26,27};
 const int EncoderB[6] ={0,1,5,4,3,2}; //ArduinoMegaMotrSlaveは物理的なピン配置上B相割込みとなっている
+
 const float Kp=0.0;
 const float Ki=0.0;
 const float Kd=0.0;
@@ -16,7 +17,7 @@ float integral[6]={0};
 
 
 //extern global変数
-volatile int count[6]={0};
+volatile long count[6]={0};
 float speed_now[6]={0};
 float order_speed[6]={0};
 float power_rate[6]={0};
@@ -61,8 +62,9 @@ void timer_setup(){
 }
 void calc_speed(){
     for(int i=0;i<6;i++){
-        int dif=count[i]-count_past[i];
-        speed_now[i]=(float)(dif)*1000*60/1024/dt_ms; //rpm
+        long dif=count[i]-count_past[i];
+        speed_now[i]=float(dif*1000*60/1024/dt_ms); //rpm
+        count_past[i]=count[i];
     }
 }
 void calc_pid(){
