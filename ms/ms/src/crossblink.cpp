@@ -39,7 +39,7 @@ void loop()
         Serial.print(", Speed: ");
         Serial.println(motorSpeeds[motorNumber]);
 
-        int count=(int)(speed.val);
+        int count=(int)(motorSpeeds[motorNumber]);
         for(int i=0;i<count;i++){
             digitalWrite(13,HIGH);
             delay(200);

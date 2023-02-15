@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <TimerOne.h>
+#include <Wire.h>
 #include "classes.h"
 
 // global変数宣言　###############################

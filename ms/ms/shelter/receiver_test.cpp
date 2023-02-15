@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <Wire.h>
 #include <TimerOne.h>
 #include "classes.h"
 //　変数・オブジェクト宣言
