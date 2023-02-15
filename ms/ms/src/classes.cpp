@@ -89,7 +89,7 @@ void timer_calc(){
 // クラスメソッド宣言 ###############################
 //  コンストラクタ
 
-void Receiver::read_order(){
+void read_order(){
     if (Serial.available() >= 6) {
     Serial.println("RECEIVED");
     byte header = Serial.read();
