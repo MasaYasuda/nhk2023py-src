@@ -134,7 +134,7 @@ void Power::output(float *power_rate)
 {
     for (int i = 0; i < 6; i++)
     {
-        output_pwm[i]=(int)(max_pwm*(power_rate[i]));
+        output_pwm[i]=int(max_pwm*(power_rate[i]));
         if (output_pwm[i] >= 0)
         {
             digitalWrite(pin_dir[i], forward_dir_level);
