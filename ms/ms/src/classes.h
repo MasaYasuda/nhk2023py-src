@@ -9,7 +9,7 @@ typedef union
 } uf;
 
 // global変数宣言　###############################
-
+extern volatile int count[6];
 extern float speed_now[6];
 extern float order_speed[6];
 extern float power_rate[6];
