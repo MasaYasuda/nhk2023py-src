@@ -85,10 +85,6 @@ void timer_calc(){
 
 // クラスメソッド宣言 ###############################
 //  コンストラクタ
-Receiver::Receiver(int baudrate){
-    Serial.begin(baudrate);
-    speed[6]={0};    
-}
 
 void Receiver::read_order(){
     if (Serial.available() >= 6) {
@@ -102,11 +98,11 @@ void Receiver::read_order(){
         for(int i=0;i<4;i++){//little indian
           order.binary[3-i]=Serial.read(); 
         }
-        speed[motorNumber] = order.val;
+        order_speed[motorNumber] = order.val;
         Serial.print("Motor: ");
         Serial.print(motorNumber);
         Serial.print(", Speed: ");
-        Serial.println(speed[motorNumber]);
+        Serial.println(order_speed[motorNumber]);
         }
     }
   }

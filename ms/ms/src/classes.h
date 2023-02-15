@@ -41,12 +41,7 @@ void pinInterrupt5F();
 class Receiver
 {
 public:
-  Receiver(int baudrate);
-  float *getOrder_speed(){return speed;};
   void read_order();
-
-private:
-  float speed[6];
 };
 
 
