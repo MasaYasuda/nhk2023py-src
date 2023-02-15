@@ -97,8 +97,8 @@ void Receiver::read_order(){
       Serial.println(motorNumber);
       if (motorNumber >= 0 && motorNumber < 6) {
         uf order;
-        for(int i=0;i<4;i++){//little indian
-          order.binary[3-i]=Serial.read(); 
+        for(int i=3;i>-1;i--){//little indian
+          order.binary[i]=Serial.read(); 
         }
         order_speed[motorNumber] = order.val;
         Serial.print("Motor: ");

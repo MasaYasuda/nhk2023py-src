@@ -46,7 +46,6 @@ void loop()
             digitalWrite(13,LOW);
             delay(200);
         }
-        while (Serial.available())Serial.read();
       }
     }
   }
