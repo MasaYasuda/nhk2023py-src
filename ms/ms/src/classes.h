@@ -1,14 +1,16 @@
 #ifndef _CLASSES_H_
 #define _CLASSES_H_
 
-
-// 構造体宣言
+// 構造体宣言　###############################
 typedef union
 {
   float val;
   byte binary[4];
 } uf;
 
+// 関数宣言 ###############################
+void timer_setup();
+void calc_speed();
 void encoder_setup();
 void pinInterrupt0R();
 void pinInterrupt1R();
@@ -24,7 +26,7 @@ void pinInterrupt3F();
 void pinInterrupt4F();
 void pinInterrupt5F();
 
-// クラス宣言
+// クラス宣言 ###############################
 class Receiver
 {
 public:
@@ -36,8 +38,6 @@ private:
   float order_speed[6];
 };
 
-void timer_setup();
-void calc_speed();
 class Pid
 {
 public:
@@ -53,6 +53,7 @@ private:
   int integral[6];
   float power_rate[6];
 };
+
 class Power
 {
 public:

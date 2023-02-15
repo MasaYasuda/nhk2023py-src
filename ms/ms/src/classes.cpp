@@ -2,12 +2,15 @@
 #include <TimerOne.h>
 #include "classes.h"
 
-int dt_ms=20;
+// global変数宣言　###############################
+const int dt_ms=20;
 int count[6];
 int count_past[6];
 float speed_now[6];
 const int EncoderA[6] ={22,23,24,25,26,27};
 const int EncoderB[6] ={2,3,18,19,20,21}; //ArduinoMegaMotrSlaveは物理的なピン配置上B相割込みとなっている
+
+// 関数宣言 ###############################
 // Function For pinInterrupt
 void pinInterrupt0R(){if(digitalRead(EncoderA[0])==1){count[0]++;}else{count[0]--;}}
 void pinInterrupt1R(){if(digitalRead(EncoderA[1])==1){count[1]++;}else{count[1]--;}}
@@ -39,7 +42,6 @@ void encoderSetup(){
   attachInterrupt(EncoderB[5], pinInterrupt5F, FALLING);
 }
 
-
 //Function Fot Timer Interrupt
 void timer_setup(){
   Timer1.initialize(dt_ms*000); // 20msごとに割込み
@@ -52,7 +54,7 @@ void calc_speed(){
     }
 }
 
-
+// クラスメソッド宣言 ###############################
 //  コンストラクタ
 Receiver::Receiver(int baudrate){
     Serial.begin(baudrate);
