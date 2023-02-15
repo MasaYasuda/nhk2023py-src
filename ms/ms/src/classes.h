@@ -8,9 +8,18 @@ typedef union
   byte binary[4];
 } uf;
 
+// global変数宣言　###############################
+
+extern float speed_now[6];
+extern float order_speed[6];
+extern float power_rate[6];
+
 // 関数宣言 ###############################
 void timer_setup();
 void calc_speed();
+void calc_pid();
+void timer_calc();
+
 void encoder_setup();
 void pinInterrupt0R();
 void pinInterrupt1R();
@@ -26,40 +35,27 @@ void pinInterrupt3F();
 void pinInterrupt4F();
 void pinInterrupt5F();
 
+
+
 // クラス宣言 ###############################
 class Receiver
 {
 public:
   Receiver(int baudrate);
-  float *getOrder_speed(){return order_speed;};
+  float *getOrder_speed(){return speed;};
   void read_order();
 
 private:
-  float order_speed[6];
+  float speed[6];
 };
 
-class Pid
-{
-public:
-  Pid(float KP,float KI ,float KD);
-  void calc_pid(float *order_speed);
-  float *getPower_rate(){return power_rate;};
-
-private:
-  float Kp;
-  float Ki;
-  float Kd;
-  int dev_past[6];
-  int integral[6];
-  float power_rate[6];
-};
 
 class Power
 {
 public:
   //  コンストラクタ
   Power();
-  void output(Pid t);
+  void output(float *power_rate);
   int *getOutput_dir(){return output_dir;};
   int *getOutput_pwm(){return output_pwm;};
 

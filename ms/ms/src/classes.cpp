@@ -4,11 +4,23 @@
 
 // global変数宣言　###############################
 const int dt_ms=20;
-int count[6];
-int count_past[6];
-float speed_now[6];
 const int EncoderA[6] ={22,23,24,25,26,27};
 const int EncoderB[6] ={2,3,18,19,20,21}; //ArduinoMegaMotrSlaveは物理的なピン配置上B相割込みとなっている
+const float Kp=0.0;
+const float Ki=0.0;
+const float Kd=0.0;
+int count[6]={0};
+int count_past[6]={0};
+
+float dev_past[6]={0};
+float integral[6]={0};
+
+
+//extern global変数
+float speed_now[6]={0};
+float order_speed[6]={0};
+float power_rate[6]={0};
+
 
 // 関数宣言 ###############################
 // Function For pinInterrupt
@@ -26,7 +38,7 @@ void pinInterrupt3F(){if(digitalRead(EncoderA[3])==0){count[3]++;}else{count[3]-
 void pinInterrupt4F(){if(digitalRead(EncoderA[4])==0){count[4]++;}else{count[4]--;}}
 void pinInterrupt5F(){if(digitalRead(EncoderA[5])==0){count[5]++;}else{count[5]--;}}
 
-void encoderSetup(){
+void encoder_setup(){
   attachInterrupt(EncoderB[0], pinInterrupt0R, RISING);
   attachInterrupt(EncoderB[1], pinInterrupt1R, RISING);
   attachInterrupt(EncoderB[2], pinInterrupt2R, RISING);
@@ -44,8 +56,8 @@ void encoderSetup(){
 
 //Function Fot Timer Interrupt
 void timer_setup(){
-  Timer1.initialize(dt_ms*000); // 20msごとに割込み
-  Timer1.attachInterrupt(calc_speed);
+  Timer1.initialize(dt_ms*1000); // 20msごとに割込み
+  Timer1.attachInterrupt(timer_calc);
 }
 void calc_speed(){
     for(int i=0;i<6;i++){
@@ -53,47 +65,7 @@ void calc_speed(){
         speed_now[i]=dif*1000*60/2048/dt_ms; //rpm
     }
 }
-
-// クラスメソッド宣言 ###############################
-//  コンストラクタ
-Receiver::Receiver(int baudrate){
-    Serial.begin(baudrate);
-    order_speed[6]={0};    
-}
-
-void Receiver::read_order(){
-    if (Serial.available() >= 6) {
-    Serial.println("RECEIVED");
-    byte header = Serial.read();
-    if (header == 0xFF) {
-      byte motorNumber = Serial.read();
-      Serial.println(motorNumber);
-      if (motorNumber >= 0 && motorNumber < 6) {
-        uf speed;
-        for(int i=0;i<4;i++){//little indian
-          speed.binary[3-i]=Serial.read(); 
-        }
-        order_speed[motorNumber] = speed.val;
-        Serial.print("Motor: ");
-        Serial.print(motorNumber);
-        Serial.print(", Speed: ");
-        Serial.println(order_speed[motorNumber]);
-        }
-    }
-  }
-}
-
-
-Pid::Pid(float KP,float KI ,float KD)
-{   
-    Kp=KP;
-    Ki=KI;
-    Kd=KD;
-    dev_past[6]={0};
-    integral[6]={0};
-    power_rate[6]={0};
-}
-void Pid::calc_pid(float *order_speed){
+void calc_pid(){
     for(int i=0;i<6;i++){
         float dev=order_speed[i]-speed_now[i];
         float P=Kp*dev;
@@ -105,6 +77,43 @@ void Pid::calc_pid(float *order_speed){
         power_rate[i]=constrain(power_rate_raw,-1,1);
     }
 }
+
+void timer_calc(){
+    calc_speed();
+    calc_pid();
+}
+
+// クラスメソッド宣言 ###############################
+//  コンストラクタ
+Receiver::Receiver(int baudrate){
+    Serial.begin(baudrate);
+    speed[6]={0};    
+}
+
+void Receiver::read_order(){
+    if (Serial.available() >= 6) {
+    Serial.println("RECEIVED");
+    byte header = Serial.read();
+    if (header == 0xFF) {
+      byte motorNumber = Serial.read();
+      Serial.println(motorNumber);
+      if (motorNumber >= 0 && motorNumber < 6) {
+        uf order;
+        for(int i=0;i<4;i++){//little indian
+          order.binary[3-i]=Serial.read(); 
+        }
+        speed[motorNumber] = order.val;
+        Serial.print("Motor: ");
+        Serial.print(motorNumber);
+        Serial.print(", Speed: ");
+        Serial.println(speed[motorNumber]);
+        }
+    }
+  }
+}
+
+
+
 
 
 Power::Power()
@@ -125,12 +134,11 @@ Power::Power()
         analogWrite(pin_pwm[i], 0);
     }
 }
-void Power::output(Pid t)
+void Power::output(float *power_rate)
 {
-    float *pr= t.getPower_rate();
     for (int i = 0; i < 6; i++)
     {
-        output_pwm[i]=(int)(max_pwm*(pr[i]));
+        output_pwm[i]=(int)(max_pwm*(power_rate[i]));
         if (output_pwm[i] >= 0)
         {
             digitalWrite(pin_dir[i], forward_dir_level);
