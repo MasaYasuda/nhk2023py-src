@@ -111,10 +111,6 @@ void Receiver::read_order(){
   }
 }
 
-
-
-
-
 Power::Power()
 {
     // DIR_LEVEL : Cytron=0 , Polulu=1
@@ -133,6 +129,7 @@ Power::Power()
         analogWrite(pin_pwm[i], 0);
     }
 }
+
 void Power::output(float *power_rate)
 {
     for (int i = 0; i < 6; i++)

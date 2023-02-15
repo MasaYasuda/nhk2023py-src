@@ -50,6 +50,7 @@ try:
         
 except KeyboardInterrupt:
     print("プログラムを終了します")
+    transmitter.write_all_auto([0,1,2,3],motor.omni_enc_target)
     j.quit()
     transmitter.close()
     
