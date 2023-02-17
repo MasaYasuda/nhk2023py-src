@@ -29,8 +29,8 @@ class Vector:
     r = max(-1, min(r, 1))
     theta = math.atan2(y, x) # rad
     
-    x = r * math.cos(theta)
-    y = r * math.sin(theta)
+    x = r * math.cos(theta)/math.sqrt(2)
+    y = r * math.sin(theta)/math.sqrt(2)
     self.move = [x - y, x + y, -x + y, -x - y]
     return
   
