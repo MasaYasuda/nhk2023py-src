@@ -8,6 +8,7 @@ try:
 
     while True:
         print("Press any key to continue! (or press ESC to quit!)")
+        
         if getch() == chr(0x1b):
             break
         dynamixel_1.write_position(0)
