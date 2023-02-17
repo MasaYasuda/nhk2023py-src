@@ -43,3 +43,4 @@ except KeyboardInterrupt:
     print("プログラムを終了します")
     j.quit()
     dynamixel_1.close_port()
+    dynamixel_2.close_port()
