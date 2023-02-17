@@ -1,6 +1,10 @@
 import math
 import serial
 import struct
+import os
+import msvcrt
+import sys, tty, termios
+from dynamixel_sdk import * # Uses Dynamixel SDK library
 class Vector:
   '''
   HOW TO USE Vector class
@@ -308,16 +312,14 @@ class Transmitter (serial.Serial):
     self.write_forward_direction(forward_direction_array)
     print("Configured")
 
-"""  
+
 class Dynamixel: ## This class is specified in X_series
-  def __init__(self,port,baudrate,id):
-    import os
+  def __init__(self,port,baudrate,id,min_position,max_position):
+
     if os.name == 'nt':
-        import msvcrt
         def getch():
             return msvcrt.getch().decode()
     else:
-        import sys, tty, termios
         fd = sys.stdin.fileno()
         old_settings = termios.tcgetattr(fd)
         def getch():
@@ -327,24 +329,22 @@ class Dynamixel: ## This class is specified in X_series
             finally:
                 termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
             return ch
-
-    from dynamixel_sdk import * # Uses Dynamixel SDK library
-
+        
     #********* DYNAMIXEL Model definition *********
     #***** (Use only one definition at a time) *****
     self.__MY_DXL = 'X_SERIES'       # X330 (5.0 V recommended), X430, X540, 2X430
     self.__ADDR_TORQUE_ENABLE          = 64
     self.__ADDR_GOAL_POSITION          = 116
     self.__ADDR_PRESENT_POSITION       = 132
-    self.__DXL_MINIMUM_POSITION_VALUE  = 0         # Refer to the Minimum Position Limit of product eManual
-    self.__DXL_MAXIMUM_POSITION_VALUE  = 4095      # Refer to the Maximum Position Limit of product eManual
+    self.__DXL_MINIMUM_POSITION_VALUE  = min_position         # ダイナミクセルの最小値は0  Refer to the Minimum Position Limit of product eManual 
+    self.__DXL_MAXIMUM_POSITION_VALUE  = max_position      # ダイナミクセルの最小値は4095　Refer to the Maximum Position Limit of product eManual
     self.__BAUDRATE                    = baudrate
     # DYNAMIXEL Protocol Version (1.0 / 2.0)
     # https://emanual.robotis.com/docs/en/dxl/protocol2/
     self.__PROTOCOL_VERSION            = 2.0
 
     # Factory default ID of all DYNAMIXEL is 1
-    self.__DXL_ID                      = 1
+    self.__DXL_ID                      = id
 
     # Use the actual port assigned to the U2D2.
     # ex) Windows: "COM*", Linux: "/dev/ttyUSB*", Mac: "/dev/tty.usbserial-*"
@@ -448,4 +448,4 @@ class Dynamixel: ## This class is specified in X_series
     
     return dxl_present_position,present_position_value
     
-"""
+  
