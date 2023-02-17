@@ -22,6 +22,7 @@ volatile long count[6]={0};
 float speed_now[6]={0};
 float order_speed[6]={0};
 float power_rate[6]={0};
+float power_rate_past[6]={0};
 
 
 // 関数宣言 ###############################
@@ -68,7 +69,7 @@ void calc_speed(){
         count_past[i]=count[i];
     }
 }
-void calc_pid(){
+void calc_pid_speed_type(){
     for(int i=0;i<6;i++){
         float dev=order_speed[i]-speed_now[i];
         float P=Kp*dev;
@@ -77,13 +78,15 @@ void calc_pid(){
         float D=Kd*(dev-dev_past[i])/dt_ms;
         dev_past[i]=dev;
         float power_rate_raw=(float)(P+I-D);
-        power_rate[i]=constrain(power_rate_raw,-1,1);
+        power_rate[i]=constrain(power_rate_raw+power_rate_past[i],-1,1);
+
+        power_rate_past[i]=power_rate[i];
     }
 }
 
 void timer_calc(){
     calc_speed();
-    calc_pid();
+    calc_pid_speed_type();
 }
 
 // クラスメソッド宣言 ###############################

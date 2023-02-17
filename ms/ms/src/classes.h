@@ -13,11 +13,12 @@ extern volatile long count[6];
 extern float speed_now[6];
 extern float order_speed[6];
 extern float power_rate[6];
+extern float power_rate_past[6];
 
 // 関数宣言 ###############################
 void timer_setup();
 void calc_speed();
-void calc_pid();
+void calc_pid_speed_type();
 void timer_calc();
 
 void encoder_setup();
