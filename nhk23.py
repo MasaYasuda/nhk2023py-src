@@ -432,11 +432,13 @@ class Dynamixel: ## This class is specified in X_series
     self.__now_goal_position_value = max(0, min(value, 1)) # value: 0~1
     position=(self.__DXL_MAXIMUM_POSITION_VALUE*value)+(1-value)*self.__DXL_MINIMUM_POSITION_VALUE
     self.__now_goal_position = int(position)  # position: 0~4095
-    dxl_comm_result, dxl_error = self.__packetHandler.write4ByteTxRx(self.__portHandler, self.__DXL_ID, self.__ADDR_GOAL_POSITION, self.__dxl_goal_position[value])
+    dxl_comm_result, dxl_error = self.__packetHandler.write4ByteTxRx(self.__portHandler, self.__DXL_ID, self.__ADDR_GOAL_POSITION, self.__now_goal_position)
     if dxl_comm_result != COMM_SUCCESS:
         print("%s" % self.__packetHandler.getTxRxResult(dxl_comm_result))
     elif dxl_error != 0:
         print("%s" % self.__packetHandler.getRxPacketError(dxl_error))
+    print("SET POSITION")
+    print("[ID:%03d]  GoalPos:%03d  Value:%03f" % (self.__DXL_ID, self.__now_goal_position,self.__now_goal_position_value))
     
         
   def read_position(self): 

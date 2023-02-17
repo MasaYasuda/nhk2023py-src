@@ -10,7 +10,7 @@ try:
         print("Press any key to continue! (or press ESC to quit!)")
         if getch() == chr(0x1b):
             break
-        dynamixel_1.read_position():
+        dynamixel_1.read_position()
     
     print("プログラムを終了します")
     dynamixel_1.close_port()
