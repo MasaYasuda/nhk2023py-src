@@ -61,7 +61,6 @@ private:
   int output_dir[6];
   int output_pwm[6];
   int max_pwm;
-  int forward_dir_level;
 };
 
 

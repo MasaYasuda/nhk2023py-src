@@ -179,8 +179,12 @@ class Transmitter (serial.Serial):
   transmitter = nhk23.Transmitter("COM3", 115200)
   motor_num_array=[0,1,2,3,4,5]
   # If speed pid
-  write_mode_auto=[20,20,20,20,20,20]
-  write_direction_config =[0,0,0,0,0,0]
+  mode_array=[20,20,20,20,20,20]
+  direction_config_array =[0,0,0,0,0,0]
+  forward_direction_array=[0,0,0,0,0,0]
+
+  transmitter.write_config_all(mode_array,direction_config_array,forward_direction_array)
+
   values=[10,10,10,10,10,10]
   transmitter.write_all_auto(motor_num_array,values)
   transmitter.close()  ## DON'T FORGET!!
@@ -206,6 +210,7 @@ class Transmitter (serial.Serial):
         self.target_values = [0,0,0,0,0,0]
         self.target_mode =[100,100,100,100,100,100]
         self.target_direction_config=[0,0,0,0,0,0]
+        self.target_forward_direction=[0,0,0,0,0,0]
         
   def store_single_target_values(self,motor_num,value):  # motor_num starts 0 (max 5)
     self.target_values[motor_num]=float(value)
@@ -283,7 +288,25 @@ class Transmitter (serial.Serial):
       print(data)
       print(str(packet))
       return data
+    
+  def write_forward_direction(self,forward_direction_array):
+    for i in range(0,6):
+      self.target_forward_direction[i]=float(forward_direction_array[i])
+      # 1Byte目は固定値0xFF
+      # 2Byte目は1Byteデータ（数値）
+      # 3~6Byte目はfloat型数値
+      data = [0xFF, (i+210).to_bytes(1,"big"),self.target_forward_direction[i]]
+      packet = struct.pack('>Bcf', *data)
+      self.write(packet)
+      print(data)
+      print(str(packet))
+      return data
 
+  def write_config_all(self,mode_array,config_array,forward_direction_array):
+    self.write_mode_auto(mode_array)
+    self.write_direction_config(config_array)
+    self.write_forward_direction(forward_direction_array)
+    print("Configured")
 
 """  
 class Dynamixel: ## This class is specified in X_series

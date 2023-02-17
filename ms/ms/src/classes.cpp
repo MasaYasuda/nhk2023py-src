@@ -5,29 +5,31 @@
 
 // global変数宣言　###############################
 
-int mode[6]={0};
-/* Mode= 0:Radio Controll  10:Position PID  20:Speed PID  30:Output disable  */
-int direction_config[6]={0};
-/* To know the config number, please refer to this "" */
-
 const long dt_ms=20;
 const int EncoderA[6] ={22,23,24,25,26,27};
 const int EncoderB[6] ={0,1,5,4,3,2}; //ArduinoMegaMotrSlaveは物理的なピン配置上B相割込みとなっている
 
 const float KP_SPEED=0.001;
 const float KI_SPEED=0.000;
-const float KD_SPPED=-0.0;
+const float KD_SPPED=0.0;
 const float Kp_speed[6]={KP_SPEED,KP_SPEED,KP_SPEED,KP_SPEED,KP_SPEED,KP_SPEED};
 const float Ki_speed[6]={KI_SPEED,KI_SPEED,KI_SPEED,KI_SPEED,KI_SPEED,KI_SPEED};
 const float Kd_speed[6]={KD_SPPED,KD_SPPED,KD_SPPED,KD_SPPED,KD_SPPED,KD_SPPED};
 
 const float KP_POSITION=0.001;
 const float KI_POSITION=0.000;
-const float KD_POSITION=-0.0;
+const float KD_POSITION=0.0;
 const float Kp_position[6]={KP_POSITION,KP_POSITION,KP_POSITION,KP_POSITION,KP_POSITION,KP_POSITION};
 const float Ki_position[6]={KI_POSITION,KI_POSITION,KI_POSITION,KI_POSITION,KI_POSITION,KI_POSITION};
 const float Kd_position[6]={KD_POSITION,KD_POSITION,KD_POSITION,KD_POSITION,KD_POSITION,KD_POSITION};
 
+
+int mode[6]={0};
+/* Mode= 0:Radio Controll  10:Position PID  20:Speed PID  30:Output disable  */
+int direction_config[6]={0};
+/* To know the config number, please refer to this "" */
+int forward_dir_level[6] = {0,0,0,0,0,0};
+/* Cytron: 0  /  Polulu G2: 1  */
 
 long count_past[6]={0};
 
@@ -36,7 +38,6 @@ float dev_position_past[6]={0};
 
 float dev_speed_past[6]={0};
 float integral_speed[6]={0};
-
 
 //extern global変数
 volatile long count[6]={0};
@@ -145,6 +146,7 @@ void Receiver::read_order(){
             byte motorNumber = Serial.read();
             Serial.println(motorNumber);
             if (motorNumber >= 0 && motorNumber < 6) { //値受信
+
                 uf order;
                 for(int i=3;i>-1;i--){//little indian
                     order.binary[i]=Serial.read(); 
@@ -178,6 +180,15 @@ void Receiver::read_order(){
                     }
                 }
             }
+            /*
+            config系
+
+            -モータの制御モード（ラジコン、位置型PID、速度型PID）
+            -出力回転方向とエンコーダーカウント正方向のつじつま合わせ
+            -MD別　正方向出力のDIRの定義
+
+            */ 
+        
             else if(motorNumber>99 && motorNumber<106){
                 uf order;
                 for(int i=3;i>-1;i--){//little indian
@@ -188,6 +199,7 @@ void Receiver::read_order(){
                 Serial.print(motorNumber);
                 Serial.print(", Mode: ");
                 Serial.println(mode[motorNumber-100]);
+
             }else if(motorNumber>199 && motorNumber<206){
                 uf order;
                 for(int i=3;i>-1;i--){//little indian
@@ -198,6 +210,17 @@ void Receiver::read_order(){
                 Serial.print(motorNumber);
                 Serial.print(", config: ");
                 Serial.println(direction_config[motorNumber-200]);
+                
+            }else if(motorNumber>209 && motorNumber<216){
+                uf order;
+                for(int i=3;i>-1;i--){//little indian
+                order.binary[i]=Serial.read(); 
+                }
+                forward_dir_level[motorNumber-210] = int(order.val);
+                Serial.print("Direction config num : ");
+                Serial.print(motorNumber);
+                Serial.print(", forward_dir_level: ");
+                Serial.println(forward_dir_level[motorNumber-210]);
             }
         }
     }
@@ -213,7 +236,6 @@ Power::Power()
     output_dir[6] = {0};
     output_pwm[6] = {0};
     max_pwm = 240;
-    forward_dir_level = 0;
     for (int i = 0; i < 6; i++)
     {
         pinMode(pin_dir[i], OUTPUT);
@@ -234,12 +256,12 @@ void Power::output(float *power_rate)
         output_pwm[i]=int(config_check*max_pwm*(power_rate[i]));
         if (output_pwm[i] >= 0)
         {
-            digitalWrite(pin_dir[i], forward_dir_level);
+            digitalWrite(pin_dir[i], forward_dir_level[i]);
             analogWrite(pin_pwm[i], output_pwm[i]);
         }
         else
         {
-            int dir = 1 - forward_dir_level;
+            int dir = 1 - forward_dir_level[i];
             digitalWrite(pin_dir[i], dir);
             analogWrite(pin_pwm[i], (-1) * output_pwm[i]);
         }
