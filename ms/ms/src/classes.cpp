@@ -5,9 +5,9 @@
 
 // global変数宣言　###############################
 
-int mode[6]={0,0,0,0,0,0};
+int mode[6]={0};
 /* Mode= 0:Radio Controll  10:Position PID  20:Speed PID  30:Output disable  */
-int direction_config[6]={0,0,0,0,0,0};
+int direction_config[6]={0};
 /* To know the config number, please refer to this "" */
 
 const long dt_ms=20;
@@ -100,7 +100,7 @@ void calc_pid_position_type(){
         integral_position[i]+=dev_position;
         float I=Ki_position[i]*integral_position[i];
         float D=Kd_position[i]*(dev_position-dev_position_past[i])/dt_ms;
-        dev_poition_past[i]=dev_position;
+        dev_position_past[i]=dev_position;
         float power_rate_raw=(float)(P+I-D);
         power_rate[i]=constrain(power_rate_raw+power_rate_past[i],-1,1);
 
@@ -116,7 +116,7 @@ void calc_pid_speed_type(){
         float dev_speed=order_speed[i]-speed_now[i];
         float P=Kp_speed[i]*dev_speed;
         integral_speed[i]+=dev_speed;
-        float I=Ki_speed[i]*integral[i];
+        float I=Ki_speed[i]*integral_speed[i];
         float D=Kd_speed[i]*(dev_speed-dev_speed_past[i])/dt_ms;
         dev_speed_past[i]=dev_speed;
         float power_rate_raw=(float)(P+I-D);
@@ -147,37 +147,38 @@ void Receiver::read_order(){
             if (motorNumber >= 0 && motorNumber < 6) { //値受信
                 uf order;
                 for(int i=3;i>-1;i--){//little indian
-                order.binary[i]=Serial.read(); 
-                float config_check=1;
+                    order.binary[i]=Serial.read(); 
+                    float config_check=1;
 
-                if(direction_config[motorNumber]==2 ||direction_config[motorNumber]==3){
-                    config_check=-1;
+                    if(direction_config[motorNumber]==2 ||direction_config[motorNumber]==3){
+                        config_check=-1;
+                    }
+
+                    if(mode[motorNumber]==0){ //ラジコンモード
+                        power_rate[motorNumber]=config_check*constrain(order.val,-1,1);
+                        Serial.print("Motor: ");
+                        Serial.print(motorNumber);
+                        Serial.print(", Power: ");
+                        Serial.println(power_rate[motorNumber]);
+
+                    }else if (mode[motorNumber]==10){//ポジションPIDモード
+
+                        order_count[motorNumber] = config_check*(int(order.val)+count[i]);
+                        Serial.print("Motor: ");
+                        Serial.print(motorNumber);
+                        Serial.print(", Count: ");
+                        Serial.println(order_count[motorNumber]);
+                        
+                    }else if (mode[motorNumber]==20){// スピードPIDモード
+                        order_speed[motorNumber] = config_check*order.val;
+                        Serial.print("Motor: ");
+                        Serial.print(motorNumber);
+                        Serial.print(", Speed: ");
+                        Serial.println(order_speed[motorNumber]);
+                    }
                 }
-
-                if(mode[motorNumber]==0){ //ラジコンモード
-                    power_rate[motorNumber]=config_check*constrain(order.val,-1,1);
-                    Serial.print("Motor: ");
-                    Serial.print(motorNumber);
-                    Serial.print(", Power: ");
-                    Serial.println(power_rate[motorNumber]);
-
-                }else if (mode[motorNumber]==10){//ポジションPIDモード
-
-                    order_count[motorNumber] = config_check*(int(order.val)+count[i]);
-                    Serial.print("Motor: ");
-                    Serial.print(motorNumber);
-                    Serial.print(", Count: ");
-                    Serial.println(order_count[motorNumber]);
-                    
-                }else if (mode[motorNumber]==20){// スピードPIDモード
-                    order_speed[motorNumber] = config_check*order.val;
-                    Serial.print("Motor: ");
-                    Serial.print(motorNumber);
-                    Serial.print(", Speed: ");
-                    Serial.println(order_speed[motorNumber]);
-                }
-
-            }else if(motorNumber>99 && motorNumber<106){
+            }
+            else if(motorNumber>99 && motorNumber<106){
                 uf order;
                 for(int i=3;i>-1;i--){//little indian
                 order.binary[i]=Serial.read(); 
@@ -186,7 +187,7 @@ void Receiver::read_order(){
                 Serial.print("DefineMotor: ");
                 Serial.print(motorNumber);
                 Serial.print(", Mode: ");
-                Serial.println(,mode[motorNumber-100]);
+                Serial.println(mode[motorNumber-100]);
             }else if(motorNumber>199 && motorNumber<206){
                 uf order;
                 for(int i=3;i>-1;i--){//little indian
@@ -196,7 +197,7 @@ void Receiver::read_order(){
                 Serial.print("Direction config num : ");
                 Serial.print(motorNumber);
                 Serial.print(", config: ");
-                Serial.println(,direction_config[motorNumber-200]);
+                Serial.println(direction_config[motorNumber-200]);
             }
         }
     }
@@ -226,7 +227,7 @@ void Power::output(float *power_rate)
     for (int i = 0; i < 6; i++)
     {
         float config_check=1;
-        if(direction_config[motorNumber]==1 ||direction_config[motorNumber]==2){
+        if(direction_config[i]==1 ||direction_config[i]==2){
             config_check=-1;
         }
 
