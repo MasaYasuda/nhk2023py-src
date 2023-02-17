@@ -8,9 +8,9 @@ const long dt_ms=20;
 const int EncoderA[6] ={22,23,24,25,26,27};
 const int EncoderB[6] ={0,1,5,4,3,2}; //ArduinoMegaMotrSlaveは物理的なピン配置上B相割込みとなっている
 
-const float Kp=0.01;
-const float Ki=0.0;
-const float Kd=0.0;
+const float Kp=0.001;
+const float Ki=0.000;
+const float Kd=-0.0;
 
 long count_past[6]={0};
 float dev_past[6]={0};
@@ -22,6 +22,7 @@ volatile long count[6]={0};
 float speed_now[6]={0};
 float order_speed[6]={0};
 float power_rate[6]={0};
+float power_rate_past[6]={0};
 
 
 // 関数宣言 ###############################
@@ -68,7 +69,7 @@ void calc_speed(){
         count_past[i]=count[i];
     }
 }
-void calc_pid(){
+void calc_pid_speed_type(){
     for(int i=0;i<6;i++){
         float dev=order_speed[i]-speed_now[i];
         float P=Kp*dev;
@@ -77,13 +78,15 @@ void calc_pid(){
         float D=Kd*(dev-dev_past[i])/dt_ms;
         dev_past[i]=dev;
         float power_rate_raw=(float)(P+I-D);
-        power_rate[i]=constrain(power_rate_raw,-1,1);
+        power_rate[i]=constrain(power_rate_raw+power_rate_past[i],-1,1);
+
+        power_rate_past[i]=power_rate[i];
     }
 }
 
 void timer_calc(){
     calc_speed();
-    calc_pid();
+    calc_pid_speed_type();
 }
 
 // クラスメソッド宣言 ###############################
