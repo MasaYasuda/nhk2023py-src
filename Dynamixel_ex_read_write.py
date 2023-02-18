@@ -59,15 +59,15 @@ MY_DXL = 'X_SERIES'       # X330 (5.0 V recommended), X430, X540, 2X430
 ADDR_TORQUE_ENABLE          = 64
 ADDR_GOAL_POSITION          = 116
 ADDR_PRESENT_POSITION       = 132
-DXL_MINIMUM_POSITION_VALUE  = 500         # Refer to the Minimum Position Limit of product eManual
-DXL_MAXIMUM_POSITION_VALUE  = 1870  # Refer to the Maximum Position Limit of product eManual
+DXL_MINIMUM_POSITION_VALUE  = 2500         # Refer to the Minimum Position Limit of product eManual
+DXL_MAXIMUM_POSITION_VALUE  = 3800   # Refer to the Maximum Position Limit of product eManual
 BAUDRATE                    = 57600
 # DYNAMIXEL Protocol Version (1.0 / 2.0)
 # https://emanual.robotis.com/docs/en/dxl/protocol2/
 PROTOCOL_VERSION            = 2.0
 
 # Factory default ID of all DYNAMIXEL is 1
-DXL_ID                      = 2
+DXL_ID                      = 1
 
 # Use the actual port assigned to the U2D2.
 # ex) Windows: "COM*", Linux: "/dev/ttyUSB*", Mac: "/dev/tty.usbserial-*"
