@@ -88,7 +88,7 @@ void timer_setup(){
 void calc_speed(){
     for(int i=0;i<6;i++){
         long dif=count[i]-count_past[i];
-        speed_now[i]=float(dif*1000*60/1024/dt_ms); //rpm
+        speed_now[i]=float(dif*1000*60/2048/dt_ms); //rpm
         count_past[i]=count[i];
     }
 }
