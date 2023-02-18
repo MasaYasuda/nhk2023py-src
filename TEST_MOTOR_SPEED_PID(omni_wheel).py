@@ -47,6 +47,7 @@ try:
         
         ##### TRANSMIT 
         transmitter.write_all_auto([0,1,2,3],motor.omni_enc_target)
+        transmitter.reset_input_buffer()
 
         time.sleep(0.01)
         

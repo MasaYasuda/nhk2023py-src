@@ -233,11 +233,17 @@ class Transmitter (serial.Serial):
     # 1Byte目は固定値0xFF
     # 2Byte目は1Byteデータ（数値）
     # 3~6Byte目はfloat型数値
+    print("POINT 0")
     data = [0xFF, motor_num.to_bytes(1,"big"),self.target_values[motor_num]]
+    print("POINT 1")
     packet = struct.pack('>Bcf', *data)
+    print("POINT 2")
     self.write(packet)
+    print("POINT 3")
     print(data)
+    print("POINT 4")
     print(str(packet))
+    print("POINT 5")
     return data
   
   def write_all(self):
@@ -276,7 +282,6 @@ class Transmitter (serial.Serial):
       self.write(packet)
       print(data)
       print(str(packet))
-      return data
   
   def write_direction_config(self,config_array):
     '''
@@ -296,7 +301,6 @@ class Transmitter (serial.Serial):
       self.write(packet)
       print(data)
       print(str(packet))
-      return data
     
   def write_forward_direction(self,forward_direction_array):
     for i in range(0,6):
@@ -309,7 +313,6 @@ class Transmitter (serial.Serial):
       self.write(packet)
       print(data)
       print(str(packet))
-      return data
 
   def write_config_all(self,mode_array,config_array,forward_direction_array):
     self.write_mode_auto(mode_array)
