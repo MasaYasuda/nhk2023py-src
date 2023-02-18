@@ -1,14 +1,15 @@
 import nhk23
 import time
 import os
+import kbhit
+kb=kbhit.KBHit()
+
 try:    
     os.environ['SDL_VIDEODRIVER'] = 'dummy'
-    dynamixel_1=nhk23.Dynamixel("COM3",115200,1,2500,3800)
-    dynamixel_1.enable_torque()
+    dynamixel_1=nhk23.Dynamixel("/dev/ttyUSB0",57600 ,1,2500,3800)
 
     while True:
-        print("Press any key to continue! (or press ESC to quit!)")
-        if getch() == chr(0x1b):
+        if kb.kbhit():
             break
         dynamixel_1.read_position()
     

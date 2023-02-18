@@ -2,13 +2,14 @@ import math
 import serial
 import struct
 import os
+
+###### 触らない
 if os.name == 'nt':
     import msvcrt
 else:
     import sys, tty, termios
-
 from dynamixel_sdk import * # Uses Dynamixel SDK library
-
+###############
 class Vector:
   '''
   HOW TO USE Vector class
@@ -433,7 +434,7 @@ class Dynamixel: ## This class is specified in X_series
    
   def write_position(self,value):
     self.__now_goal_position_value = max(0, min(value, 1)) # value: 0~1
-    position=(self.__DXL_MAXIMUM_POSITION_VALUE*value)+(1-value)*self.__DXL_MINIMUM_POSITION_VALUE
+    position=(self.__DXL_MAXIMUM_POSITION_VALUE*self.__now_goal_position_value)+(1-self.__now_goal_position_value)*self.__DXL_MINIMUM_POSITION_VALUE
     self.__now_goal_position = int(position)  # position: 0~4095
     dxl_comm_result, dxl_error = self.__packetHandler.write4ByteTxRx(self.__portHandler, self.__DXL_ID, self.__ADDR_GOAL_POSITION, self.__now_goal_position)
     if dxl_comm_result != COMM_SUCCESS:
