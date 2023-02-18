@@ -13,13 +13,13 @@ try:
     j.init()
     print("コントローラのボタンを押してください")
     # id 1 =右手　　id 2 = 左手
-    dynamixel_1=nhk23.Dynamixel("/dev/ttyUSB0",57600 ,1,2500,3800)
+    dynamixel_1=nhk23.Dynamixel("/dev/ttyUSB0",57600 ,1,2138,3803)
+    dynamixel_2=nhk23.Dynamixel("/dev/ttyUSB0",57600 ,2,324,2115)
     dynamixel_1.enable_torque()
-    dynamixel_2=nhk23.Dynamixel("/dev/ttyUSB0",57600 ,2,500,1870)
     dynamixel_2.enable_torque()
 
-    R_hand_value=0.5
-    L_hand_value=0.5
+    R_hand_value=0.634
+    L_hand_value=0.355
 
     while True:
         events = pygame.event.get()
@@ -27,16 +27,17 @@ try:
         print(str(j.get_axis(0)))
         print("右スティックx座標")
         print(str(j.get_axis(3)))
-        L_order=j.get_axis(3)
+
+        L_order=j.get_axis(0)
         if abs(L_order)<0.2:
             L_order=0
         R_order=j.get_axis(3)
         if abs(R_order)<0.2:
             R_order=0
 
-        R_hand_value=R_hand_value+j.get_axis(3)*0.05
+        R_hand_value=R_hand_value+R_order*0.03
         R_hand_value=max(0,min(R_hand_value,1))
-        L_hand_value=L_hand_value+j.get_axis(3)*0.05
+        L_hand_value=L_hand_value+L_order*0.03
         L_hand_value=max(0,min(L_hand_value,1))
 
         dynamixel_1.write_position(R_hand_value)
