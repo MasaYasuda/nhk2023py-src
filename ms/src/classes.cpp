@@ -145,6 +145,13 @@ void Receiver::read_order(){
         Serial.println("RECEIVED");
         byte header = Serial.read();
         if (header == 0xFF) {
+            /*
+            for(int i=0;i<6-check_loss;i++){
+                byte loss=Serial.read();
+            }
+            */
+            
+            
             byte motorNumber = Serial.read();
             Serial.println(motorNumber);
             if (motorNumber >= 0 && motorNumber < 6) { //値受信
@@ -181,6 +188,8 @@ void Receiver::read_order(){
                         Serial.println(order_speed[motorNumber]);
                     }
                 }
+
+                check_loss=0;
             }
             /*
             config系
@@ -201,6 +210,7 @@ void Receiver::read_order(){
                 Serial.print(motorNumber);
                 Serial.print(", Mode: ");
                 Serial.println(mode[motorNumber-100]);
+                check_loss=0;
 
             }else if(motorNumber>199 && motorNumber<206){
                 uf order;
@@ -212,6 +222,7 @@ void Receiver::read_order(){
                 Serial.print(motorNumber);
                 Serial.print(", config: ");
                 Serial.println(direction_config[motorNumber-200]);
+                check_loss=0;
                 
             }else if(motorNumber>209 && motorNumber<216){
                 uf order;
@@ -223,7 +234,10 @@ void Receiver::read_order(){
                 Serial.print(motorNumber);
                 Serial.print(", forward_dir_level: ");
                 Serial.println(forward_dir_level[motorNumber-210]);
+                check_loss=0;
             }
+        }else{
+            check_loss+=1;
         }
     }
 }

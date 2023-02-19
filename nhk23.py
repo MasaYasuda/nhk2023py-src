@@ -246,6 +246,24 @@ class Transmitter (serial.Serial):
     print("POINT 5")
     return data
   
+  def write_reset_null(self):
+    # 1Byte目は固定値0xFF
+    # 2Byte目は1Byteデータ（数値）
+    # 3~6Byte目はfloat型数値
+    NULL=0.0
+    print("POINT 0")
+    data = [0x00, 0x00,NULL]
+    print("POINT 1")
+    packet = struct.pack('>BBf', *data)
+    print("POINT 2")
+    self.write(packet)
+    print("POINT 3")
+    print(data)
+    print("POINT 4")
+    print(str(packet))
+    print("POINT 5")
+    return data
+  
   def write_all(self):
     for i in range(0,6):
       self.write_single(i)

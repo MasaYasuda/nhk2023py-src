@@ -35,9 +35,10 @@ try:
         
 
         transmitter.write_single_auto(0,order*1)
-        time.sleep(0.2)
+        time.sleep(0.1)
         transmitter.write_single_auto(5,order*1)
-        time.sleep(0.2)
+        time.sleep(0.1)
+
         
 except KeyboardInterrupt:
     print("プログラムを終了します")

@@ -8,8 +8,10 @@ Power power;
 
 void setup(){
   Serial.begin(115200);
+  /*
   encoder_setup();
   timer_setup();
+  */
 }
 void loop(){
   receiver.read_order();//->order_speed[6]

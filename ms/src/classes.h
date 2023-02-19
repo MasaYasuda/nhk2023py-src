@@ -44,6 +44,8 @@ class Receiver
 {
 public:
   void read_order();
+private:
+  int check_loss;
 };
 
 
