@@ -15,7 +15,6 @@ try:
     #########
     
     transmitter = nhk23.Transmitter("/dev/ttyACM0", 115200)
-    # If speed pid
     mode_array=[0,0,100,100,100,100]
     direction_config_array =[0,0,0,0,0,0] #回転が逆だったら3にする
     forward_direction_array=[1,1,0,0,0,0]
@@ -27,17 +26,20 @@ try:
         
         ## Get Inputs
         events = pygame.event.get()
-        print("R2")
-        order=(j.get_axis(5)+1)/2
-        if abs(order)<0.1:
-            order=0
-        print(str(order))
-        
+        # 発射用ローラー : 
+        print("R2") 
+        emit_order=(j.get_axis(5)+1)/2
+        if abs(emit_order)<0.1:
+            emit_order=0
+        print(str(emit_order))
 
-        transmitter.write_single_auto(0,order*1)
+        transmitter.write_single_auto(0,emit_order*1)
         time.sleep(0.1)
-        transmitter.write_single_auto(2,order*1)
+        transmitter.write_single_auto(2,emit_order*1)
         time.sleep(0.1)
+
+        # 引き込み用ローラー
+        print()
 
         
 except KeyboardInterrupt:

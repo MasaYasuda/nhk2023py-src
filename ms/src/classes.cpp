@@ -157,10 +157,10 @@ void calc_ff_pid_speed_type(){
             float I=Ki_speed[i]*integral_speed[i];
             float D=Kd_speed[i]*(dev_speed-dev_speed_past[i])/dt_ms;
             dev_speed_past[i]=dev_speed;
-            float power_rate_raw=float(F+P+I-D);
-            power_rate[i]=constrain(power_rate_raw+power_rate_past[i],-1,1);
+            float power_rate_raw=constrain(float(P+I-D+power_rate_past[i]),-1,1);
+            power_rate[i]=constrain(F+power_rate_raw,-1,1);
                 
-            power_rate_past[6]={0};
+            power_rate_past[i]=power_rate_raw;
             Serial.print("FF & PID Speed Calclated:");
             Serial.println(i);
         }
