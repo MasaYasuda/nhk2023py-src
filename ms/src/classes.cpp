@@ -8,6 +8,7 @@
 const long dt_ms=20;
 const int EncoderA[6] ={22,23,24,25,26,27};
 const int EncoderB[6] ={0,1,5,4,3,2}; //ArduinoMegaMotrSlaveは物理的なピン配置上B相割込みとなっている
+const int resolution[6]={2048,2048,2048,2048,2048,2048};
 
 const float KP_SPEED=0.0001;
 const float KI_SPEED=0.00;
@@ -88,7 +89,7 @@ void timer_setup(){
 void calc_speed(){
     for(int i=0;i<6;i++){
         long dif=count[i]-count_past[i];
-        speed_now[i]=float(dif*1000*60/2048/dt_ms); //rpm
+        speed_now[i]=float(dif*1000*60/resolution[i]/dt_ms); //rpm
         count_past[i]=count[i];
     }
 }
@@ -96,7 +97,7 @@ void calc_speed_delay(int num){
     unsigned long tmp_ms=millis();
     for(int i=0;i<num;i++){
             long dif=count[i]-count_past[i];
-            speed_now[i]=float(dif*1000*60/2048/dt_ms); //rpm
+            speed_now[i]=float(dif*1000*60/resolution[i]/dt_ms); //rpm
             count_past[i]=count[i];
             while(dt_ms>millis()-tmp_ms){}
     }

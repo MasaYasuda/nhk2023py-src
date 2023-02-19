@@ -25,6 +25,7 @@ void loop(){
   power.output(power_rate);
   calc_speed_delay(2);
   calc_pid_speed_type();
+
   /*
   power.output(power_rate);
   Serial.print("OUTPUT:");
@@ -37,6 +38,7 @@ void loop(){
   Serial.print("COUNT:");
   Serial.println(count[0]);
   */
+ 
   Serial.print("Speed [0]:");
   Serial.print(speed_now[0]);
   Serial.print("Speed [1]:");
