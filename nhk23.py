@@ -244,17 +244,11 @@ class Transmitter (serial.Serial):
     # 1Byte目は固定値0xFF
     # 2Byte目は1Byteデータ（数値）
     # 3~6Byte目はfloat型数値
-    print("POINT 0")
     data = [0xFF, motor_num.to_bytes(1,"big"),self.target_values[motor_num]]
-    print("POINT 1")
     packet = struct.pack('>Bcf', *data)
-    print("POINT 2")
     self.write(packet)
-    print("POINT 3")
     print(data)
-    print("POINT 4")
     print(str(packet))
-    print("POINT 5")
     return data
   
   def write_reset_null(self):

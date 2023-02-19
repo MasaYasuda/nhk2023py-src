@@ -17,7 +17,7 @@ try:
     #########
 
     motor=nhk23.Motor("roller") # make instance
-    motor.roller_setup(100,180,2.77)
+    motor.roller_setup(100,10,2.77)
 
     #########
     
