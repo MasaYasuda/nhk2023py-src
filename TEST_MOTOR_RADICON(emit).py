@@ -14,14 +14,14 @@ try:
     j.init()
     print("コントローラのボタンを押してください")
     
-    transmitter = nhk23.Transmitter("/dev/ttyACM0", 115200)
+    transmitter = nhk23.Transmitter("/dev/ArduinoMega1", 115200)
     mode_array=[0,0,100,100,100,100]
     direction_config_array =[3,0,0,0,0,0] #回転が逆だったら3にする
     forward_direction_array=[1,1,0,0,0,0]
     transmitter.write_config_all(mode_array,direction_config_array,forward_direction_array)
 
     while True:
-        # transmitter.reset_input_buffer()
+        transmitter.reset_input_buffer()
         
         ## Get Inputs
         events = pygame.event.get()

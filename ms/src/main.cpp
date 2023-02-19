@@ -24,7 +24,6 @@ void loop(){
   receiver.read_order();//->order_speed[6]
   power.output(power_rate);
   
-  calc_speed_delay(4);
   /*
   
   calc_speed_delay(4);
@@ -57,8 +56,10 @@ void loop(){
 
 
   */
-  Serial.print("COUNT:");
-  Serial.println(count[0]);
-  
-  delay(1);
+
+  Serial.print("OUTPUT :");
+  Serial.print(power_rate[0]);
+  Serial.print(" Speed [0] :");
+  Serial.println(speed_now[0]);
+  delay(10);
 }
