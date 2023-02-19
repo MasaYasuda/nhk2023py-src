@@ -1,3 +1,5 @@
+# CORRECT
+
 import nhk23
 import pygame
 import time

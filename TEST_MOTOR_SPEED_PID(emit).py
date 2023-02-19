@@ -18,29 +18,36 @@ try:
     
     transmitter = nhk23.Transmitter("/dev/ttyACM0", 115200)
     # If speed pid
-    mode_array=[0,100,100,100,100,100]
-    direction_config_array =[0,0,0,0,0,0] #回転が逆だったら3にする
-    forward_direction_array=[0,0,0,0,0,0]
+    mode_array=[0,0,100,100,100,100]
+    direction_config_array =[3,0,0,0,0,0] #回転が逆だったら3にする
+    forward_direction_array=[1,1,0,0,0,0]
 
     transmitter.write_config_all(mode_array,direction_config_array,forward_direction_array)
 
     while True:
-        #transmitter.reset_input_buffer()
+        # transmitter.reset_input_buffer()
         
         ## Get Inputs
         events = pygame.event.get()
-        print("右スティックy座標")
-        print(str((-1)*j.get_axis(4)))
-        order=(-1)*j.get_axis(4)
-        if abs(order)<0.2:
+        print("R2")
+        order=(j.get_axis(5)+1)/2
+        if abs(order)<0.1:
             order=0
+        print(str(order))
+        
 
-        transmitter.write_single_auto(0,order*0.5)
+
+
+        transmitter.write_single_auto(0,order*1)
         time.sleep(0.1)
+        transmitter.write_single_auto(1,order*1)
+        time.sleep(0.1)
+
         
 except KeyboardInterrupt:
     print("プログラムを終了します")
-    transmitter.write_single_auto(0,0)
+    init_array=[0,0,0,0]
+    transmitter.write_all_auto([0,1,2,3],init_array)
     j.quit()
     transmitter.close()
     
