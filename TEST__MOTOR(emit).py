@@ -16,9 +16,9 @@ try:
     
     transmitter = nhk23.Transmitter("/dev/ttyACM0", 115200)
     # If speed pid
-    mode_array=[0,0,100,100,100,100]
+    mode_array=[0,100,100,100,100,0]
     direction_config_array =[0,0,0,0,0,0] #回転が逆だったら3にする
-    forward_direction_array=[1,1,0,0,0,0]
+    forward_direction_array=[1,0,0,0,0,1]
 
     transmitter.write_config_all(mode_array,direction_config_array,forward_direction_array)
 
@@ -35,9 +35,9 @@ try:
         
 
         transmitter.write_single_auto(0,order*1)
-        time.sleep(0.1)
-        transmitter.write_single_auto(1,order*1)
-        time.sleep(0.1)
+        time.sleep(0.2)
+        transmitter.write_single_auto(5,order*1)
+        time.sleep(0.2)
         
 except KeyboardInterrupt:
     print("プログラムを終了します")
