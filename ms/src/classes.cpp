@@ -10,14 +10,19 @@ const int EncoderA[6] ={22,23,24,25,26,27};
 const int EncoderB[6] ={0,1,5,4,3,2}; //ArduinoMegaMotrSlaveは物理的なピン配置上B相割込みとなっている
 const int resolution[6]={2048,2048,2048,2048,2048,2048};
 
-const float KP_SPEED=0.0000001;
-const float KI_SPEED=0.00;
+const float KF_SPEED=0.0;
+const float KP_SPEED=0.0005;
+const float KI_SPEED=0.0001;
 const float KD_SPPED=0.0;
+const float INTEGRAL_LIMIT_SPEED=1000;
+
+const float Kf_speed[6]={KF_SPEED,KF_SPEED,KF_SPEED,KF_SPEED,KF_SPEED,KF_SPEED};
 const float Kp_speed[6]={KP_SPEED,KP_SPEED,KP_SPEED,KP_SPEED,KP_SPEED,KP_SPEED};
 const float Ki_speed[6]={KI_SPEED,KI_SPEED,KI_SPEED,KI_SPEED,KI_SPEED,KI_SPEED};
 const float Kd_speed[6]={KD_SPPED,KD_SPPED,KD_SPPED,KD_SPPED,KD_SPPED,KD_SPPED};
+const float Integtal_limit_speed[6]={INTEGRAL_LIMIT_SPEED,INTEGRAL_LIMIT_SPEED,INTEGRAL_LIMIT_SPEED,INTEGRAL_LIMIT_SPEED,INTEGRAL_LIMIT_SPEED,INTEGRAL_LIMIT_SPEED};
 
-const float KP_POSITION=0.00001;
+const float KP_POSITION=0.001;
 const float KI_POSITION=0.000;
 const float KD_POSITION=0.0;
 const float Kp_position[6]={KP_POSITION,KP_POSITION,KP_POSITION,KP_POSITION,KP_POSITION,KP_POSITION};
@@ -96,10 +101,10 @@ void calc_speed(){
 void calc_speed_delay(int num){
     unsigned long tmp_ms=millis();
     for(int i=0;i<num;i++){
-            long dif=count[i]-count_past[i];
-            speed_now[i]=float(dif*1000*60/resolution[i]/dt_ms); //rpm
-            count_past[i]=count[i];
-            while(dt_ms>millis()-tmp_ms){}
+        count_past[i]=count[i];
+        while(dt_ms>millis()-tmp_ms){}
+        long dif=count[i]-count_past[i];
+        speed_now[i]=float(dif*1000*60/resolution[i]/dt_ms); //rpm
     }
 }
 
@@ -109,13 +114,13 @@ void calc_pid_position_type(){
         float dev_position=float(order_count[i]-count[i]);
         float P=Kp_position[i]*dev_position;
         integral_position[i]+=dev_position;
+        integral_position[i]  = constrain(integral_position[i], -1,1);
         float I=Ki_position[i]*integral_position[i];
         float D=Kd_position[i]*(dev_position-dev_position_past[i])/dt_ms;
         dev_position_past[i]=dev_position;
         float power_rate_raw=float(P+I-D);
-        power_rate[i]=constrain(power_rate_raw+power_rate_past[i],-1,1);
+        power_rate[i]=constrain(power_rate_raw,-1,1);
 
-        power_rate_past[i]=power_rate[i];
         
         }
     }
@@ -127,15 +132,36 @@ void calc_pid_speed_type(){
             float dev_speed=order_speed[i]-speed_now[i];
             float P=Kp_speed[i]*dev_speed;
             integral_speed[i]+=dev_speed;
+            integral_speed[i]  = constrain(integral_speed[i], -Integtal_limit_speed[i],Integtal_limit_speed[i]); 
             float I=Ki_speed[i]*integral_speed[i];
             float D=Kd_speed[i]*(dev_speed-dev_speed_past[i])/dt_ms;
             dev_speed_past[i]=dev_speed;
             float power_rate_raw=float(P+I-D);
             power_rate[i]=constrain(power_rate_raw+power_rate_past[i],-1,1);
-
-            power_rate_past[i]=power_rate[i];
                 
+            power_rate_past[6]={0};
             Serial.print("Speed Calclated:");
+            Serial.println(i);
+        }
+    }
+}
+
+void calc_ff_pid_speed_type(){
+    for(int i=0;i<6;i++){
+        if(mode[i]==20){
+            float F= Kf_speed[i]*order_speed[i];
+            float dev_speed=order_speed[i]-speed_now[i];
+            float P=Kp_speed[i]*dev_speed;
+            integral_speed[i]+=dev_speed;
+            integral_speed[i]  = constrain(integral_speed[i], -1000,1000); 
+            float I=Ki_speed[i]*integral_speed[i];
+            float D=Kd_speed[i]*(dev_speed-dev_speed_past[i])/dt_ms;
+            dev_speed_past[i]=dev_speed;
+            float power_rate_raw=float(F+P+I-D);
+            power_rate[i]=constrain(power_rate_raw+power_rate_past[i],-1,1);
+                
+            power_rate_past[6]={0};
+            Serial.print("FF & PID Speed Calclated:");
             Serial.println(i);
         }
     }

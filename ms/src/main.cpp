@@ -23,10 +23,13 @@ void setup(){
 void loop(){
   receiver.read_order();//->order_speed[6]
   power.output(power_rate);
-  calc_speed_delay(2);
-  calc_pid_speed_type();
-
+  
+  calc_speed_delay(4);
   /*
+  
+  calc_speed_delay(4);
+  calc_ff_pid_speed_type();
+
   power.output(power_rate);
   Serial.print("OUTPUT:");
   Serial.println(power_rate[0]);
@@ -40,12 +43,22 @@ void loop(){
   Serial.print("  Speed [1]:");
   Serial.println(speed_now[0]);
 
+
+  
+
+  Serial.print("OUTPUT [0]:");
+  Serial.print(power_rate[0]);
+  Serial.print("  OUTPUT [1]:");
+  Serial.print(power_rate[1]);
+  Serial.print("  OUTPUT [2]:");
+  Serial.print(power_rate[2]);
+  Serial.print("  OUTPUT [3]:");
+  Serial.println(power_rate[3]);
+
+
+  */
   Serial.print("COUNT:");
   Serial.println(count[0]);
-  */
-
-  power.output(power_rate);
-  Serial.print("OUTPUT [0]:");
-  Serial.println(power_rate[0]);
+  
   delay(1);
 }

@@ -21,6 +21,7 @@ void calc_speed();
 void calc_speed_delay(int num);
 void calc_pid_position_type();
 void calc_pid_speed_type();
+void calc_ff_pid_speed_type();
 void timer_calc();
 
 void encoder_setup();

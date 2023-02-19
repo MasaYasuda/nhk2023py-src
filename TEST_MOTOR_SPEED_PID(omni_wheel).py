@@ -47,9 +47,9 @@ try:
         
         ##### TRANSMIT 
         transmitter.write_all_auto([0,1,2,3],motor.omni_enc_target)
+        time.sleep(0.1)
         transmitter.reset_input_buffer()
-
-        time.sleep(0.01)
+        time.sleep(0.1)
         
 except KeyboardInterrupt:
     print("プログラムを終了します")
