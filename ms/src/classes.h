@@ -18,6 +18,7 @@ extern float power_rate_past[6];
 // 関数宣言 ###############################
 void timer_setup();
 void calc_speed();
+void calc_pid_position_type();
 void calc_pid_speed_type();
 void timer_calc();
 

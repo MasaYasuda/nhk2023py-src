@@ -9,14 +9,14 @@ const long dt_ms=20;
 const int EncoderA[6] ={22,23,24,25,26,27};
 const int EncoderB[6] ={0,1,5,4,3,2}; //ArduinoMegaMotrSlaveは物理的なピン配置上B相割込みとなっている
 
-const float KP_SPEED=0.1;
+const float KP_SPEED=0.0001;
 const float KI_SPEED=0.00;
 const float KD_SPPED=0.0;
 const float Kp_speed[6]={KP_SPEED,KP_SPEED,KP_SPEED,KP_SPEED,KP_SPEED,KP_SPEED};
 const float Ki_speed[6]={KI_SPEED,KI_SPEED,KI_SPEED,KI_SPEED,KI_SPEED,KI_SPEED};
 const float Kd_speed[6]={KD_SPPED,KD_SPPED,KD_SPPED,KD_SPPED,KD_SPPED,KD_SPPED};
 
-const float KP_POSITION=0.1;
+const float KP_POSITION=0.0001;
 const float KI_POSITION=0.000;
 const float KD_POSITION=0.0;
 const float Kp_position[6]={KP_POSITION,KP_POSITION,KP_POSITION,KP_POSITION,KP_POSITION,KP_POSITION};

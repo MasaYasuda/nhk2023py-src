@@ -26,5 +26,5 @@ void loop(){
   Serial.print("COUNT:");
   Serial.println(count[0]);
   */
-  delay(10);
+  delay(80);
 }
