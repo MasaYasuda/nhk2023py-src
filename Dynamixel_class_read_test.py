@@ -17,7 +17,7 @@ try:
 
 
         time.sleep(0.5)
-
+    
     print("プログラムを終了します")
     dynamixel_1.close_port()
     dynamixel_2.close_port()
