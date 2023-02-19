@@ -35,13 +35,15 @@ void loop(){
   Serial.println(speed_now[0]);
   delay(100);
   
+  Serial.print("Speed [0]:");
+  Serial.print(speed_now[0]);
+  Serial.print("  Speed [1]:");
+  Serial.prinln(speed_now[0]);
+
   Serial.print("COUNT:");
   Serial.println(count[0]);
   */
- 
-  Serial.print("Speed [0]:");
-  Serial.print(speed_now[0]);
-  Serial.print("Speed [1]:");
-  Serial.print(speed_now[0]);
-  delay(80);
+
+  
+  delay(1);
 }

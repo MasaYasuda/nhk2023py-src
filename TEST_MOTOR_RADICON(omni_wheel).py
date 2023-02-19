@@ -4,11 +4,11 @@ import time
 import os
 try:
     os.environ['SDL_VIDEODRIVER'] = 'dummy'
-    '''
+    
     pygame.init()
     j = pygame.joystick.Joystick(0)
     j.init()
-    '''
+
     ##### VECTOR SETUP
     
     vector=nhk23.Vector() # make instance
@@ -16,19 +16,17 @@ try:
     ##### MOTOR SETUP
 
     motor=nhk23.Motor("omni") # make instance
-    motor.omni_setup(5,50,0.0001,0.1,1000,[1,1,1,1])
     
     ##### TRANSMITTER SETUP
 
     transmitter = nhk23.Transmitter("/dev/ttyACM0", 115200)
 
     # If speed pid
-    mode_array=[10,0,0,0,100,100]
-    direction_config_array =[2,1,1,2,0,0] #回転が逆だったら3にする
+    mode_array=[0,0,0,0,100,100]
+    direction_config_array =[0,3,3,0,0,0] #回転が逆だったら3にする
     forward_direction_array=[0,0,0,0,0,0]
     transmitter.write_config_all(mode_array,direction_config_array,forward_direction_array)
 
-    '''
     print("コントローラのボタンを押してください")
     while True:
         ## Get Inputs
@@ -45,18 +43,18 @@ try:
         move,rot = vector.calc_vector(x,y,rotation)  # calc.vector using  x,y,rotation
         
         ##### MOTOR CALCLATION
-        omni_output = motor.calc_omni_output(move,rot)  # move,rot is "Vector.move","Vector.rot"
+        omni_output = motor.calc_omni_output_for_radicon(move,rot)  # move,rot is "Vector.move","Vector.rot"
         print(omni_output)
         
         ##### TRANSMIT 
-        transmitter.write_all_auto([0,1,2,3],motor.omni_enc_target)
+        transmitter.write_all_auto([0,1,2,3],omni_output)
 
-        time.sleep(0.01)
-        '''
+        time.sleep(0.1)
+
 except KeyboardInterrupt:
     print("プログラムを終了します")
-    init_array=[0,0,0,0]
-    transmitter.write_all_auto([0,1,2,3],init_array)
+    init_array=[0,0,0,0,0,0]
+    transmitter.write_all_auto([0,1,2,3,4,5],init_array)
     j.quit()
     transmitter.close()
     

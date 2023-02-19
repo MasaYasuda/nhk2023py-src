@@ -13,7 +13,7 @@ try:
     
     ##### MOTOR SETUP
     motor=nhk23.Motor("omni") # make instance
-    motor.omni_setup(5,50,0.0001,0.1,1000,[1,1,1,1])
+    motor.omni_setup(127,306,1,30,1000,[14,14,14,14])
     
     ##### TRANSMITTER SETUP
     
@@ -53,8 +53,8 @@ try:
         
 except KeyboardInterrupt:
     print("プログラムを終了します")
-    init_array=[0,0,0,0]
-    transmitter.write_all_auto([0,1,2,3],init_array)
+    init_array=[0,0,0,0,0,0]
+    transmitter.write_all_auto([0,1,2,3,4,5],init_array)
     j.quit()
     transmitter.close()
     

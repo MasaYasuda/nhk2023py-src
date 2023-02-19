@@ -15,11 +15,16 @@ try:
     print("コントローラのボタンを押してください")
     
     #########
+
+    motor=nhk23.Motor("roller") # make instance
+    motor.roller_setup(100,180,2.77)
+
+    #########
     
     transmitter = nhk23.Transmitter("/dev/ttyACM0", 115200)
     # If speed pid
-    mode_array=[0,0,100,100,100,100]
-    direction_config_array =[3,0,0,0,0,0] #回転が逆だったら3にする
+    mode_array=[20,20,100,100,100,100]
+    direction_config_array =[3,0,0,0,0,0]# speed pidの時でチェック済み
     forward_direction_array=[1,1,0,0,0,0]
 
     transmitter.write_config_all(mode_array,direction_config_array,forward_direction_array)
@@ -35,12 +40,11 @@ try:
             order=0
         print(str(order))
         
+        output = motor.calc_roller_output(order) # spin: -1~1    
 
-
-
-        transmitter.write_single_auto(0,order*1)
+        transmitter.write_single_auto(0,output)
         time.sleep(0.1)
-        transmitter.write_single_auto(1,order*1)
+        transmitter.write_single_auto(1,output)
         time.sleep(0.1)
 
         

@@ -28,7 +28,7 @@ class Vector:
   
   def calc_move(self,x,y):
     r = math.sqrt(x**2 + y**2) 
-    if abs(r)<0.2:
+    if abs(r)<0.1:
       r=0
     r = max(-1, min(r, 1))
     theta = math.atan2(y, x) # rad
@@ -39,7 +39,7 @@ class Vector:
     return
   
   def calc_rot(self,rot):
-    if abs(rot)<0.2:
+    if abs(rot)<0.1:
       rot=0
     rot = max(-1, min(rot, 1))
     self.rot = [rot,rot,rot,rot]
@@ -154,6 +154,17 @@ class Motor:
     self.compression_speed()
     self.calc_omni_enc_target()
     return self.omni_enc_target
+  
+  def calc_omni_output_for_radicon(self,move,rot):
+    check_ratio=1
+    for i in range(0,4):
+      self.omni_speed[i] = move[i] + rot[i]
+      if self.omni_speed[i] > 1:
+        check_ratio = min(check_ratio , 1/self.omni_speed[i] )
+    if check_ratio<1:
+      for i in range(0,4):
+        self.omni_speed[i] = check_ratio* (move[i] + rot[i])
+    return self.omni_speed
   
   ## FOR ROLLER #########################
     
