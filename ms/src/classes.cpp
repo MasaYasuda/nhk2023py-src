@@ -99,8 +99,9 @@ void calc_speed(){
     }
 }
 void calc_speed_delay(int num){
-    unsigned long tmp_ms=millis();
+    unsigned long tmp_ms=0;
     for(int i=0;i<num;i++){
+        tmp_ms=millis();
         count_past[i]=count[i];
         while(dt_ms>millis()-tmp_ms){}
         long dif=count[i]-count_past[i];
