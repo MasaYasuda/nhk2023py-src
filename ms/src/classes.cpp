@@ -92,6 +92,15 @@ void calc_speed(){
         count_past[i]=count[i];
     }
 }
+void calc_speed_delay(int num){
+    unsigned long tmp_ms=millis();
+    for(int i=0;i<num;i++){
+            long dif=count[i]-count_past[i];
+            speed_now[i]=float(dif*1000*60/2048/dt_ms); //rpm
+            count_past[i]=count[i];
+            while(dt_ms>millis()-tmp_ms){}
+    }
+}
 
 void calc_pid_position_type(){
     for(int i=0;i<6;i++){
