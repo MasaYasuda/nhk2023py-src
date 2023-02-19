@@ -8,7 +8,7 @@
 const long dt_ms=20;
 const int EncoderA[6] ={22,23,24,25,26,27};
 const int EncoderB[6] ={0,1,5,4,3,2}; //ArduinoMegaMotrSlaveは物理的なピン配置上B相割込みとなっている
-const int resolution[6]={2048,2048,2048,2048,2048,2048};
+const int resolution[6]={256,256,2048,2048,2048,2048};
 
 const float KF_SPEED=0.0;
 const float KP_SPEED=0.0005;
@@ -190,6 +190,7 @@ void Receiver::read_order(){
                 for(int i=3;i>-1;i--){//little indian
                     order.binary[i]=Serial.read(); 
                 }
+
                 float config_check=1;
                 if(direction_config[motorNumber]==2 ||direction_config[motorNumber]==3){
                     config_check=-1;

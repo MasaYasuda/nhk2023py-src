@@ -14,9 +14,9 @@ Power power;
 
 void setup(){
   Serial.begin(115200);
+  
   encoder_setup();
   /*
-  
   timer_setup();
   */
 }
@@ -24,6 +24,8 @@ void loop(){
   receiver.read_order();//->order_speed[6]
   power.output(power_rate);
   
+  calc_speed_delay(2);
+
   /*
   
   calc_speed_delay(4);
@@ -37,10 +39,7 @@ void loop(){
   Serial.println(speed_now[0]);
   delay(100);
   
-  Serial.print("Speed [0]:");
-  Serial.print(speed_now[0]);
-  Serial.print("  Speed [1]:");
-  Serial.println(speed_now[0]);
+  
 
 
   
@@ -56,10 +55,9 @@ void loop(){
 
 
   */
-
-  Serial.print("OUTPUT :");
-  Serial.print(power_rate[0]);
-  Serial.print(" Speed [0] :");
-  Serial.println(speed_now[0]);
+  Serial.print("Speed [0]:");
+  Serial.print(speed_now[0]);
+  Serial.print("  Speed [1]:");
+  Serial.println(speed_now[1]);
   delay(10);
 }
