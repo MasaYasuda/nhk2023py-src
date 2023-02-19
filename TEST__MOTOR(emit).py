@@ -29,7 +29,7 @@ try:
         events = pygame.event.get()
         print("R2")
         order=(j.get_axis(5)+1)/2
-        if abs(order)<0.2:
+        if abs(order)<0.1:
             order=0
         print(str(order))
         
