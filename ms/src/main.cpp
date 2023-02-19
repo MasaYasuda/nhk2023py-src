@@ -44,10 +44,8 @@ void loop(){
   Serial.println(count[0]);
   */
 
-  Serial.print("Speed [0]:");
-  Serial.print(speed_now[0]);
-  Serial.print("  Speed [1]:");
-  Serial.println(speed_now[0]);
-  
+  power.output(power_rate);
+  Serial.print("OUTPUT [0]:");
+  Serial.println(power_rate[0]);
   delay(1);
 }

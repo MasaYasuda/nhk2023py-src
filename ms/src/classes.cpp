@@ -10,14 +10,14 @@ const int EncoderA[6] ={22,23,24,25,26,27};
 const int EncoderB[6] ={0,1,5,4,3,2}; //ArduinoMegaMotrSlaveは物理的なピン配置上B相割込みとなっている
 const int resolution[6]={2048,2048,2048,2048,2048,2048};
 
-const float KP_SPEED=0.0001;
+const float KP_SPEED=0.0000001;
 const float KI_SPEED=0.00;
 const float KD_SPPED=0.0;
 const float Kp_speed[6]={KP_SPEED,KP_SPEED,KP_SPEED,KP_SPEED,KP_SPEED,KP_SPEED};
 const float Ki_speed[6]={KI_SPEED,KI_SPEED,KI_SPEED,KI_SPEED,KI_SPEED,KI_SPEED};
 const float Kd_speed[6]={KD_SPPED,KD_SPPED,KD_SPPED,KD_SPPED,KD_SPPED,KD_SPPED};
 
-const float KP_POSITION=0.0001;
+const float KP_POSITION=0.00001;
 const float KI_POSITION=0.000;
 const float KD_POSITION=0.0;
 const float Kp_position[6]={KP_POSITION,KP_POSITION,KP_POSITION,KP_POSITION,KP_POSITION,KP_POSITION};
@@ -112,7 +112,7 @@ void calc_pid_position_type(){
         float I=Ki_position[i]*integral_position[i];
         float D=Kd_position[i]*(dev_position-dev_position_past[i])/dt_ms;
         dev_position_past[i]=dev_position;
-        float power_rate_raw=(float)(P+I-D);
+        float power_rate_raw=float(P+I-D);
         power_rate[i]=constrain(power_rate_raw+power_rate_past[i],-1,1);
 
         power_rate_past[i]=power_rate[i];
@@ -130,7 +130,7 @@ void calc_pid_speed_type(){
             float I=Ki_speed[i]*integral_speed[i];
             float D=Kd_speed[i]*(dev_speed-dev_speed_past[i])/dt_ms;
             dev_speed_past[i]=dev_speed;
-            float power_rate_raw=(float)(P+I-D);
+            float power_rate_raw=float(P+I-D);
             power_rate[i]=constrain(power_rate_raw+power_rate_past[i],-1,1);
 
             power_rate_past[i]=power_rate[i];
@@ -155,13 +155,6 @@ void Receiver::read_order(){
         Serial.println("RECEIVED");
         byte header = Serial.read();
         if (header == 0xFF) {
-            /*
-            for(int i=0;i<6-check_loss;i++){
-                byte loss=Serial.read();
-            }
-            */
-            
-            
             byte motorNumber = Serial.read();
             Serial.println(motorNumber);
             if (motorNumber >= 0 && motorNumber < 6) { //値受信
@@ -169,38 +162,37 @@ void Receiver::read_order(){
                 uf order;
                 for(int i=3;i>-1;i--){//little indian
                     order.binary[i]=Serial.read(); 
-
-                    float config_check=1;
-                    if(direction_config[motorNumber]==2 ||direction_config[motorNumber]==3){
-                        config_check=-1;
-                    }
-
-                    if(mode[motorNumber]==0){ //ラジコンモード
-                        power_rate[motorNumber]=config_check*constrain(order.val,-1,1);
-                        Serial.print("Motor: ");
-                        Serial.print(motorNumber);
-                        Serial.print(", Power: ");
-                        Serial.println(power_rate[motorNumber]);
-
-                    }else if (mode[motorNumber]==10){//ポジションPIDモード
-
-                        order_count[motorNumber] = config_check*(int(order.val)+count[i]);
-                        Serial.print("Motor: ");
-                        Serial.print(motorNumber);
-                        Serial.print(", Count: ");
-                        Serial.println(order_count[motorNumber]);
-                        
-                    }else if (mode[motorNumber]==20){// スピードPIDモード
-                        order_speed[motorNumber] = config_check*order.val;
-                        Serial.print("Motor: ");
-                        Serial.print(motorNumber);
-                        Serial.print(", Speed: ");
-                        Serial.println(order_speed[motorNumber]);
-                    }
+                }
+                float config_check=1;
+                if(direction_config[motorNumber]==2 ||direction_config[motorNumber]==3){
+                    config_check=-1;
                 }
 
-                check_loss=0;
+                if(mode[motorNumber]==0){ //ラジコンモード
+                    power_rate[motorNumber]=config_check*constrain(order.val,-1,1);
+                    Serial.print("Motor: ");
+                    Serial.print(motorNumber);
+                    Serial.print(", Power: ");
+                    Serial.println(power_rate[motorNumber]);
+
+                }else if (mode[motorNumber]==10){//ポジションPIDモード
+
+                    order_count[motorNumber] = config_check*(int(order.val)+count[motorNumber]);
+                    Serial.print("Motor: ");
+                    Serial.print(motorNumber);
+                    Serial.print(", Count: ");
+                    Serial.println(order_count[motorNumber]);
+                    
+                }else if (mode[motorNumber]==20){// スピードPIDモード
+                    order_speed[motorNumber] = config_check*order.val;
+                    Serial.print("Motor: ");
+                    Serial.print(motorNumber);
+                    Serial.print(", Speed: ");
+                    Serial.println(order_speed[motorNumber]);
+                }
             }
+
+                
             /*
             config系
 
@@ -220,7 +212,6 @@ void Receiver::read_order(){
                 Serial.print(motorNumber);
                 Serial.print(", Mode: ");
                 Serial.println(mode[motorNumber-100]);
-                check_loss=0;
 
             }else if(motorNumber>199 && motorNumber<206){
                 uf order;
@@ -232,7 +223,6 @@ void Receiver::read_order(){
                 Serial.print(motorNumber);
                 Serial.print(", config: ");
                 Serial.println(direction_config[motorNumber-200]);
-                check_loss=0;
                 
             }else if(motorNumber>209 && motorNumber<216){
                 uf order;
@@ -244,10 +234,7 @@ void Receiver::read_order(){
                 Serial.print(motorNumber);
                 Serial.print(", forward_dir_level: ");
                 Serial.println(forward_dir_level[motorNumber-210]);
-                check_loss=0;
             }
-        }else{
-            check_loss+=1;
         }
     }
 }

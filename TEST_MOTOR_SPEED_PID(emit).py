@@ -1,5 +1,3 @@
-# CORRECT
-
 import nhk23
 import pygame
 import time
@@ -30,8 +28,6 @@ try:
     transmitter.write_config_all(mode_array,direction_config_array,forward_direction_array)
 
     while True:
-        # transmitter.reset_input_buffer()
-        
         ## Get Inputs
         events = pygame.event.get()
         print("R2")
@@ -46,6 +42,8 @@ try:
         time.sleep(0.1)
         transmitter.write_single_auto(1,output)
         time.sleep(0.1)
+        transmitter.reset_input_buffer()
+        time.sleep(0.1)
 
         
 except KeyboardInterrupt:
@@ -54,5 +52,6 @@ except KeyboardInterrupt:
     transmitter.write_all_auto([0,1,2,3],init_array)
     j.quit()
     transmitter.close()
+    transmitter
     
 
