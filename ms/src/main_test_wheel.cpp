@@ -19,7 +19,6 @@ void loop(){
   receiver.read_order();//->order_speed[6]
   power.output(power_rate);
   /*
-  
   */
   Serial.print("OUTPUT [0]:");
   Serial.print(power_rate[0]);
@@ -30,7 +29,7 @@ void loop(){
   Serial.print("  OUTPUT [3]:");
   Serial.print(power_rate[3]);
 
-  delay(5);
+  delay(50);
 }
 
   /*

@@ -299,6 +299,7 @@ void Power::output(float *power_rate)
         {
             digitalWrite(pin_dir[i], forward_dir_level[i]);
             analogWrite(pin_pwm[i], output_pwm[i]);
+            delay(0.1);;
             Serial.print("TM!");
         }
         else
@@ -306,6 +307,7 @@ void Power::output(float *power_rate)
             int dir = 1 - forward_dir_level[i];
             digitalWrite(pin_dir[i], dir);
             analogWrite(pin_pwm[i], (-1) * output_pwm[i]);
+            delay(0.1);
             Serial.print("TM!");
         }
         Serial.print(i);

@@ -73,13 +73,13 @@ try:
         
         ##### TRANSMIT 
         transmitter0.write_single_auto(0,omni_output[0])
-        time.sleep(0.1)
+        time.sleep(0.2)
         transmitter0.write_single_auto(1,omni_output[1])
-        time.sleep(0.1)
+        time.sleep(0.2)
         transmitter0.write_single_auto(2,omni_output[2])
-        time.sleep(0.1)
+        time.sleep(0.2)
         transmitter0.write_single_auto(3,omni_output[3])
-        time.sleep(0.1)
+        time.sleep(0.2)
 
 
 except KeyboardInterrupt:
