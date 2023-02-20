@@ -13,19 +13,15 @@ try:
     while True:
         events = pygame.event.get()
         for event in events:
-            if event.type == pygame.JOYHATMOTION:
+            if event.type == pygame.JOYHATMOTION: # 発射用ローラー 
                 if (j.get_hat(0))[1]==1:
-                    state=state+1
-                    print("state="+str(state))
+                    emit_order=emit_order+0.2
                     time.sleep(0.1)
                 elif (j.get_hat(0))[1]==-1:
-                    state=state-1
-                    print("state="+str(state))
+                    emit_order=emit_order-0.2
                     time.sleep(0.1)
-            elif event.type == pygame.JOYBUTTONDOWN: #ボタンが押された場合
-                if j.get_button(0):
-                    print("四角ボタンが押されました")
-                    time.sleep(0.1)
+        emit_order=max(0,min(emit_order,1))
+        print(str(emit_order))
                 
 except KeyboardInterrupt:
     print("プログラムを終了します")
