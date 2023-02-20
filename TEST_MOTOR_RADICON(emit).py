@@ -14,7 +14,7 @@ try:
     j.init()
     print("コントローラのボタンを押してください")
     
-    transmitter = nhk23.Transmitter("/dev/ArduinoMega1", 115200)
+    transmitter = nhk23.Transmitter("/dev/ArduinoMega2", 115200)
     mode_array=[0,0,100,100,100,100]
     direction_config_array =[3,0,0,0,0,0] #回転が逆だったら3にする
     forward_direction_array=[1,1,0,0,0,0]
@@ -32,9 +32,9 @@ try:
         print(str(order))
         
 
-        transmitter.write_single_auto(0,order*0.2)
+        transmitter.write_single_auto(0,order*0.5)
         time.sleep(0.1)
-        transmitter.write_single_auto(1,order*0.2)
+        transmitter.write_single_auto(1,order*0.5)
         time.sleep(0.1)
 
         
