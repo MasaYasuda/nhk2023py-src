@@ -12,7 +12,7 @@ const int resolution[6]={256,256,512,512,2048,2048};
 
 const float KF_SPEED=0.10/1058;
 const float KP_SPEED=0.0000;
-const float KI_SPEED=0.0000075;
+const float KI_SPEED=0.00002;
 const float KD_SPPED=0.0000;
 const float INTEGRAL_LIMIT_SPEED=100000000;
 

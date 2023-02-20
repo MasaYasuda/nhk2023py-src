@@ -1,3 +1,5 @@
+# CORRECT
+
 import nhk23
 import pygame
 import time
@@ -21,21 +23,15 @@ try:
     
     transmitter = nhk23.Transmitter("/dev/ArduinoMega2", 115200)
     # If speed pid
-    mode_array=[0,100,100,100,100,0]
-    direction_config_array =[0,0,0,0,0,0]# speed pidの時でチェック済み
-    forward_direction_array=[1,1,1,0,0,1]
+    mode_array=[20,20,100,100,100,100]
+    direction_config_array =[3,0,0,0,0,0]# speed pidの時でチェック済み
+    forward_direction_array=[1,1,0,0,0,0]
 
     transmitter.write_config_all(mode_array,direction_config_array,forward_direction_array)
 
     while True:
-        
+        ## Get Inputs
         events = pygame.event.get()
-        # 引き込み操作
-        print("十字y座標")
-        print(str((j.get_hat(0))[1]))
-        drawin_order=(j.get_hat(0))[1]
-
-        '''## Get Inputs
         print("R2")
         order=(j.get_axis(5)+1)/2
         if abs(order)<0.1:
@@ -47,14 +43,9 @@ try:
         transmitter.write_single_auto(0,output*0.67)
         time.sleep(0.1)
         transmitter.write_single_auto(1,output*0.67)
-        time.sleep(0.1)'''
-        transmitter.write_single_auto(0,drawin_order*1.0)
         time.sleep(0.1)
-
         transmitter.reset_input_buffer()
         time.sleep(0.1)
-
-
 
         
 except KeyboardInterrupt:

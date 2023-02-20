@@ -1,3 +1,5 @@
+# CORRECT
+
 '''
 joystickでハンドの開閉を調節する
 '''

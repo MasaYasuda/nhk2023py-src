@@ -9,6 +9,8 @@ Power power;
 
 void setup(){
   Serial.begin(115200);
+  
+  encoder_setup();
   /*
   encoder_setup();
   timer_setup();
@@ -18,9 +20,8 @@ void loop(){
   receiver.read_order();//->order_speed[6]
   power.output(power_rate);
   
-  Serial.print("OUTPUT:");
+  Serial.print(" OUTPUT[0]:");
   Serial.print(power_rate[0]);
-
   Serial.print(" Speed now:");
   Serial.println(speed_now[0]);
 
