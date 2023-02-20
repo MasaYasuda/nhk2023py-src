@@ -18,7 +18,7 @@ try:
     dynamixel_1.enable_torque()
     dynamixel_2.enable_torque()
 
-    transmitter = nhk23.Transmitter("/dev/ttyACM0", 115200)
+    transmitter = nhk23.Transmitter("/dev/ArduinoMega2", 115200)
     mode_array=[0,100,100,100,100,100]
     direction_config_array =[3,0,0,0,0,0] #回転が逆だったら3にする
     forward_direction_array=[1,0,0,0,0,0]

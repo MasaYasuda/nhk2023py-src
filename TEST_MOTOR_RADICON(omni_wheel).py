@@ -24,7 +24,7 @@ try:
     # If speed pid
     mode_array=[0,0,0,0,100,100]
     direction_config_array =[0,3,3,0,0,0] #回転が逆だったら3にする
-    forward_direction_array=[0,0,0,0,0,0]
+    forward_direction_array=[1,0,0,0,0,0]
     transmitter.write_config_all(mode_array,direction_config_array,forward_direction_array)
 
     print("コントローラのボタンを押してください")
@@ -46,13 +46,14 @@ try:
         ##### MOTOR CALCLATION
         omni_output = motor.calc_omni_output_for_radicon(move,rot)  # move,rot is "Vector.move","Vector.rot"
         for i in range(0,4):
-            omni_output[i]=omni_output[i]*0.2
+            omni_output[i]=omni_output[i]*0.5
         print(omni_output)
         
         ##### TRANSMIT 
-        transmitter.write_all_auto([0,1,2,3],omni_output)
+        for i in range(0,4):
+            transmitter.write_single_auto(0,omni_output[i])
+            time.sleep(0.1)
 
-        time.sleep(0.30)
 
 except KeyboardInterrupt:
     print("プログラムを終了します")
