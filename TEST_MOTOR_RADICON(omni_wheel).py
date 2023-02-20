@@ -19,7 +19,7 @@ try:
     
     ##### TRANSMITTER SETUP
 
-    transmitter = nhk23.Transmitter("/dev/ttyACM0", 115200)
+    transmitter = nhk23.Transmitter("/dev/ArduinoMega1", 115200)
 
     # If speed pid
     mode_array=[0,0,0,0,100,100]
@@ -29,6 +29,7 @@ try:
 
     print("コントローラのボタンを押してください")
     while True:
+        transmitter.reset_input_buffer()
         ## Get Inputs
         events = pygame.event.get()
         print("左スティック座標")
@@ -44,12 +45,14 @@ try:
         
         ##### MOTOR CALCLATION
         omni_output = motor.calc_omni_output_for_radicon(move,rot)  # move,rot is "Vector.move","Vector.rot"
+        for i in range(0,4):
+            omni_output[i]=omni_output[i]*0.2
         print(omni_output)
         
         ##### TRANSMIT 
         transmitter.write_all_auto([0,1,2,3],omni_output)
 
-        time.sleep(0.1)
+        time.sleep(0.30)
 
 except KeyboardInterrupt:
     print("プログラムを終了します")

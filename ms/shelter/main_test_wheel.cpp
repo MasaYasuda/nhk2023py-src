@@ -15,16 +15,20 @@ void setup(){
   */
 }
 void loop(){
-  receiver.read_order();//->order_speed[6]
+  for (int i=0;i<6;i++){receiver.read_order();//->order_speed[6]
+  }
   power.output(power_rate);
   
-  Serial.print("OUTPUT:");
-  Serial.println(power_rate[0]);
 
-  Serial.print("Speed now:");
-  Serial.println(speed_now[0]);
-
-  delay(10);
+  Serial.print("OUTPUT [0]:");
+  Serial.print(power_rate[0]);
+  Serial.print("  OUTPUT [1]:");
+  Serial.print(power_rate[1]);
+  Serial.print("  OUTPUT [2]:");
+  Serial.print(power_rate[2]);
+  Serial.print("  OUTPUT [3]:");
+  Serial.println(power_rate[3]);
+  delay(20);
 }
 
   /*
@@ -50,4 +54,19 @@ void loop(){
   Serial.print("  OUTPUT [3]:");
   Serial.println(power_rate[3]);
 
+  
+  Serial.print("Speed [0]:");
+  Serial.print(speed_now[0]);
+  Serial.print("  Speed [1]:");
+  Serial.print(speed_now[1]);
+  Serial.print("  Speed [2]:");
+  Serial.print(speed_now[2]);
+  Serial.print("  Speed [3]:");
+  Serial.println(speed_now[3]);
+  
+
+  Serial.print("  POWER_RATE[0]:");
+  Serial.print(power_rate[0]);
+  Serial.print("  POWER_RATE[1]:");
+  Serial.println(power_rate[1]);
   */

@@ -32,9 +32,9 @@ try:
         print(str(order))
         
 
-        transmitter.write_single_auto(0,order*0.4)
+        transmitter.write_single_auto(0,order*0.2)
         time.sleep(0.1)
-        transmitter.write_single_auto(1,order*0.4)
+        transmitter.write_single_auto(1,order*0.2)
         time.sleep(0.1)
 
         
