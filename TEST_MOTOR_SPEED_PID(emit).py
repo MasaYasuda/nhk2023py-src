@@ -19,7 +19,7 @@ try:
 
     #########
     
-    transmitter = nhk23.Transmitter("/dev/ttyACM0", 115200)
+    transmitter = nhk23.Transmitter("/dev/ArduinoMega2", 115200)
     # If speed pid
     mode_array=[20,20,100,100,100,100]
     direction_config_array =[3,0,0,0,0,0]# speed pidの時でチェック済み
@@ -38,9 +38,9 @@ try:
         
         output = motor.calc_roller_output(order) # spin: -1~1    
 
-        transmitter.write_single_auto(0,output)
+        transmitter.write_single_auto(0,output*0.5)
         time.sleep(0.1)
-        transmitter.write_single_auto(1,output)
+        transmitter.write_single_auto(1,output*0.5)
         time.sleep(0.1)
         transmitter.reset_input_buffer()
         time.sleep(0.1)

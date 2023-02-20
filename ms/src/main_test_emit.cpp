@@ -19,11 +19,16 @@ void loop(){
   power.output(power_rate);
   
   calc_speed_delay(2);
+  calc_ff_pid_speed_type();
 
   Serial.print("Speed [0]:");
   Serial.print(speed_now[0]);
   Serial.print("  Speed [1]:");
-  Serial.println(speed_now[1]);
+  Serial.print(speed_now[1]);
+  Serial.print("  POWER_RATE[0]:");
+  Serial.print(power_rate[0]);
+  Serial.print("  POWER_RATE[1]:");
+  Serial.println(power_rate[1]);
   delay(10);
 }
 

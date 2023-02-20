@@ -1,18 +1,8 @@
 === emit
------------- pid -------------------- emit
-const float KF_SPEED=0.0;
-const float KP_SPEED=0.0005;
-const float KI_SPEED=0.0001;
-const float KD_SPPED=0.0;
-const float INTEGRAL_LIMIT_SPEED=10000000000000;
-
-const float Kf_speed[6]={KF_SPEED,KF_SPEED,KF_SPEED,KF_SPEED,KF_SPEED,KF_SPEED};
-const float Kp_speed[6]={KP_SPEED,KP_SPEED,KP_SPEED,KP_SPEED,KP_SPEED,KP_SPEED};
-const float Ki_speed[6]={KI_SPEED,KI_SPEED,KI_SPEED,KI_SPEED,KI_SPEED,KI_SPEED};
-const float Kd_speed[6]={KD_SPPED,KD_SPPED,KD_SPPED,KD_SPPED,KD_SPPED,KD_SPPED};
-const float Integtal_limit_speed[6]={INTEGRAL_LIMIT_SPEED,INTEGRAL_LIMIT_SPEED,INTEGRAL_LIMIT_SPEED,INTEGRAL_LIMIT_SPEED,INTEGRAL_LIMIT_SPEED,INTEGRAL_LIMIT_SPEED};
-
 ----------- ff_pid ------------------- emit
+Kf  1058 rpm->0.10 power
+
+
 const float KF_SPEED=0.0;
 const float KP_SPEED=0.0005;
 const float KI_SPEED=0.0001;

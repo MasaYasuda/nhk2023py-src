@@ -10,11 +10,11 @@ const int EncoderA[6] ={22,23,24,25,26,27};
 const int EncoderB[6] ={0,1,5,4,3,2}; //ArduinoMegaMotrSlaveは物理的なピン配置上B相割込みとなっている
 const int resolution[6]={256,256,2048,2048,2048,2048};
 
-const float KF_SPEED=0.0;
-const float KP_SPEED=0.0005;
-const float KI_SPEED=0.0001;
-const float KD_SPPED=0.0;
-const float INTEGRAL_LIMIT_SPEED=1000;
+const float KF_SPEED=0.10/1058;
+const float KP_SPEED=0.0000;
+const float KI_SPEED=0.000001;
+const float KD_SPPED=0.0000;
+const float INTEGRAL_LIMIT_SPEED=100000000;
 
 const float Kf_speed[6]={KF_SPEED,KF_SPEED,KF_SPEED,KF_SPEED,KF_SPEED,KF_SPEED};
 const float Kp_speed[6]={KP_SPEED,KP_SPEED,KP_SPEED,KP_SPEED,KP_SPEED,KP_SPEED};
@@ -159,9 +159,10 @@ void calc_ff_pid_speed_type(){
             dev_speed_past[i]=dev_speed;
             float power_rate_raw=constrain(float(P+I+D),-1,1);
             power_rate[i]=constrain(F+power_rate_raw,-1,1);
-                
+            /*
             Serial.print("FF & PID Speed Calclated:");
             Serial.println(i);
+            */    
         }
     }
     
