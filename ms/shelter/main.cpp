@@ -2,19 +2,13 @@
 #include <Wire.h>
 #include <TimerOne.h>
 #include "classes.h"
-// 関数
 
 //　変数・オブジェクト宣言
-
-
 Receiver receiver;
 Power power;
 
-
-
 void setup(){
   Serial.begin(115200);
-  
   encoder_setup();
   /*
   timer_setup();
@@ -25,6 +19,13 @@ void loop(){
   power.output(power_rate);
   
   calc_speed_delay(2);
+
+  Serial.print("Speed [0]:");
+  Serial.print(speed_now[0]);
+  Serial.print("  Speed [1]:");
+  Serial.println(speed_now[1]);
+  delay(10);
+}
 
   /*
   
@@ -39,10 +40,6 @@ void loop(){
   Serial.println(speed_now[0]);
   delay(100);
   
-  
-
-
-  
 
   Serial.print("OUTPUT [0]:");
   Serial.print(power_rate[0]);
@@ -53,11 +50,4 @@ void loop(){
   Serial.print("  OUTPUT [3]:");
   Serial.println(power_rate[3]);
 
-
   */
-  Serial.print("Speed [0]:");
-  Serial.print(speed_now[0]);
-  Serial.print("  Speed [1]:");
-  Serial.println(speed_now[1]);
-  delay(10);
-}

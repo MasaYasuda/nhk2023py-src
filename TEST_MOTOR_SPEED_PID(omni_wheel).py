@@ -18,9 +18,8 @@ try:
     ##### TRANSMITTER SETUP
     
     transmitter = nhk23.Transmitter("/dev/ttyACM0", 115200)
-    # If speed pid
     mode_array=[20,20,20,20,100,100]
-    direction_config_array =[2,1,1,2,0,0] #回転が逆だったら3にする
+    direction_config_array =[2,3,3,2,0,0] 
     forward_direction_array=[0,0,0,0,0,0]
     transmitter.write_config_all(mode_array,direction_config_array,forward_direction_array)
 
