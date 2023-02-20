@@ -27,6 +27,8 @@ try:
     print("コントローラのボタンを押してください")
     
     while True:
+        transmitter.reset_input_buffer()
+
         ## Get Inputs
         events = pygame.event.get()
         print("左スティック座標")
@@ -46,8 +48,6 @@ try:
         
         ##### TRANSMIT 
         transmitter.write_all_auto([0,1,2,3],motor.omni_enc_target)
-        time.sleep(0.1)
-        transmitter.reset_input_buffer()
         time.sleep(0.1)
         
 except KeyboardInterrupt:
