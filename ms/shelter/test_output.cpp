@@ -14,23 +14,15 @@ void setup(){
   encoder_setup();
   timer_setup();
   */
+  for(int i=0;i<6;i++){
+    power_rate[i]=0.5;
+  } 
 }
 void loop(){
-  receiver.read_order();//->order_speed[6]
+   
   power.output(power_rate);
-  /*
-  
-  */
-  Serial.print("OUTPUT [0]:");
-  Serial.print(power_rate[0]);
-  Serial.print("  OUTPUT [1]:");
-  Serial.print(power_rate[1]);
-  Serial.print("  OUTPUT [2]:");
-  Serial.print(power_rate[2]);
-  Serial.print("  OUTPUT [3]:");
-  Serial.print(power_rate[3]);
 
-  delay(5);
+  delay(10);
 }
 
   /*
