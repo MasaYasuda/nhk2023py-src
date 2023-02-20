@@ -9,7 +9,7 @@ j = pygame.joystick.Joystick(0)
 j.init()
 print("コントローラのボタンを押してください")
 try:
-    state=0
+    emit_order=0
     while True:
         events = pygame.event.get()
         for event in events:
@@ -20,6 +20,8 @@ try:
                 elif (j.get_hat(0))[1]==-1:
                     emit_order=emit_order-0.2
                     time.sleep(0.1)
+        if abs(emit_order)<0.1:
+            emit_order=0
         emit_order=max(0,min(emit_order,1))
         print(str(emit_order))
                 
