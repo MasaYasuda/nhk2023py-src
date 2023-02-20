@@ -29,6 +29,7 @@ try:
     L_hand_value=0.355
 
     lift_order=0
+    lift_order_past=0
     while True:
         events = pygame.event.get()
         print("十字y座標")
@@ -45,15 +46,15 @@ try:
         print(str(j.get_axis(3)))
 
         L_order=j.get_axis(0)
-        if abs(L_order)<0.2:
+        if abs(L_order)<0.1:
             L_order=0
         R_order=j.get_axis(3)
-        if abs(R_order)<0.2:
+        if abs(R_order)<0.1:
             R_order=0
 
-        R_hand_value=R_hand_value+R_order*0.03
+        R_hand_value=R_hand_value+R_order*0.015
         R_hand_value=max(0,min(R_hand_value,1))
-        L_hand_value=L_hand_value+L_order*0.03
+        L_hand_value=L_hand_value+L_order*0.015
         L_hand_value=max(0,min(L_hand_value,1))
 
         dynamixel_1.write_position(R_hand_value)
@@ -61,9 +62,14 @@ try:
         
         dynamixel_1.read_position()
         dynamixel_1.read_position()
-
-        transmitter.write_single_auto(0,lift_order*0.5)
-        time.sleep(0.1)
+        if lift_order!=0 :
+            transmitter.write_single_auto(0,lift_order*(-1)*0.5)
+            time.sleep(0.05)
+        elif lift_order==0 and lift_order_past!=0:
+            transmitter.write_single_auto(0,lift_order*(-1)*0.5)
+            time.sleep(0.05)
+        lift_order_past=lift_order
+        time.sleep(0.005)
         
 except KeyboardInterrupt:
     print("プログラムを終了します")
