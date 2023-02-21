@@ -1,6 +1,4 @@
 #include <Arduino.h>
-#include <TimerOne.h>
-#include <Wire.h>
 #include "classes.h"
 
 // global変数宣言　###############################
@@ -53,6 +51,7 @@ int order_count[6]={0};
 float power_rate[6]={0};
 float power_rate_past[6]={0};
 
+/*
 
 // 関数宣言 ###############################
 // Function For pinInterrupt
@@ -159,10 +158,10 @@ void calc_ff_pid_speed_type(){
             dev_speed_past[i]=dev_speed;
             float power_rate_raw=constrain(float(P+I+D),-1,1);
             power_rate[i]=constrain(F+power_rate_raw,-1,1);
-            /*
+            
             Serial.print("FF & PID Speed Calclated:");
             Serial.println(i);
-            */    
+             
         }
     }
     
@@ -173,6 +172,8 @@ void timer_calc(){
     calc_pid_position_type();
     calc_pid_speed_type();
 }
+
+*/
 
 // クラスメソッド宣言 ###############################
 //  コンストラクタ
@@ -287,7 +288,7 @@ Power::Power()
 
 void Power::output(float *power_rate)
 {
-    for (int i = 0; i < 6; i++)
+    for (int i = 3; i >-1 ; i--)
     {   
         float config_check=1;
         if(direction_config[i]==1 ||direction_config[i]==2){
@@ -310,10 +311,7 @@ void Power::output(float *power_rate)
             delay(0.1);
             Serial.print("TM!");
         }
-        Serial.print(i);
-        Serial.print(":");
-        Serial.print(output_pwm[i]);
-        Serial.print(" / ");
     }
     Serial.print("\n");
+
 }
