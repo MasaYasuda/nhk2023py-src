@@ -1,4 +1,6 @@
 #include <Arduino.h>
+#include <TimerOne.h>
+#include <Wire.h>
 #include "classes.h"
 
 // global変数宣言　###############################
@@ -6,7 +8,7 @@
 const long dt_ms=20;
 const int EncoderA[6] ={22,23,24,25,26,27};
 const int EncoderB[6] ={0,1,5,4,3,2}; //ArduinoMegaMotrSlaveは物理的なピン配置上B相割込みとなっている
-const int resolution[6]={512,512,512,512,2048,2048};
+const int resolution[6]={256,256,256,256,2048,2048};
 
 const float KF_SPEED=0.10/1058;
 const float KP_SPEED=0.0000;
@@ -50,8 +52,6 @@ float order_speed[6]={0};
 int order_count[6]={0};
 float power_rate[6]={0};
 float power_rate_past[6]={0};
-
-/*
 
 // 関数宣言 ###############################
 // Function For pinInterrupt
@@ -173,8 +173,6 @@ void timer_calc(){
     calc_pid_speed_type();
 }
 
-*/
-
 // クラスメソッド宣言 ###############################
 //  コンストラクタ
 
@@ -288,7 +286,7 @@ Power::Power()
 
 void Power::output(float *power_rate)
 {
-    for (int i = 3; i >-1 ; i--)
+    for (int i = 0; i < 6 ; i++)
     {   
         float config_check=1;
         if(direction_config[i]==1 ||direction_config[i]==2){
@@ -300,18 +298,12 @@ void Power::output(float *power_rate)
         {
             digitalWrite(pin_dir[i], forward_dir_level[i]);
             analogWrite(pin_pwm[i], output_pwm[i]);
-            delay(0.1);;
-            Serial.print("TM!");
         }
         else
         {
             int dir = 1 - forward_dir_level[i];
             digitalWrite(pin_dir[i], dir);
             analogWrite(pin_pwm[i], (-1) * output_pwm[i]);
-            delay(0.1);
-            Serial.print("TM!");
         }
     }
-    Serial.print("\n");
-
 }

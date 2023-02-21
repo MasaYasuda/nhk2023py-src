@@ -21,11 +21,7 @@ void loop(){
   Serial.print("OUTPUT [0]:");
   Serial.print(power_rate[0]);
   Serial.print("  OUTPUT [1]:");
-  Serial.print(power_rate[1]);
-  Serial.print("  OUTPUT [2]:");
-  Serial.print(power_rate[2]);
-  Serial.print("  OUTPUT [3]:");
-  Serial.print(power_rate[3]);
+  Serial.println(power_rate[1]);
 
   delay(50);
 }
