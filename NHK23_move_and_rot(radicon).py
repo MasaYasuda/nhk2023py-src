@@ -46,12 +46,8 @@ try:
         print(str(j.get_axis(3)))
         
         ##### VECTOR CALCLATION
-        x=0
-        y=0
-        rotation=0
-        #x=j.get_axis(0)
+        x=j.get_axis(0)
         y=j.get_axis(1)*(-1)
-
         rotation=j.get_axis(3)
         move,rot = vector.calc_vector(x,y,rotation)  # calc.vector using  x,y,rotation
         
@@ -62,10 +58,9 @@ try:
         print(omni_output)
         
         ##### TRANSMIT 
-        transmitter.write_single_auto(0,omni_output[0])
-        time.sleep(0.1)
-        transmitter.write_single_auto(1,omni_output[1])
-        time.sleep(0.1)
+        for i in range(0,4):
+            transmitter.write_single_auto(i,omni_output[i])
+            time.sleep(0.1)
 
 
 
