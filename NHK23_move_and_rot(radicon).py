@@ -49,23 +49,22 @@ try:
         x=0
         y=0
         rotation=0
-        #x=j.get_axis(0)
+        # x=j.get_axis(0)
         y=j.get_axis(1)*(-1)
 
-        rotation=j.get_axis(3)
+        rotation=j.get_axis(3)*0.3
         move,rot = vector.calc_vector(x,y,rotation)  # calc.vector using  x,y,rotation
         
         ##### MOTOR CALCLATION
         omni_output = motor.calc_omni_output_for_radicon(move,rot)  # move,rot is "Vector.move","Vector.rot"
         for i in range(0,4):
-            omni_output[i]=omni_output[i]*0.25
+            omni_output[i]=omni_output[i]*1
         print(omni_output)
         
         ##### TRANSMIT 
         transmitter.write_single_auto(0,omni_output[0])
-        time.sleep(0.1)
         transmitter.write_single_auto(1,omni_output[1])
-        time.sleep(0.1)
+        time.sleep(0.2)
 
 
 

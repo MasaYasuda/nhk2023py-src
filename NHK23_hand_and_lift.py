@@ -33,6 +33,8 @@ try:
     lift_order=0
     lift_order_past=0
     while True:
+        transmitter.reset_input_buffer()
+
         events = pygame.event.get()
         print("十字y座標")
         print(str((j.get_hat(0))[1]))
