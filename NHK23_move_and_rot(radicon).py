@@ -67,6 +67,8 @@ try:
         time.sleep(0.05)
         transmitter.write_single_auto(3,omni_output[3])
         time.sleep(0.05)
+        ser=transmitter.readline()
+        print(ser)
 
 
 
