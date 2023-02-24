@@ -46,6 +46,7 @@ try:
         print(str(j.get_axis(3)))
         
         ##### VECTOR CALCLATION
+<<<<<<< HEAD
         x=0
         y=0
         rotation=0
@@ -53,6 +54,11 @@ try:
         y=j.get_axis(1)*(-1)
 
         rotation=j.get_axis(3)*0.3
+=======
+        x=j.get_axis(0)
+        y=j.get_axis(1)*(-1)
+        rotation=j.get_axis(3)
+>>>>>>> 3f79c9d46e371156a2d054b3ad2865cb7e894275
         move,rot = vector.calc_vector(x,y,rotation)  # calc.vector using  x,y,rotation
         
         ##### MOTOR CALCLATION
@@ -62,9 +68,15 @@ try:
         print(omni_output)
         
         ##### TRANSMIT 
+<<<<<<< HEAD
         transmitter.write_single_auto(0,omni_output[0])
         transmitter.write_single_auto(1,omni_output[1])
         time.sleep(0.2)
+=======
+        for i in range(0,4):
+            transmitter.write_single_auto(i,omni_output[i])
+            time.sleep(0.1)
+>>>>>>> 3f79c9d46e371156a2d054b3ad2865cb7e894275
 
 
 

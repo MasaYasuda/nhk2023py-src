@@ -158,9 +158,11 @@ void calc_ff_pid_speed_type(){
             dev_speed_past[i]=dev_speed;
             float power_rate_raw=constrain(float(P+I+D),-1,1);
             power_rate[i]=constrain(F+power_rate_raw,-1,1);
-            
+            /*
             Serial.print("FF & PID Speed Calclated:");
             Serial.println(i);
+            */
+            
              
         }
     }
@@ -270,9 +272,10 @@ Power::Power()
 {
     // DIR_LEVEL : Cytron=0 , Polulu=1
     int PIN_DIR[6]={28, 29, 30, 31, 32, 33};
-    memcpy(pin_dir,PIN_DIR,6);
+    memcpy(pin_dir,PIN_DIR,12);
     int PIN_PWM[6]={4, 5, 6, 7, 8, 9};
-    memcpy(pin_pwm,PIN_PWM,6);
+    memcpy(pin_pwm,PIN_PWM,12);
+    
     output_dir[6] = {0};
     output_pwm[6] = {0};
     max_pwm = 240;
