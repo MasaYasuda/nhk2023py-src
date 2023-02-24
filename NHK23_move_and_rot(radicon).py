@@ -27,7 +27,7 @@ try:
     transmitter = nhk23.Transmitter("/dev/ArduinoMega1", 115200)
 
     # If speed pid
-    mode_array=[0,0,100,100,100,100]
+    mode_array=[0,0,0,0,100,100]
     direction_config_array =[3,3,0,0,0,0] #回転が逆だったら3にする
     forward_direction_array=[1,1,1,1,1,1]
 
@@ -46,37 +46,27 @@ try:
         print(str(j.get_axis(3)))
         
         ##### VECTOR CALCLATION
-<<<<<<< HEAD
-        x=0
-        y=0
-        rotation=0
-        # x=j.get_axis(0)
-        y=j.get_axis(1)*(-1)
-
-        rotation=j.get_axis(3)*0.3
-=======
         x=j.get_axis(0)
         y=j.get_axis(1)*(-1)
+
         rotation=j.get_axis(3)
->>>>>>> 3f79c9d46e371156a2d054b3ad2865cb7e894275
         move,rot = vector.calc_vector(x,y,rotation)  # calc.vector using  x,y,rotation
         
         ##### MOTOR CALCLATION
         omni_output = motor.calc_omni_output_for_radicon(move,rot)  # move,rot is "Vector.move","Vector.rot"
         for i in range(0,4):
-            omni_output[i]=omni_output[i]*1
+            omni_output[i]=omni_output[i]*0.5
         print(omni_output)
         
         ##### TRANSMIT 
-<<<<<<< HEAD
         transmitter.write_single_auto(0,omni_output[0])
+        time.sleep(0.05)
         transmitter.write_single_auto(1,omni_output[1])
-        time.sleep(0.2)
-=======
-        for i in range(0,4):
-            transmitter.write_single_auto(i,omni_output[i])
-            time.sleep(0.1)
->>>>>>> 3f79c9d46e371156a2d054b3ad2865cb7e894275
+        time.sleep(0.05)
+        transmitter.write_single_auto(2,omni_output[2])
+        time.sleep(0.05)
+        transmitter.write_single_auto(3,omni_output[3])
+        time.sleep(0.05)
 
 
 

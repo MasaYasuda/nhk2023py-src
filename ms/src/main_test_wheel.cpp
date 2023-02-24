@@ -7,10 +7,11 @@ Power power;
 
 void setup(){
   Serial.begin(115200);
-  
-  /*
   encoder_setup();
   timer_setup();
+  /*
+  
+  
   */
 }
 void loop(){
@@ -18,15 +19,25 @@ void loop(){
   power.output(power_rate);
   /*
   */
+  Serial.print("Speed [0]:");
+  Serial.print(speed_now[0]);
+  Serial.print("  Speed [1]:");
+  Serial.print(speed_now[1]);
+  Serial.print("  Speed [2]:");
+  Serial.print(speed_now[2]);
+  Serial.print("  Speed [3]:");
+  Serial.println(speed_now[3]);
+  
   Serial.print("OUTPUT [0]:");
   Serial.print(power_rate[0]);
   Serial.print("  OUTPUT [1]:");
   Serial.print(power_rate[1]);
-  Serial.print(" OUTPUT [2]:");
+  Serial.print("  OUTPUT [2]:");
   Serial.print(power_rate[2]);
   Serial.print("  OUTPUT [3]:");
   Serial.println(power_rate[3]);
-  delay(50);
+  Serial.println("");
+  delay(20);
 }
 
   /*
@@ -38,8 +49,16 @@ void loop(){
   Serial.print("OUTPUT:");
   Serial.println(power_rate[0]);
 
-  Serial.print("Speed now:");
+  Serial.print("Speed [0]:");
   Serial.println(speed_now[0]);
+  Serial.print("Speed [1]:");
+  Serial.println(speed_now[1]);
+  Serial.print("Speed [2]:");
+  Serial.println(speed_now[2]);
+  Serial.print("Speed [3]:");
+  Serial.println(speed_now[3]);
+  
+  
   delay(100);
   
 
