@@ -55,7 +55,7 @@ try:
         ##### MOTOR CALCLATION
         omni_output = motor.calc_omni_output_for_radicon(move,rot)  # move,rot is "Vector.move","Vector.rot"
         for i in range(0,4):
-            omni_output[i]=omni_output[i]*0.5
+            omni_output[i]=omni_output[i]*0.75
         print(omni_output)
         
         ##### TRANSMIT 
