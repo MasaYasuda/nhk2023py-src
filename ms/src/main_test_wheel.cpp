@@ -7,17 +7,25 @@ Power power;
 
 void setup(){
   Serial.begin(115200);
-  encoder_setup();
-  timer_setup();
   /*
   
+  encoder_setup();
+  timer_setup();
   
   */
 }
 void loop(){
   receiver.read_order();//->order_speed[6]
   power.output(power_rate);
-  Serial.println("HelloWorld");
+  
+  Serial.print("OUTPUT [0]:");
+  Serial.print(power_rate[0]);
+  Serial.print("  OUTPUT [1]:");
+  Serial.print(power_rate[1]);
+  Serial.print("  OUTPUT [2]:");
+  Serial.print(power_rate[2]);
+  Serial.print("  OUTPUT [3]:");
+  Serial.println(power_rate[3]);
   delay(20);
 }
   /*

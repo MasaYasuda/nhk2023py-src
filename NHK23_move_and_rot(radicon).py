@@ -49,7 +49,7 @@ try:
         x=j.get_axis(0)
         y=j.get_axis(1)*(-1)
 
-        rotation=j.get_axis(3)
+        rotation=j.get_axis(3)*0.3
         move,rot = vector.calc_vector(x,y,rotation)  # calc.vector using  x,y,rotation
         
         ##### MOTOR CALCLATION
@@ -67,8 +67,6 @@ try:
         time.sleep(0.05)
         transmitter.write_single_auto(3,omni_output[3])
         time.sleep(0.05)
-        ser=transmitter.readline()
-        print(ser)
 
 
 
