@@ -437,27 +437,6 @@ class Dynamixel: ## This class is specified in X_series
     elif dxl_error != 0:
         print("%s" % self.__packetHandler.getRxPacketError(dxl_error))   
   
-  def attach_id(self,new_id):
-    NEW_DXL_ID                      = new_id
-    BROADCAST_DXL_ID                = 254
-
-    # ID変更
-    dxl_comm_result, dxl_error = self.__packetHandler.write1ByteTxRx(self.__portHandler, BROADCAST_DXL_ID, self.__ADDR_ID, NEW_DXL_ID)
-    if dxl_comm_result != COMM_SUCCESS:
-        print("%s" % self.__packetHandler.getTxRxResult(dxl_comm_result))
-    elif dxl_error != 0:
-        print("%s" % self.__packetHandler.getRxPacketError(dxl_error))
-    else:
-        print("Dynamixel has been successfully changed ID")
-
-    # IDを確認
-    dxl_id , dxl_comm_result, dxl_error = self.__packetHandler.read1ByteTxRx(self.__portHandler, NEW_DXL_ID, self.__ADDR_ID )
-    if dxl_comm_result != COMM_SUCCESS:
-        print("%s" % self.__packetHandler.getTxRxResult(dxl_comm_result))
-    elif dxl_error != 0:
-        print("%s" % self.__packetHandler.getRxPacketError(dxl_error))
-    print("ID:%d " % dxl_id)
-   
   def write_position(self,value):
     self.__now_goal_position_value = max(0, min(value, 1)) # value: 0~1
     position=(self.__DXL_MAXIMUM_POSITION_VALUE*self.__now_goal_position_value)+(1-self.__now_goal_position_value)*self.__DXL_MINIMUM_POSITION_VALUE
