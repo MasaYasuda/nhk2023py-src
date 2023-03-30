@@ -1,0 +1,61 @@
+def calc_vector(x,y):
+"""
+座標,回転から単位円のベクトルを求める
+
+Parameters
+---------
+x : float
+  -1~1で示される移動のx座標 
+y : float
+  -1~1で示される移動のy座標 
+
+Returns
+---------
+r : float
+  0~1 で示される半径
+theta : float
+  弧度法(°)で示される偏角0~360°
+  
+"""
+ 
+
+def calc_dif_drive(move,rot)
+
+
+class Motor:
+  def __init__(self,type): 
+  def omni_setup(self,diamiter,diagonal,max_move,max_rot,max_wheel_speed,gear_ratio):
+  def calc_move_speed(self,move):
+  def calc_rot_speed(self,rot):
+  def compression_speed(self):
+  def calc_omni_enc_target(self):
+  def calc_omni_output(self,move,rot):
+  def calc_omni_output_for_radicon(self,move,rot):
+  
+  def roller_setup(self,diamiter,max_spin,gear_ratio):
+  def calc_roller_speed(self,spin): 
+  def calc_roller_enc_target(self):
+  def calc_roller_output(self,spin):
+  
+class Transmitter (serial.Serial):
+  def __init__(self, port, baudrate):    
+  def store_single_target_values(self,motor_num,value):
+  def store_all_taget_values(self,motor_num_array,values):
+  def write_single(self,motor_num):
+  def write_reset_null(self):
+  def write_all(self):
+  def write_all_auto(self,motor_num_array,values):
+  def write_single_auto(self,motor_num,value):
+  def write_mode_auto(self,mode_array):
+  def write_direction_config(self,config_array):
+  def write_forward_direction(self,forward_direction_array):
+  def write_config_all(self,mode_array,config_array,forward_direction_array):
+
+class Dynamixel:
+  def __init__(self,port,baudrate,id,min_position,max_position):
+  def enable_torque(self):
+  def disable_torque(self):
+  def attach_id(self,new_id):   
+  def write_position(self,value):
+  def read_position(self): 
+  def close_port(self):
