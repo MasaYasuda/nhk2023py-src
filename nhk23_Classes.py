@@ -317,10 +317,15 @@ class Transmitter (serial.Serial):
     # 1Byte目は固定値0xFF
     # 2Byte目は1Byteデータ（数値）
     # 3~6Byte目はfloat型数値
+    # 7Byte目はチェックサム（開始宣言バイト0xFFも含む）
+    
     data = [0xFF, addr_direct.to_bytes(1,"big"),float(value)]
     packet = struct.pack('>Bcf', *data)
+    checksum=sum(packet) & 0xFF
     self.write(packet)
-    print(data)
+    self.write(checksum)
+    print(packet,checksum)
+    
     
     return data
   
@@ -330,7 +335,7 @@ class Transmitter (serial.Serial):
     Parameters
     ----------
     addr : int
-     書き込むアドレス (1つ目)
+     書き込むアドレス (0番目)
     value : list[float]*6
      各値
      
