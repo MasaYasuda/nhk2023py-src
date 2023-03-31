@@ -282,7 +282,7 @@ class Transmitter (serial.Serial):
     baudrate : int
         通信速度
     mode : list[int]*6
-        モードの指定(0:ラジコン/10:位置型PID/20:速度型PID/100:出力無効)
+        モードの指定(100:ラジコン/10:位置型PID/20:速度型PID/0:出力無効)
     direction_config : list[int]*6
         To know the config number, please refer to this ""
     forward_level : list[int]*6
