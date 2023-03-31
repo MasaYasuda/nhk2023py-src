@@ -221,7 +221,7 @@ class DiffDrive:
     self.__MAX_ROT=max_rot
     self.__GEAR_RATIO=gear_ratio
     
-  def speed_radicon(self,move,rot):
+  def calc_speed_radicon(self,move,rot):
     """ラジコン制御用各エンコーダーの目標観測回転量の算出
 
     Parameters
@@ -256,7 +256,7 @@ class DiffDrive:
             
     return R_speed,L_speed
     
-  def speed(self,move,rot):
+  def calc_speed(self,move,rot):
     return 0
   
   
@@ -290,9 +290,9 @@ class Transmitter (serial.Serial):
     """
     super().__init__(port, baudrate) # 基底クラスのコンストラクタをオーバーライド
     self.__ADDR_MOTOR=0
-    self.__ADDR_MODE=100
-    self.__ADDR_DIRECTION_CONFIG=200
-    self.__ADDR_FORWARD_LEVEL=210
+    self.__ADDR_MODE=200
+    self.__ADDR_DIRECTION_CONFIG=210
+    self.__ADDR_FORWARD_LEVEL=220
     
     #mode等の初期設定
     self.__write_all(self.__ADDR_MODE,mode)
