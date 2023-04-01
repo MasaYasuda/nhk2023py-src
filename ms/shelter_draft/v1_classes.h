@@ -1,31 +1,31 @@
-#ifndef _CLASSES_V2_H_
-#define _CLASSES_V2_H_
-
-
-#include <Arduino.h>
-#include <TimerOne.h>
-#include <Wire.h>
-#include "classes.h"
-
-
-extern float storage[300];
+#ifndef _V1_CLASSES_H_
+#define _V1_CLASSES_H_
 
 void serial_receive();
-void __serial_sumcheck();
-void __serial_receive_radicon(int num , float value);
-void __serial_receive_pid_position(int num , int value);
-void __serial_receive_pid_speed(int num , float value);
-void __serial_receive_mode(int num , int );
-void __serial_receive_dir_config();
-void __serial_receive_forward_lev();
-void Pininterrupt();
-void Timerinterrupt();
+void encoder_setup();
+void __pinInterrupt0R();
+void __pinInterrupt1R();
+void __pinInterrupt2R();
+void __pinInterrupt3R();
+void __pinInterrupt4R();
+void __pinInterrupt5R();
+void __pinInterrupt0F();
+void __pinInterrupt1F();
+void __pinInterrupt2F();
+void __pinInterrupt3F();
+void __pinInterrupt4F();
+void __pinInterrupt5F();
 
-void calc_radicon();
-void calc_pid_position();
-void calc_pid_speed();
-void output_all();
+void timer_setup();
+void __timer_calc();
+void __calc_speed();
+void __calc_pid_position();
+void __calc_ffpid_speed();
 
+void output();
+void switch_input();
+
+#endif // _V1_CLASSES_H_
 
 
 

@@ -1,85 +1,75 @@
 ------- コントロールテーブルライクな変数群
-extern byte            _PINNUM_ENCODER_A[6]
-extern byte            _PINNUM_ENCODER_B[6]
-extern byte            _PINNUM_OUTPUT_DIR[6]
-extern byte            _PINNUM_OUTPUT_PWM[6]
-extern int             _RESOLUTION[6]
-extern byte            _MAX_PWM[6]
-extern float           _GAIN_POSITION_PID[6][3]
-extern float           _GAIN_SPEED_FFPID[6][4]
-extern long            _INTEGRAL_POSITION_ERROR_LIMIT[6]
-extern float           _INTEGRAL_VELOCITY_ERROR_LIMIT[6]
-extern byte            _MODE[6]
-extern byte            _DIRECTION_CONFIG[6]
-extern bool            _FORWARD_LEVEL[6]
+extern byte          _PINNUM_ENCODER_A[6];
+extern byte          _PINNUM_ENCODER_B[6];
+extern byte          _PINNUM_OUTPUT_DIR[6];
+extern byte          _PINNUM_OUTPUT_PWM[6];
+extern int           _RESOLUTION[6];
+extern byte          __common_max_pwm = 240;
+extern byte          _MAX_PWM[6];
+extern float         __common_gain_position_pid[3];
+extern float         _GAIN_POSITION_PID[6][3];
+extern float         __common_gain_speed_ffpid[4];
+extern float         _GAIN_SPEED_FFPID[6][4];
+extern long          __common_integral_position_error_limit;
+extern long          _INTEGRAL_POSITION_ERROR_LIMIT[6];
+extern float         _INTEGRAL_VELOCITY_ERROR_LIMIT[6] ;
+extern byte          _MODE[6];
+extern byte          _DIRECTION_CONFIG[6];
+extern byte          _FORWARD_LEVEL[6];
 
-extern volatile long   _current_position[6]
-extern float           _current_velocity[6]
-extern long            _goal_position[6]
-extern float           _goal_velocity[6]
-extern int             _output_pwm[6]
-extern int             _previous_position_error[6]
-extern float           _previous_velocity_error[6]
-extern long            _integral_position_error[6]
-extern float           _integral_velocity_error[6]
-
-共通
-extern byte            _DT_MS
-
+extern volatile long _current_position[6];
+extern float         _current_velocity[6];
+extern long          _goal_position[6];
+extern float         _goal_velocity[6];
+extern int           _output_pwm[6];
+extern int           _previous_position_error[6];
+extern float         _previous_velocity_error[6];
+extern long          _integral_position_error[6];
+extern float         _integral_velocity_error[6];
 -----------------------------------------
 
-ファイル分け
-_controll_table_v1.cpp  // コントロールテーブルのみ
-_serial_v1.cpp  // シリアル送受信に関する関数群
-_timer_v1.cpp  // タイマー割込み及び速度計算に関する関数群
-_encoder_v1.cpp  // ピン割込みに関する関数群
-_pid_v1.cpp   // 位置型及び速度型PIDに関する関数群
-_output_v1.cpp  //　MDへの出力に関する関数群
-_input_v1.cpp   //物理スイッチなどの入力に関する関数群(未定)
-main.cpp  // メインプログラム 名前は任意
-
-------------------------------------------
 実装内容
-_controll_table_v1.cpp  // コントロールテーブルのみ
-  変数のみ（目標値や現在値、パラメータ定数、ピン番号など）
 
-_serial_v1.cpp  // シリアル送受信に関する関数群
-  public:
-    void serial_receive()
-  private:(未定)
-    void __write_int_data()
-    void __write_long_data()
-    void __write_float_data()
-    void __write_byte_data()
-    void __write_bool_data()
+_v1_controll_table.cpp  // コントロールテーブルのみ
+  変数のみ（目標値や現在値、パラメータ定数、ピン番号など。すべて（ダブル）アンダースコアから始まる名前）
 
-_timer_v1.cpp  // タイマー割込み及び速度計算に関する関数群
-  public:
-    void timer_setup()
-  private:
-    void __timer_calc()
-    void __calc_speed()
-
-_encoder_v1.cpp  // ピン割込みに関する関数群
-  public:
-    void encoder_setup()
-  private:
-    void __pinInterruptXX()
-
-_ffpid_v1.cpp   // 位置型及び速度型PIDに関する関数群
-  // (ff)pidの計算はタイマ割り込み内ではなくループ内outputの前で実行
-  protect:
-    void _calc_pid_position()
-    void _calc_ffpid_speed()
-
-_output_v1.cpp  //　MDへの出力に関する関数群
-  public:
-    void output()
-  
-_input_v1.cpp   //物理スイッチなどの入力に関する関数群(未定)
-  public :
-    void switch_input()
+v1_classes.cpp
+ 関数群(ダブルアンダースコアから始まる名前の関数は他のモジュールからは決して使用しないこと。)
 
 main.cpp  // メインプログラム 名前は任意
+------------------------------------------
 
+----------------------------------------
+input()に関して
+
+extern byte _PINNUM_SWITCH[2]
+
+シーケンス(arduinoはそれ専用に別固体を用いるとよい)
+
+EMG=1 //端のスイッチが押されたとき
+
+ピン割込み(pin1,flip1)
+flip(){
+  EMG=1
+}
+ピン割込み(pin2,flip2)
+flip(){
+  EMG=2
+}
+
+loop(){
+  //ラジコン制御
+  serial_receive()
+  if(時計回転){
+    if(EMG!=2){
+      回す
+    }
+  }else if(反時計回転){
+    if(EMG!=1){
+      回す
+    }
+  }
+}
+
+----------------------------------------
 
