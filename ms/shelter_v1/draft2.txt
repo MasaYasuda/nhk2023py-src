@@ -1,4 +1,5 @@
 ------- コントロールテーブルライクな変数群
+
 extern byte          _PINNUM_ENCODER_A[6];
 extern byte          _PINNUM_ENCODER_B[6];
 extern byte          _PINNUM_OUTPUT_DIR[6];
