@@ -34,6 +34,7 @@ float _INTEGRAL_VELOCITY_ERROR_LIMIT[6] = {
 byte _MODE[6] = {0};
 byte _DIRECTION_CONFIG[6] = {0};
 byte _FORWARD_LEVEL[6] = {0};
+byte _DT_MS=20;
 
 volatile long _current_position[6] = {0};
 float _current_velocity[6] = {0};

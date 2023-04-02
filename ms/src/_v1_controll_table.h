@@ -6,7 +6,7 @@ extern byte _PINNUM_ENCODER_B[6];
 extern byte _PINNUM_OUTPUT_DIR[6];
 extern byte _PINNUM_OUTPUT_PWM[6];
 extern int _RESOLUTION[6];
-extern byte __common_max_pwm = 240;
+extern byte __common_max_pwm;
 extern byte _MAX_PWM[6];
 extern float __common_gain_position_pid[3];
 extern float _GAIN_POSITION_PID[6][3];
@@ -18,6 +18,7 @@ extern float _INTEGRAL_VELOCITY_ERROR_LIMIT[6] ;
 extern byte _MODE[6];
 extern byte _DIRECTION_CONFIG[6];
 extern byte _FORWARD_LEVEL[6];
+extern byte _DT_MS;
 
 extern volatile long _current_position[6];
 extern float _current_velocity[6];
@@ -28,5 +29,6 @@ extern int _previous_position_error[6];
 extern float _previous_velocity_error[6];
 extern long _integral_position_error[6];
 extern float _integral_velocity_error[6];
+
 
 #endif // __V1_CONTROLL_TABLE_H_

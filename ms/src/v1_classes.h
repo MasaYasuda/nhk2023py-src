@@ -23,7 +23,7 @@ void __calc_pid_position();
 void __calc_ffpid_speed();
 
 void output();
-void switch_input();
+void __clear_table(byte addr);
 
 #endif // _V1_CLASSES_H_
 

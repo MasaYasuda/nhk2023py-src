@@ -1,8 +1,28 @@
+/**
+ * @file v1_classes.cpp
+ * @brief ArduinoMegaMotorSlave用の関数群です。
+ * @date 23/4/2 <br>
+ * ほぼ完成
+ * @par TEST<br>
+ * wawawa
+ * @author Masanaga Yasuda
+*/
+
 #include <Arduino.h>
 #include <TimerOne.h>
 #include "_v1_controll_table.h"
 
-extern float storage[300];
+void __clear_table(byte addr){
+  _current_position[addr]=0;
+  _current_velocity[addr]=0;
+  _goal_position[addr]=0;
+  _goal_velocity[addr]=0;
+  _output_pwm[addr]=0;
+  _previous_position_error[addr]=0;
+  _previous_velocity_error[addr]=0;
+  _integral_position_error[addr]=0;
+  _integral_velocity_error[addr]=0;
+}
 
 void serial_receive()
 {
@@ -46,6 +66,7 @@ void serial_receive()
             _goal_position[addr]=long(config_check*value);
           }
         }else if(addr>=200 && addr <206){//write _MODE
+          __clear_table(addr-200);
           _MODE[addr-200]=byte(value);
         }else if(addr>=210 && addr <216){//write _DIRECTION_CONFIG
           _DIRECTION_CONFIG[addr-210]=byte(value);
@@ -58,48 +79,43 @@ void serial_receive()
 }
 
 
+
+void __pinInterrupt0R(){if(digitalRead(_PINNUM_ENCODER_A[0])==1){_current_position[0]++;}else{_current_position[0]--;}}
+void __pinInterrupt1R(){if(digitalRead(_PINNUM_ENCODER_A[1])==1){_current_position[1]++;}else{_current_position[1]--;}}
+void __pinInterrupt2R(){if(digitalRead(_PINNUM_ENCODER_A[2])==1){_current_position[2]++;}else{_current_position[2]--;}}
+void __pinInterrupt3R(){if(digitalRead(_PINNUM_ENCODER_A[3])==1){_current_position[3]++;}else{_current_position[3]--;}}
+void __pinInterrupt4R(){if(digitalRead(_PINNUM_ENCODER_A[4])==1){_current_position[4]++;}else{_current_position[4]--;}}
+void __pinInterrupt5R(){if(digitalRead(_PINNUM_ENCODER_A[5])==1){_current_position[5]++;}else{_current_position[5]--;}}
+
+void __pinInterrupt0F(){if(digitalRead(_PINNUM_ENCODER_A[0])==0){_current_position[0]++;}else{_current_position[0]--;}}
+void __pinInterrupt1F(){if(digitalRead(_PINNUM_ENCODER_A[1])==0){_current_position[1]++;}else{_current_position[1]--;}}
+void __pinInterrupt2F(){if(digitalRead(_PINNUM_ENCODER_A[2])==0){_current_position[2]++;}else{_current_position[2]--;}}
+void __pinInterrupt3F(){if(digitalRead(_PINNUM_ENCODER_A[3])==0){_current_position[3]++;}else{_current_position[3]--;}}
+void __pinInterrupt4F(){if(digitalRead(_PINNUM_ENCODER_A[4])==0){_current_position[4]++;}else{_current_position[4]--;}}
+void __pinInterrupt5F(){if(digitalRead(_PINNUM_ENCODER_A[5])==0){_current_position[5]++;}else{_current_position[5]--;}}
+
+
 void encoder_setup(){
-  attachInterrupt(EncoderB[0], __pinInterrupt0R, RISING);
-  attachInterrupt(EncoderB[1], __pinInterrupt1R, RISING);
-  attachInterrupt(EncoderB[2], __pinInterrupt2R, RISING);
-  attachInterrupt(EncoderB[3], __pinInterrupt3R, RISING);
-  attachInterrupt(EncoderB[4], __pinInterrupt4R, RISING);
-  attachInterrupt(EncoderB[5], __pinInterrupt5R, RISING);
+  attachInterrupt(_PINNUM_ENCODER_B[0], __pinInterrupt0R, RISING);
+  attachInterrupt(_PINNUM_ENCODER_B[1], __pinInterrupt1R, RISING);
+  attachInterrupt(_PINNUM_ENCODER_B[2], __pinInterrupt2R, RISING);
+  attachInterrupt(_PINNUM_ENCODER_B[3], __pinInterrupt3R, RISING);
+  attachInterrupt(_PINNUM_ENCODER_B[4], __pinInterrupt4R, RISING);
+  attachInterrupt(_PINNUM_ENCODER_B[5], __pinInterrupt5R, RISING);
 
-  attachInterrupt(EncoderB[0], __pinInterrupt0F, FALLING);
-  attachInterrupt(EncoderB[1], __pinInterrupt1F, FALLING);
-  attachInterrupt(EncoderB[2], __pinInterrupt2F, FALLING);
-  attachInterrupt(EncoderB[3], __pinInterrupt3F, FALLING);
-  attachInterrupt(EncoderB[4], __pinInterrupt4F, FALLING);
-  attachInterrupt(EncoderB[5], __pinInterrupt5F, FALLING);
+  attachInterrupt(_PINNUM_ENCODER_B[0], __pinInterrupt0F, FALLING);
+  attachInterrupt(_PINNUM_ENCODER_B[1], __pinInterrupt1F, FALLING);
+  attachInterrupt(_PINNUM_ENCODER_B[2], __pinInterrupt2F, FALLING);
+  attachInterrupt(_PINNUM_ENCODER_B[3], __pinInterrupt3F, FALLING);
+  attachInterrupt(_PINNUM_ENCODER_B[4], __pinInterrupt4F, FALLING);
+  attachInterrupt(_PINNUM_ENCODER_B[5], __pinInterrupt5F, FALLING);
 }
-void __pinInterrupt0R(){if(digitalRead(EncoderA[0])==1){_current_position[0]++;}else{_current_position[0]--;}}
-void __pinInterrupt1R(){if(digitalRead(EncoderA[1])==1){_current_position[1]++;}else{_current_position[1]--;}}
-void __pinInterrupt2R(){if(digitalRead(EncoderA[2])==1){_current_position[2]++;}else{_current_position[2]--;}}
-void __pinInterrupt3R(){if(digitalRead(EncoderA[3])==1){_current_position[3]++;}else{_current_position[3]--;}}
-void __pinInterrupt4R(){if(digitalRead(EncoderA[4])==1){_current_position[4]++;}else{_current_position[4]--;}}
-void __pinInterrupt5R(){if(digitalRead(EncoderA[5])==1){_current_position[5]++;}else{_current_position[5]--;}}
 
-void __pinInterrupt0F(){if(digitalRead(EncoderA[0])==0){_current_position[0]++;}else{_current_position[0]--;}}
-void __pinInterrupt1F(){if(digitalRead(EncoderA[1])==0){_current_position[1]++;}else{_current_position[1]--;}}
-void __pinInterrupt2F(){if(digitalRead(EncoderA[2])==0){_current_position[2]++;}else{_current_position[2]--;}}
-void __pinInterrupt3F(){if(digitalRead(EncoderA[3])==0){_current_position[3]++;}else{_current_position[3]--;}}
-void __pinInterrupt4F(){if(digitalRead(EncoderA[4])==0){_current_position[4]++;}else{_current_position[4]--;}}
-void __pinInterrupt5F(){if(digitalRead(EncoderA[5])==0){_current_position[5]++;}else{_current_position[5]--;}}
-
-void timer_setup(){
-  Timer1.initialize(_DT_MS*1000); // 20msごとに割込み
-  Timer1.attachInterrupt(__timer_calc);
-}
-void __timer_calc(){
-  __calc_speed();
-  __calc_ffpid_speed();
-}
 void __calc_speed(){
   for(int i=0;i<6;i++){
         long error=_current_position[i]-_integral_position_error[i];
         _current_velocity[i]=float(error*1000*60/_RESOLUTION[i]/_DT_MS); //rpm
-        _integral_position_error[i]+=error[i];
+        _integral_position_error[i]+=error;
     }
 }
 
@@ -111,12 +127,13 @@ void __calc_pid_position(){
     _integral_position_error[i]+=error;
     _integral_position_error[i]  = constrain(_integral_position_error[i], -_INTEGRAL_POSITION_ERROR_LIMIT[i],_INTEGRAL_POSITION_ERROR_LIMIT[i]);
     float I=_GAIN_POSITION_PID[i][1]*float(_integral_position_error[i]);
-    float D=Kd_position[i]*float((error-_previous_position_error[i]))/_DT_MS;
+    float D=_GAIN_POSITION_PID[i][2]*float((error-_previous_position_error[i]))/_DT_MS;
     _previous_position_error[i]=error;
     _output_pwm[i]=int(constrain(P+I+D,-_MAX_PWM[i],_MAX_PWM[i]));
     }
   }
 }
+
 void __calc_ffpid_speed(){
   for(int i=0;i<6;i++){
     if(_MODE[i]==20){
@@ -128,9 +145,19 @@ void __calc_ffpid_speed(){
       float I=_GAIN_SPEED_FFPID[i][2]*_integral_velocity_error[i];
       float D=_GAIN_SPEED_FFPID[i][3]*(error-_previous_velocity_error[i])/_DT_MS;
       _previous_velocity_error[i]=error;
-      _output_pwm[i]=int(constrain(P+I+D,-_MAX_PWM[i],_MAX_PWM[i]));
+      _output_pwm[i]=int(constrain(F+P+I+D,-_MAX_PWM[i],_MAX_PWM[i]));
     }
   }
+}
+
+void __timer_calc(){
+  __calc_speed();
+  __calc_ffpid_speed();
+}
+
+void timer_setup(){
+  Timer1.initialize(_DT_MS*1000); // 20msごとに割込み
+  Timer1.attachInterrupt(__timer_calc);
 }
 
 void output(){
@@ -141,16 +168,16 @@ void output(){
           config_check=-1;
       }
 
-      int pwm[i]=int(config_check*_output_pwm[i]);
-      if (pwm[i] >= 0)
+      int pwm=int(config_check*_output_pwm[i]);
+      if (pwm >= 0)
       {
           digitalWrite(_PINNUM_OUTPUT_DIR[i], _FORWARD_LEVEL[i]);
-          analogWrite(_PINNUM_OUTPUT_PWM[i], pwm[i]);
+          analogWrite(_PINNUM_OUTPUT_PWM[i], pwm);
       }
       else
       {
           digitalWrite(_PINNUM_OUTPUT_DIR[i], 1 - _FORWARD_LEVEL[i]);
-          analogWrite(_PINNUM_OUTPUT_PWM[i], (-1) * pwm[i]);
+          analogWrite(_PINNUM_OUTPUT_PWM[i], (-1) * pwm);
       }
     }
     else {
@@ -159,6 +186,4 @@ void output(){
     }
   }
 }
-
-void switch_input()
 

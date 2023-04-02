@@ -1,4 +1,4 @@
-import nhk23
+import v1_nhk23
 import pygame
 import time
 import os
@@ -11,7 +11,7 @@ try:
 
     ##### TRANSMITTER SETUP
 
-    transmitter = nhk23.Transmitter("/dev/ArduinoMega1", 115200)
+    transmitter = v1_nhk23.Transmitter("/dev/ArduinoMega1", 115200)
 
     # If speed pid
     mode_array=[0,0,100,100,100,100]
@@ -28,15 +28,8 @@ try:
         events = pygame.event.get()
         
         ##### VECTOR CALCLATION
-        move=j.get_axis(1)*(-1)
-        rotation=j.get_axis(3)*0.3
-        
-        # JoyStickのわずかな傾きは無視する
-        if abs(move) < 0.1:
-            move = 0
-        if abs(rot) < 0.05:
-            rot = 0
-
+        move=v1_nhk23.joy_threshold(j.get_axis(1)*(-1),0.1)
+        rotation=v1_nhk23.joy_threshold(j.get_axis(3)*0.3,0.1)
         # 運動学（簡易版）の計算
         R_value = move - rot
         L_value = move + rot

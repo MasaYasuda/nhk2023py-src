@@ -1,2 +1,0 @@
-ゾウ　右手　Dynamixel MAX開き 1350~2048 前ならえ
-　　　左手　Dynamixel 前ならえ　1900~2600 MAX開き
