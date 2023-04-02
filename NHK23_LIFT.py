@@ -8,37 +8,31 @@ try:
     pygame.init()
     j = pygame.joystick.Joystick(0)
     j.init()
-
+    print("コントローラのボタンを押してください")
+    
     ##### TRANSMITTER SETUP
     
-    mode=[100,100,0,0,0,0]
+    mode=[10,10,0,0,0,0]
     direction_config =[3,3,0,0,0,0] #回転が逆だったら3にする
     forward_level=[1,1,1,1,1,1]
     
     transmitter = v1_nhk23.Transmitter("/dev/ArduinoMega1", 115200,mode,direction_config,forward_level)
-    diffdrive=v1_nhk23.DiffDrive()
+    goal_position=0
     
-    print("コントローラのボタンを押してください")
     while True:
         transmitter.reset_input_buffer()
         
         ## Get Inputs
         events = pygame.event.get()
-        
-        ##### VECTOR CALCLATION
-        
-        move=v1_nhk23.joy_threshold(j.get_axis(1)*(-1),0.1)
-        rot=v1_nhk23.joy_threshold(j.get_axis(3)*0.3,0.1)
-        
-        R_value,L_value=diffdrive.calc_speed_radicon(move,rot)
-        
-        ##### TRANSMIT 
-        transmitter.write_motor_single(0,R_value)
+        for event in events:
+          if event.type ==pygame.JOYHATMOTION: # 変化があった時のみ反応する
+            goal_position+=1000*(j.get_hat(0))[1]
+            time.sleep(0.05)
+            
+        transmitter.write_motor_single(0,goal_position)
         time.sleep(0.05)
-        transmitter.write_motor_single(1,L_value)
+        transmitter.write_motor_single(1,goal_position)
         time.sleep(0.05)
-
-
 
 except KeyboardInterrupt:
     print("プログラムを終了します")

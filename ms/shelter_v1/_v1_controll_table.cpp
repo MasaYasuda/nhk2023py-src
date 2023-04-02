@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <_v1_controll_table.h>
 
 byte _PINNUM_ENCODER_A[6] = {22, 23, 24, 25, 26, 27};
 byte _PINNUM_ENCODER_B[6] = {0, 1, 5, 4, 3, 2};

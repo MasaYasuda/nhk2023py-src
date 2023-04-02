@@ -11,6 +11,7 @@
 #include <Arduino.h>
 #include <TimerOne.h>
 #include "_v1_controll_table.h"
+#include "v1_classes.h"
 
 void __clear_table(byte addr){
   _current_position[addr]=0;
@@ -68,6 +69,9 @@ void serial_receive()
         }else if(addr>=200 && addr <206){//write _MODE
           __clear_table(addr-200);
           _MODE[addr-200]=byte(value);
+          if (_MODE[addr-200]==10 || _MODE[addr-200]==20){
+            encoder_setup(addr-200);
+          }
         }else if(addr>=210 && addr <216){//write _DIRECTION_CONFIG
           _DIRECTION_CONFIG[addr-210]=byte(value);
         }else if(addr>=220 && addr <226){//write _FORWARD_LEVEL
@@ -95,20 +99,36 @@ void __pinInterrupt4F(){if(digitalRead(_PINNUM_ENCODER_A[4])==0){_current_positi
 void __pinInterrupt5F(){if(digitalRead(_PINNUM_ENCODER_A[5])==0){_current_position[5]++;}else{_current_position[5]--;}}
 
 
-void encoder_setup(){
-  attachInterrupt(_PINNUM_ENCODER_B[0], __pinInterrupt0R, RISING);
-  attachInterrupt(_PINNUM_ENCODER_B[1], __pinInterrupt1R, RISING);
-  attachInterrupt(_PINNUM_ENCODER_B[2], __pinInterrupt2R, RISING);
-  attachInterrupt(_PINNUM_ENCODER_B[3], __pinInterrupt3R, RISING);
-  attachInterrupt(_PINNUM_ENCODER_B[4], __pinInterrupt4R, RISING);
-  attachInterrupt(_PINNUM_ENCODER_B[5], __pinInterrupt5R, RISING);
-
-  attachInterrupt(_PINNUM_ENCODER_B[0], __pinInterrupt0F, FALLING);
-  attachInterrupt(_PINNUM_ENCODER_B[1], __pinInterrupt1F, FALLING);
-  attachInterrupt(_PINNUM_ENCODER_B[2], __pinInterrupt2F, FALLING);
-  attachInterrupt(_PINNUM_ENCODER_B[3], __pinInterrupt3F, FALLING);
-  attachInterrupt(_PINNUM_ENCODER_B[4], __pinInterrupt4F, FALLING);
-  attachInterrupt(_PINNUM_ENCODER_B[5], __pinInterrupt5F, FALLING);
+void encoder_setup(byte num){
+  switch (num)
+  {
+  case 0:
+    attachInterrupt(_PINNUM_ENCODER_B[0], __pinInterrupt0R, RISING);
+    attachInterrupt(_PINNUM_ENCODER_B[0], __pinInterrupt0F, FALLING);
+    break;
+  case 1:
+    attachInterrupt(_PINNUM_ENCODER_B[1], __pinInterrupt1R, RISING);
+    attachInterrupt(_PINNUM_ENCODER_B[1], __pinInterrupt1F, FALLING);
+    break;
+  case 2:
+    attachInterrupt(_PINNUM_ENCODER_B[2], __pinInterrupt2R, RISING);
+    attachInterrupt(_PINNUM_ENCODER_B[2], __pinInterrupt2F, FALLING);
+    break;
+  case 3:
+    attachInterrupt(_PINNUM_ENCODER_B[3], __pinInterrupt3R, RISING);
+    attachInterrupt(_PINNUM_ENCODER_B[3], __pinInterrupt3F, FALLING);
+    break;
+  case 4:
+    attachInterrupt(_PINNUM_ENCODER_B[4], __pinInterrupt4R, RISING);
+    attachInterrupt(_PINNUM_ENCODER_B[4], __pinInterrupt4F, FALLING);
+    break;
+  case 5:
+    attachInterrupt(_PINNUM_ENCODER_B[5], __pinInterrupt5R, RISING);
+    attachInterrupt(_PINNUM_ENCODER_B[5], __pinInterrupt5F, FALLING);
+    break;
+  default:
+    break;
+  }
 }
 
 void __calc_speed(){

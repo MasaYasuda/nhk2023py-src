@@ -367,7 +367,22 @@ class Transmitter (serial.Serial):
         目標値の配列
     """
     self.__write_all(self.__ADDR_MOTOR,value)
+  
+  def reset_data_single(self,num,mode):
+    """Slaveのデータをリセットまたはモードを変更する
     
+    ArduinoSlaveのcontroll_tableに保存された定数を除くデータのリセットを行なう。
+    使用例:位置型PID制御におけるカウントのリセット、モードの変更
+    
+    ※ Slave側ではmodeの指定命令を受信したときデータをリセットする仕様になっている。
+
+    Parameters
+    ----------
+    num : int
+        リセットするデータのモーター番号
+    mode : int
+    """
+    self.__write_single(self.__ADDR_MODE+num,mode)
 
 
 class Dynamixel:

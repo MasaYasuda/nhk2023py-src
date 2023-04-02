@@ -51,11 +51,11 @@ EMG=1 //端のスイッチが押されたとき
 
 ピン割込み(pin1,flip1)
 flip(){
-  EMG=1
+  EMG=1　//反時計回転禁止
 }
 ピン割込み(pin2,flip2)
 flip(){
-  EMG=2
+  EMG=2 //時計回転禁止
 }
 
 loop(){
@@ -64,10 +64,12 @@ loop(){
   if(時計回転){
     if(EMG!=2){
       回す
+      EMG=0
     }
   }else if(反時計回転){
     if(EMG!=1){
       回す
+      EMG=0
     }
   }
 }

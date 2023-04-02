@@ -2,7 +2,7 @@
 #define _V1_CLASSES_H_
 
 void serial_receive();
-void encoder_setup();
+void encoder_setup(byte num);
 void __pinInterrupt0R();
 void __pinInterrupt1R();
 void __pinInterrupt2R();
