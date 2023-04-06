@@ -36,7 +36,7 @@ void serial_receive()
     tmp_sum += buf[0];
     if (buf[0] == 0xFF)
     { // 開始バイトの場合
-      Serial.println("RECEIVED");
+      //Serial.println("RECEIVED");
       for (byte i = 1; i < 6; i++)
       {
         buf[i] = Serial.read();
@@ -47,7 +47,7 @@ void serial_receive()
 
       if (buf[6]==tmp_sum)
       { // if checksum is correct
-        Serial.println("CORRECT CHECKSUM");
+        //Serial.println("CORRECT CHECKSUM");
         byte addr = buf[1];  
         byte tmp_buf[4] = {0};  
         float value = 0;    
@@ -56,10 +56,10 @@ void serial_receive()
           tmp_buf[i] = buf[i + 2];
         }
         memcpy(&value, tmp_buf, sizeof(value));
-        Serial.println(addr);
-        Serial.println(value);
+        //Serial.println(addr);
+        //Serial.println(value);
         if (addr>=0 && addr <6 ){
-          Serial.println("VALUE INPUT");
+          //Serial.println("VALUE INPUT");
           int config_check=1;
           if(_DIRECTION_CONFIG[addr]==2 ||_DIRECTION_CONFIG[addr]==3){
               config_check=-1;
@@ -71,11 +71,13 @@ void serial_receive()
             _goal_velocity[addr]=float(config_check*value);
           }else if(_MODE[addr]==10){// 位置型PIDモード
             _goal_position[addr]=long(config_check*value);
+          }else{
+            __clear_table(addr);
+            _MODE[addr]=0;
           }
         }else if(addr>=200 && addr <206){//write _MODE
           __clear_table(addr-200);
           _MODE[addr-200]=byte(value);
-          //Serial.println(_MODE[addr-200]);
           if (_MODE[addr-200]==10 || _MODE[addr-200]==20){
             encoder_setup(addr-200);
           }

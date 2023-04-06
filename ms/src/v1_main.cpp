@@ -5,16 +5,17 @@
 void setup(){
   Serial.begin(115200);
   //timer_setup();
-  Serial.print("BEGIN\n");
+  //Serial.print("BEGIN\n");
 }
 void loop(){
   serial_receive();
   /*
-  output();
+  
   
   Serial.print(_output_pwm[0]);
   Serial.print(" ");
   Serial.println(_output_pwm[1]);
   */
+  output();
   delay(10);
 }
