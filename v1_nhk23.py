@@ -319,11 +319,11 @@ class Transmitter (serial.Serial):
     # 3~6Byte目はfloat型数値
     # 7Byte目はチェックサム（開始宣言バイト0xFFも含む）
     
-    data = [0xFF, addr_direct.to_bytes(1,"big"),float(value)]
-    packet = struct.pack('>Bcf', *data)
+    data = [0xFF, addr_direct.to_bytes(1,"little"),float(value)]
+    packet = struct.pack('<Bcf', *data)
     checksum=sum(packet) & 0xFF
     self.write(packet)
-    self.write(checksum)
+    self.write(checksum.to_bytes(1,"little"))
     print(packet,checksum)
     
     

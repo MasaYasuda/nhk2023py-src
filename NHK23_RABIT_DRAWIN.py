@@ -15,7 +15,7 @@ try:
     direction_config =[3,3,0,0,0,0] #回転が逆だったら3にする
     forward_level=[1,1,1,1,1,1]
     
-    transmitter = v1_nhk23.Transmitter("/dev/ArduinoMega1", 115200,mode,direction_config,forward_level)
+    transmitter = v1_nhk23.Transmitter("/dev/ttyACM0", 115200,mode,direction_config,forward_level)
 
     while True:
         transmitter.reset_input_buffer()
@@ -27,6 +27,7 @@ try:
         
         value=v1_nhk23.joy_threshold(j.get_axis(1)*(-1)*0.3,0.1)
         
+    
         ##### TRANSMIT 
         transmitter.write_motor_single(0,value)
         time.sleep(0.05)

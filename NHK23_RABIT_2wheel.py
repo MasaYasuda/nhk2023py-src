@@ -15,7 +15,7 @@ try:
     direction_config =[3,3,0,0,0,0] #回転が逆だったら3にする
     forward_level=[1,1,1,1,1,1]
     
-    transmitter = v1_nhk23.Transmitter("/dev/ArduinoMega1", 115200,mode,direction_config,forward_level)
+    transmitter = v1_nhk23.Transmitter("/dev/ttyACM0", 115200,mode,direction_config,forward_level)
     diffdrive=v1_nhk23.DiffDrive()
     
     print("コントローラのボタンを押してください")
@@ -32,6 +32,7 @@ try:
         
         R_value,L_value=diffdrive.calc_speed_radicon(move,rot)
         
+        # print(R_value,L_value)
         ##### TRANSMIT 
         transmitter.write_motor_single(0,R_value)
         time.sleep(0.05)
