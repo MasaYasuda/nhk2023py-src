@@ -268,7 +268,7 @@ class DiffDrive:
       左車輪エンコーダーの目標観測回転量
     """
   
-    mv=self.__MAX_MOVE * move[i] * 2 * 30000 / self.__DIAMETER /math.pi # N[rpm]=30*v[m/s]/(r[mm]*pi)
+    mv=self.__MAX_MOVE * move * 2 * 30000 / self.__DIAMETER /math.pi # N[rpm]=30*v[m/s]/(r[mm]*pi)
     rt=self.__MAX_ROT * rot *self.__DISTANCE/ self.__DIAMETER # v[m/s]=ω*r=ω'*r'
     R_speed=(mv+rt)*self.__GEAR_RATIO
     L_speed=(mv-rt)*self.__GEAR_RATIO
