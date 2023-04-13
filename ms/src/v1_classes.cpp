@@ -47,7 +47,7 @@ void serial_receive()
 
       if (buf[6]==tmp_sum)
       { // if checksum is correct
-        //Serial.println("CORRECT CHECKSUM");
+        Serial.println("CORRECT CHECKSUM");
         byte addr = buf[1];  
         byte tmp_buf[4] = {0};  
         float value = 0;    
@@ -76,6 +76,8 @@ void serial_receive()
             _MODE[addr]=0;
           }
         }else if(addr>=200 && addr <206){//write _MODE
+          //Serial.print("MODE:");
+          //Serial.println(value);
           __clear_table(addr-200);
           _MODE[addr-200]=byte(value);
           if (_MODE[addr-200]==10 || _MODE[addr-200]==20){

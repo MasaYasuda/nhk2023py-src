@@ -20,7 +20,7 @@ float _GAIN_POSITION_PID[6][3] = {
 
 // rabit roller ffpid ... {0.10 / 1058, 0.0, 0.00002, 0.000}
 
-float __common_gain_speed_ffpid[4] = {0.0, 0.0, 0.00001, 0.000};
+float __common_gain_speed_ffpid[4] = {0.0, 0.0, 0.01, 0.000};
 float _GAIN_SPEED_FFPID[6][4] = {
     {__common_gain_speed_ffpid[0], __common_gain_speed_ffpid[1], __common_gain_speed_ffpid[2], __common_gain_speed_ffpid[3]}, 
     {__common_gain_speed_ffpid[0], __common_gain_speed_ffpid[1], __common_gain_speed_ffpid[2], __common_gain_speed_ffpid[3]}, 
@@ -32,7 +32,7 @@ float _GAIN_SPEED_FFPID[6][4] = {
 long __common_integral_position_error_limit = 100000000;
 long _INTEGRAL_POSITION_ERROR_LIMIT[6] = {
     __common_integral_position_error_limit, __common_integral_position_error_limit, __common_integral_position_error_limit, __common_integral_position_error_limit, __common_integral_position_error_limit, __common_integral_position_error_limit};
-float __common_integral_speed_error_limit = 100000000;
+float __common_integral_speed_error_limit = 100000;
 float _INTEGRAL_VELOCITY_ERROR_LIMIT[6] = {
     __common_integral_speed_error_limit, __common_integral_speed_error_limit, __common_integral_speed_error_limit, __common_integral_speed_error_limit, __common_integral_speed_error_limit, __common_integral_speed_error_limit};
 byte _MODE[6] = {0};
