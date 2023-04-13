@@ -5,7 +5,7 @@
 void setup(){
   Serial.begin(115200);
   //timer_setup();
-  //Serial.print("BEGIN\n");
+  Serial.print("BEGIN\n");
 }
 void loop(){
   serial_receive();
