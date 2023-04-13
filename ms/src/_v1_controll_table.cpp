@@ -17,7 +17,10 @@ float _GAIN_POSITION_PID[6][3] = {
     {__common_gain_position_pid[0], __common_gain_position_pid[1], __common_gain_position_pid[2]},
     {__common_gain_position_pid[0], __common_gain_position_pid[1], __common_gain_position_pid[2]},
 };
-float __common_gain_speed_ffpid[4] = {0.10 / 1058, 0.0, 0.00002, 0.000};
+
+// rabit roller ffpid ... {0.10 / 1058, 0.0, 0.00002, 0.000}
+
+float __common_gain_speed_ffpid[4] = {0.0, 0.0, 0.00001, 0.000};
 float _GAIN_SPEED_FFPID[6][4] = {
     {__common_gain_speed_ffpid[0], __common_gain_speed_ffpid[1], __common_gain_speed_ffpid[2], __common_gain_speed_ffpid[3]}, 
     {__common_gain_speed_ffpid[0], __common_gain_speed_ffpid[1], __common_gain_speed_ffpid[2], __common_gain_speed_ffpid[3]}, 
