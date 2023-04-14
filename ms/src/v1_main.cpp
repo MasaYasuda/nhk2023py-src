@@ -15,7 +15,9 @@ void loop(){
   Serial.println(_output_pwm[1]);
   
   */
-  
+  Serial.print(_current_position[0]);
+  Serial.print(" ");
+  Serial.println(_current_position[1]);
   output();
   delay(10);
 }
