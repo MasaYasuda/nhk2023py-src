@@ -3,6 +3,7 @@ import math
 import serial
 import struct
 import os
+import time
 
 
 def joy_threshold(value,threshold):
@@ -304,7 +305,11 @@ class Transmitter (serial.Serial):
     forward_level : list[int]*6
         正回転の場合のDIRピンのレベル(0 or 1)
     """
-    super().__init__(port, baudrate) # 基底クラスのコンストラクタをオーバーライド
+    # 
+    super().__init__(port,baudrate) # 基底クラスのコンストラクタをオーバーライド
+    time.sleep(3)
+
+
     self.__ADDR_MOTOR=0
     self.__ADDR_MODE=200
     self.__ADDR_DIRECTION_CONFIG=210

@@ -2,13 +2,14 @@ import v1_nhk23
 import time
 
 try:
-    Diff=v1_nhk23.DiffDrive(127,254,0.5,30,24)
+    Diff=v1_nhk23.DiffDrive(127,254,0.4,30,28)
     mode=[20,20,0,0,0,0]
-    dir=[0,0,0,0,0,0]
-    lev=[0,0,0,0,0,0]
+    dir=[2,0,0,0,0,0]
+    lev=[0,0,1,1,1,1]
     Transmitter=v1_nhk23.Transmitter("/dev/ttyACM0",115200,mode,dir,lev)
-    time.sleep(0.5)
-    while 1:    
+    
+    time.sleep(2)
+    while 1: 
         Transmitter.reset_input_buffer()
         R_speed,L_speed=Diff.calc_speed(0,1)
         Transmitter.write_motor_single(0,R_speed)

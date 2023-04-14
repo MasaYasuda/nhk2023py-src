@@ -10,13 +10,12 @@ void setup(){
 void loop(){
   serial_receive();
   /*
-  
-  
-  
-  */
   Serial.print(_output_pwm[0]);
   Serial.print(" ");
   Serial.println(_output_pwm[1]);
+  
+  */
+  
   output();
   delay(10);
 }
