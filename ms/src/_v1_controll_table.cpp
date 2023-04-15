@@ -8,7 +8,7 @@ byte _PINNUM_OUTPUT_PWM[6]{4, 5, 6, 7, 8, 9};
 int _RESOLUTION[6] = {512, 512, 512, 512, 2048, 2048};
 byte __common_max_pwm = 240;
 byte _MAX_PWM[6] = {__common_max_pwm,__common_max_pwm ,__common_max_pwm ,__common_max_pwm ,__common_max_pwm ,__common_max_pwm};
-float __common_gain_position_pid[3] = {0.01, 0.000, 0.0};
+float __common_gain_position_pid[3] = {0.025, 0.0005, 0.00};
 float _GAIN_POSITION_PID[6][3] = {
     {__common_gain_position_pid[0], __common_gain_position_pid[1], __common_gain_position_pid[2]},
     {__common_gain_position_pid[0], __common_gain_position_pid[1], __common_gain_position_pid[2]},

@@ -3,7 +3,7 @@ import time
 
 try:
     Diff=v1_nhk23.DiffDrive(127,254,0.4,30,28)
-    mode=[20,0,0,0,0,0]
+    mode=[20,20,0,0,0,0]
     dir=[2,0,0,0,0,0]
     lev=[1,1,1,1,1,1]
     Transmitter=v1_nhk23.Transmitter("/dev/ArduinoMega1",115200,mode,dir,lev)
@@ -27,6 +27,7 @@ try:
 
 except KeyboardInterrupt:
     print("プログラムを終了します")
+    Transmitter.reset_data_all()
     Transmitter.reset_data_all()
     time.sleep(1)
     Transmitter.close()
