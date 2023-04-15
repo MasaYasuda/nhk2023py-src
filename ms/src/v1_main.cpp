@@ -14,10 +14,10 @@ void loop(){
   Serial.print(" ");
   Serial.println(_output_pwm[1]);
   
-  */
-  Serial.print(_current_position[0]);
+  Serial.print(_goal_velocity[0]);
   Serial.print(" ");
-  Serial.println(_current_position[1]);
+  Serial.println(_goal_velocity[1]);
+  */
   output();
-  delay(10);
+  delay(5);
 }

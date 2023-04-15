@@ -307,7 +307,8 @@ class Transmitter (serial.Serial):
     """
     # 
     super().__init__(port,baudrate) # 基底クラスのコンストラクタをオーバーライド
-    time.sleep(3)
+    
+    time.sleep(2)
 
 
     self.__ADDR_MOTOR=0
@@ -316,6 +317,7 @@ class Transmitter (serial.Serial):
     self.__ADDR_FORWARD_LEVEL=220
     
     #mode等の初期設定
+    self.reset_input_buffer()
     self.__write_all(self.__ADDR_MODE,mode)
     self.__write_all(self.__ADDR_DIRECTION_CONFIG,direction_config)
     self.__write_all(self.__ADDR_FORWARD_LEVEL,forward_level)
@@ -405,3 +407,8 @@ class Transmitter (serial.Serial):
     """
     self.__write_single(self.__ADDR_MODE+num,mode)
 
+  def reset_data_all(self):
+    """Slaveのデータをリセットし出力無効モードにする
+    """
+    for i in range(0,6):
+      self.reset_data_single(i,0)

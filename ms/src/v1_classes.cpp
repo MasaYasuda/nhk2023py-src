@@ -71,7 +71,6 @@ void serial_receive()
             _goal_velocity[addr]=float(config_check*value);
           }else if(_MODE[addr]==10){// 位置型PIDモード
             _goal_position[addr]=long(config_check*value);
-            Serial.println("POSITION MODE");
           }
         }else if(addr>=200 && addr <206){//write _MODE
           //Serial.print("MODE:");
