@@ -180,6 +180,7 @@ void __calc_ffpid_speed(){
 
 void __timer_calc(){
   __calc_speed();
+  __calc_pid_position();
   __calc_ffpid_speed();
 }
 
