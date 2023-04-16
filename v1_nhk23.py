@@ -176,6 +176,95 @@ class OmniDrive:
       speed[i]=speed[i]*self.__GEAR_RATIO
     return speed
     
+class MechanumDrive:
+  def __init__(self,diameter=0.0,diagonal=0.0,max_move=0.0,max_rot=0.0,gear_ratio=0.0):
+    """4輪メカナム制御用各モーター回転量計算
+
+    Parameters
+    ----------
+    diameter : float, optional
+        直径[mm], by default 0.0
+    diagonal : float, optional
+        対角線長[mm], by default 0.0
+    max_move : float, optional
+        最大移動速度[m/s], by default 0.0
+    max_rot : float, optional
+        最大旋回速度[rpm], by default 0.0
+    gear_ratio : float, optional
+        最終的な出力回転量と観測エンコーダーの回転量の比
+        =エンコーダーの観測回転量/出力1回転
+        , by default 0.0
+    """
+    self.__DIAMETER =diameter
+    self.__DIAGONAL=diagonal
+    self.__MAX_MOVE=max_move
+    self.__MAX_ROT=max_rot
+    self.__GEAR_RATIO=gear_ratio
+    
+  def calc_speed_radicon(self,r,theta,rot):
+    """
+    ラジコン制御用各エンコーダーの目標観測回転量の算出
+    配列は右前、左前、左後、右後 の順
+
+    Parameters
+    ----------
+    r : float
+        ベクトルの強さ。-1~1
+    theta : float
+        偏角[rad]
+    rot : float
+        旋回の強さ。-1~1
+
+    Returns
+    -------
+    speed : list [float] *4
+      各モーターの回転の強度-1~1
+    """
+    x = r * math.cos(theta)/math.sqrt(2)
+    y = r * math.sin(theta)/math.sqrt(2)
+    move = [x - y, x + y, -x + y, -x - y]
+    
+    check_ratio=1
+    speed = [0] * 4
+    
+    for i in range(0,4):
+      speed[i] = move[i] + rot
+      if speed[i] > 1:
+        check_ratio = min(check_ratio , 1/speed[i] )
+    if check_ratio<1:
+      for i in range(0,4):
+        speed[i] = check_ratio* (move[i] + rot)
+        
+    return speed
+  
+  def calc_speed(self,r,theta,rot):
+    """フィードバック制御用各エンコーダーの目標観測回転量の算出
+    配列は右前、左前、左後、右後 の順
+
+    Parameters
+    ----------
+    r : float
+        -1~1
+    theta : float
+        [rad]
+    rot : float
+        -1~1
+        
+    Returns
+    -------
+    speed : list[float]*4
+        エンコーダーの目標観測回転量[rpm]
+    """
+    x = r * math.cos(theta)/math.sqrt(2)
+    y = r * math.sin(theta)/math.sqrt(2)
+    move = [x - y, x + y, -x + y, -x - y]
+    speed=[0]*4
+    
+    for i in range(0,4):
+      speed[i]=self.__MAX_MOVE * move * 2 * 30000 / self.__DIAMETER /math.pi # N[rpm]=30*v[m/s]/(r[mm]*pi)
+      speed[i]+=self.__MAX_ROT * rot *self.__DIAGONAL/ self.__DIAMETER # v[m/s]=ω*r=ω'*r'
+      speed[i]=speed[i]*self.__GEAR_RATIO
+    return speed
     
 
 class DiffDrive:

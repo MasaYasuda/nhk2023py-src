@@ -49,7 +49,7 @@ forward_level
  戻し限界検出スイッチ＝A
  引き込み限界検出スイッチ＝B
  推奨速度：正回転(=戻し)=0.3
-           負回転(=引き込み)=0.5
+           負回転(=引き込み)=-0.5
 
 Dynamixelハンド
   ID1(右手):2500~3800(開) kakunou=2138  kai =3803 chokkaku=3193   hoji=2922
@@ -71,11 +71,13 @@ Dynamixelハンド
 
  [右前,左前,左後,右後]
  速度型FFPID
- エンコーダー分解度=360?
+ エンコーダー分解度=360
  MAX_PWM=240
- FFPIDゲイン=0,0,0.01,0
- integral_speed_error_limit = 100000
+ FFPIDゲイン=0,0,0.01?,0
+ integral_speed_error_limit = 100000?
  direction_config=[?,?,?,?]
+ 設定:DiffDrive(127,677,0.4,20,28)　一応もっと出せるはず
+ 上設定推奨最大値:move=1 , rot=1?
 
 射出ローラー
  [上、下]
@@ -95,7 +97,7 @@ Dynamixelハンド
  [R,L]
  [上、下]
  速度型FFPID
- エンコーダー分解度＝256
+ エンコーダー分解度＝256?
  MAX_PWM=240
  FFPIDゲイン=?,?,?,?
  direction_config=[?,?]  
@@ -107,7 +109,7 @@ Dynamixelハンド
 
 
 ------Joystick Button 割り当て-------
-# DualShock4
+DualShock4
 
 四角ボタン 3
 バツボタン 0
