@@ -22,5 +22,5 @@ void loop(){
   */
   check_sw(0);
   output();
-  delay(10);
+  delay(2);
 }

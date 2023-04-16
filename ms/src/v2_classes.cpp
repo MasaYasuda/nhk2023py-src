@@ -244,12 +244,15 @@ void output(){
 
 void check_sw(byte num){//num:0~5
   if(digitalRead(_PINNUM_INPUT_A[num])==0){
-    _sw_index[num]=1;
-    Serial.println("index:1");
+    if(_sw_index[num]!=2){
+      _sw_index[num]=1;
+      Serial.println("index:1");
+    }
   }
   else if(digitalRead(_PINNUM_INPUT_B[num])==0){
-    _sw_index[num]=2;
-    Serial.println("index:2");
-    
+    if(_sw_index[num]!=1){
+      _sw_index[num]=2;
+      Serial.println("index:2");
+    }
   }
 }

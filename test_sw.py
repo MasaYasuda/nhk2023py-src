@@ -9,14 +9,14 @@ try:
     time.sleep(0.5)
     while 1: 
         st=time.time()
-        while time.time()-st<3:
+        while time.time()-st<4:
           Transmitter.reset_input_buffer()
-          Transmitter.write_motor_single(0,0.15)
+          Transmitter.write_motor_single(0,0.25)
           time.sleep(0.1)
         st=time.time()
-        while time.time()-st<3:
+        while time.time()-st<4:
           Transmitter.reset_input_buffer()
-          Transmitter.write_motor_single(0,-0.15)
+          Transmitter.write_motor_single(0,-0.6)
           time.sleep(0.1)
         
 
