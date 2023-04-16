@@ -5,6 +5,8 @@ this is the codes for Robots made by Grobo in NHK2023
 forward_level
  polulu:1 , cytron 0
 
+エンコーダー：正面（銀色の面）から見て反時計回りが正
+
 -----------RABBIT---------
 定義：前＝射出方向
 
@@ -101,3 +103,35 @@ Dynamixelハンド
 Dynamixelハンド
   右手　Dynamixel MAX開き 1350~2048 前ならえ
 　左手　Dynamixel 前ならえ　1900~2600 MAX開き
+
+
+
+------Joystick Button 割り当て-------
+# DualShock4
+
+四角ボタン 3
+バツボタン 0
+丸ボタン 1
+三角ボタン 2
+L1 4
+R1 5
+L2 6
+  axis 2 (up -1 /down 1)
+R2 7 
+  axis 5 (up -1 /down 1)
+押し込み
+シェアボタン 8
+オプションボタン 9
+左スティック 11
+右スティック 12
+psボタン 10
+タッチパッド x
+十字キー座標 
+  右左 hat 0[0] (right 1 /left -1)
+  上下 hat 0[1] (up 1 /down -1)
+左スティック
+  x座標 0 (up 1 /down -1)
+  y座標 1 (up -1 /down 1)
+右スティック
+  x座標 3 (up 1 /down -1)
+  y座標 4 (up -1 /down 1)

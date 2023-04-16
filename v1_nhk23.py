@@ -1,4 +1,5 @@
-
+"""運動学計算・通信等用関数+クラス
+"""
 import math
 import serial
 import struct

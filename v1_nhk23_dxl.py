@@ -1,3 +1,5 @@
+"""Dynamixel操作用クラス
+"""
 import os
 
 ###### 触らない
