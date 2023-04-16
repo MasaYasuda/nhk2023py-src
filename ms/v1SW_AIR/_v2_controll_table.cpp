@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include <_v1_controll_table.h>
+#include <_v2_controll_table.h>
 
 byte _PINNUM_ENCODER_A[6] = {22, 23, 24, 25, 26, 27};
 byte _PINNUM_ENCODER_B[6] = {0, 1, 5, 4, 3, 2};
@@ -45,7 +45,10 @@ float _current_velocity[6] = {0};
 long _goal_position[6] = {0};
 float _goal_velocity[6] = {0};
 int _output_pwm[6] = {0};
+byte _output_air[12]={0};　//0...0番ポートDIRピン,1...0番ポートPWMピン,2...1番ポートDIRピン
 int _previous_position_error[6] = {0};
 float _previous_velocity_error[6] = {0};
 long _integral_position_error[6] = {0};
 float _integral_velocity_error[6] = {0};
+
+byte _sw_index[6]={0};

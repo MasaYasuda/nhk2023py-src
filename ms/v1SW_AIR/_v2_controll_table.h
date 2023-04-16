@@ -1,5 +1,10 @@
-#ifndef __V1_CONTROLL_TABLE_H_
-#define __V1_CONTROLL_TABLE_H_
+#ifndef __V2_CONTROLL_TABLE_H_
+#define __V2_CONTROLL_TABLE_H_
+
+/**
+ * これは接触スイッチとAir操作も併用したコントロールテーブルです（試験的）
+*/
+
 
 extern byte _PINNUM_ENCODER_A[6];
 extern byte _PINNUM_ENCODER_B[6];
@@ -22,12 +27,16 @@ extern byte _DT_MS;
 
 extern volatile long _current_position[6];
 extern float _current_velocity[6];
+
 extern long _goal_position[6];
 extern float _goal_velocity[6];
 extern int _output_pwm[6];
+extern byte _output_air[12];
 extern int _previous_position_error[6];
 extern float _previous_velocity_error[6];
 extern long _integral_position_error[6];
 extern float _integral_velocity_error[6];
 
-#endif // __V1_CONTROLL_TABLE_H_
+extern byte _sw_index[6];
+
+#endif // __V2_CONTROLL_TABLE_H_

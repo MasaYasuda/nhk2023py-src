@@ -1,5 +1,10 @@
-#ifndef _V1_CLASSES_H_
-#define _V1_CLASSES_H_
+#ifndef _V2_CLASSES_H_
+#define _V2_CLASSES_H_
+
+/**
+ * これは接触スイッチとAir操作も併用した関数・クラス群です（試験的）
+*/
+byte evenOrOdd(byte x);
 
 void serial_receive();
 void encoder_setup(byte num);
@@ -26,7 +31,9 @@ void __calc_ffpid_speed();
 void output();
 void __clear_table(byte addr);
 
-#endif // _V1_CLASSES_H_
+void check_sw(byte num);
+
+#endif // _V2_CLASSES_H_
 
 
 
