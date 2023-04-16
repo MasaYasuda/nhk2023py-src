@@ -35,6 +35,7 @@ void __clear_table(byte addr){
   _previous_velocity_error[addr]=0;
   _integral_position_error[addr]=0;
   _integral_velocity_error[addr]=0;
+  _sw_index[addr]=0;
 }
 
 void serial_receive()
@@ -85,6 +86,11 @@ void serial_receive()
             _goal_position[addr]=long(config_check*value);
           }else if(_MODE[evenOrOdd(addr)]==50){//エアシリモード
             _output_air[addr]=byte(value);
+
+            Serial.print(addr);
+            Serial.print("--");
+            Serial.print(_output_air[addr]);
+            Serial.println(":air input");
           }
         }else if(addr>=200 && addr <206){//write _MODE
           //Serial.print("MODE:");
@@ -219,15 +225,15 @@ void output(){
       int pwm=int(config_check*_output_pwm[i]);
       if (pwm > 0)
       { 
-          if(_sw_index==1) pwm=0;
-          else _sw_index=0;
+          if(_sw_index[i]==1) pwm=0;
+          else _sw_index[i]=0;
           digitalWrite(_PINNUM_OUTPUT_DIR[i], _FORWARD_LEVEL[i]);
           analogWrite(_PINNUM_OUTPUT_PWM[i], pwm);
       }
       else if(pwm<0)
       {   
-          if(_sw_index==2) pwm=0;
-          else _sw_index=0;
+          if(_sw_index[i]==2) pwm=0;
+          else _sw_index[i]=0;
           digitalWrite(_PINNUM_OUTPUT_DIR[i], 1 - _FORWARD_LEVEL[i]);
           analogWrite(_PINNUM_OUTPUT_PWM[i], (-1) * pwm);
       }else{

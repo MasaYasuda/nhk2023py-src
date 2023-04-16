@@ -380,7 +380,7 @@ class Transmitter (serial.Serial):
     if num>5:
       return 0
     data=self.__write_single(num,value)
-    
+      
   def write_motor_all(self,value):
     """全てのモーターの目標値を送信する
 
@@ -390,6 +390,19 @@ class Transmitter (serial.Serial):
         目標値の配列
     """
     self.__write_all(self.__ADDR_MOTOR,value)
+    
+  def write_air_single(self,num,value):
+    """1つのエアシリの目標値を送信する
+    
+    Parameters
+    ----------
+    num : int
+      エアシリ番号(0…0番ポートDIRピン、1…0番ポートPWMピン、2…1番ポートDIRピン、…)
+    value : float
+      1(ON) or 0(OFF)
+    
+    """
+    data=self.__write_single(num,value)
   
   def reset_data_single(self,num,mode):
     """Slaveのデータをリセットまたはモードを変更する
