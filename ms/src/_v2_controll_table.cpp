@@ -2,7 +2,10 @@
 #include <_v2_controll_table.h>
 
 byte _PINNUM_ENCODER_A[6] = {22, 23, 24, 25, 26, 27};
-byte _PINNUM_ENCODER_B[6] = {0, 1, 5, 4, 3, 2};
+byte _PINNUM_ENCODER_B[6] = {0, 1, 5, 4, 3, 2}; //これは割込み時に設定するピン番号
+byte _PINNUM_INPUT_A[6]={22, 23, 24, 25, 26, 27};
+extern byte _PINNUM_INPUT_B[6]={2,3,18,19,20,21};//これはdigitalReadで使うときのピン番号
+
 byte _PINNUM_OUTPUT_DIR[6] = {28, 29, 30, 31, 32, 33};
 byte _PINNUM_OUTPUT_PWM[6]{4, 5, 6, 7, 8, 9};
 int _RESOLUTION[6] = {512, 512, 512, 512, 2048, 2048};

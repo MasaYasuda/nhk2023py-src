@@ -8,6 +8,9 @@
 
 extern byte _PINNUM_ENCODER_A[6];
 extern byte _PINNUM_ENCODER_B[6];
+extern byte _PINNUM_INPUT_A[6];
+extern byte _PINNUM_INPUT_B[6];
+
 extern byte _PINNUM_OUTPUT_DIR[6];
 extern byte _PINNUM_OUTPUT_PWM[6];
 extern int _RESOLUTION[6];

@@ -1,0 +1,58 @@
+forward_level
+ polulu:1 , cytron 0
+
+-----------RABBIT---------
+定義：前＝射出方向
+差動二輪
+ [R,L]
+ 速度型PID
+ エンコーダー分解度=512
+ MAX_PWM=240
+ FFPIDゲイン=0,0,0.01,0
+ direction_config=[2,0]
+ 設定:DiffDrive(127,254,0.4,30,28)
+ 推奨最大値:move=1 , rot=1
+
+射出ローラー
+ [上、下]
+ ラジコン
+ MAX_PWM=240
+ direction_config=[?,?]  多分[3,0]
+ 設定:
+ 
+
+昇降モーター
+ [single]
+ ラジコン
+ MAX_PWM=240
+ direction_config=[?]
+ モーター正転＝
+ 上＝スイッチ？
+ 
+
+引き込みラッピニ
+ [single]
+ ラジコン
+ MAX_PWM=240
+ direction_config=[0]
+ 推奨速度
+
+Dynamixelハンド
+  ID1(右手):2500~3800(開) kakunou=2138  kai =3803 
+  chokkaku=3193   hoji=2922
+  ID2(左手):500(開)~1870  kakunou=2115  kai = 324 chokkaku=959  hoji=1252
+
+----------ELEPHANT----------
+定義：前＝射出方向
+4輪メカナム
+ [右前,左前,左後,右後]
+ direction_config=[?,?,?,?]
+
+射出ローラー
+  [上,下]
+  direction_config=[?,?]
+
+昇降モーター
+ [R,L]
+ direction_config
+

@@ -86,11 +86,6 @@ void serial_receive()
             _goal_position[addr]=long(config_check*value);
           }else if(_MODE[evenOrOdd(addr)]==50){//エアシリモード
             _output_air[addr]=byte(value);
-
-            Serial.print(addr);
-            Serial.print("--");
-            Serial.print(_output_air[addr]);
-            Serial.println(":air input");
           }
         }else if(addr>=200 && addr <206){//write _MODE
           //Serial.print("MODE:");
@@ -214,7 +209,6 @@ void output(){
     if (_MODE[i]==50){ //AIR
       digitalWrite(_PINNUM_OUTPUT_DIR[i],_output_air[i*2]);
       digitalWrite(_PINNUM_OUTPUT_PWM[i],_output_air[i*2+1]);
-      Serial.println("AIR OUTPUT");
 
     }else if(_MODE[i]!=0){
       int config_check=1;
@@ -249,6 +243,13 @@ void output(){
 }
 
 void check_sw(byte num){//num:0~5
-  if(digitalRead(_PINNUM_ENCODER_A[num]==0))_sw_index[num]=1;
-  else if(digitalRead(_PINNUM_ENCODER_B[num]==0))_sw_index[num]=2;
+  if(digitalRead(_PINNUM_INPUT_A[num])==0){
+    _sw_index[num]=1;
+    Serial.println("index:1");
+  }
+  else if(digitalRead(_PINNUM_INPUT_B[num])==0){
+    _sw_index[num]=2;
+    Serial.println("index:2");
+    
+  }
 }

@@ -10,9 +10,7 @@ void setup(){
 }
 void loop(){
   serial_receive();
-  for(byte i=0;i<6;i++){
-    check_sw(i);
-  }
+
   /*
   Serial.print(_output_pwm[0]);
   Serial.print(" ");
@@ -22,6 +20,7 @@ void loop(){
   Serial.print(" ");
   Serial.println(_goal_velocity[1]);
   */
+  check_sw(0);
   output();
-  delay(5);
+  delay(10);
 }

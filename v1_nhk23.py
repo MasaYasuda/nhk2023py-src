@@ -398,6 +398,7 @@ class Transmitter (serial.Serial):
     ----------
     num : int
       エアシリ番号(0…0番ポートDIRピン、1…0番ポートPWMピン、2…1番ポートDIRピン、…)
+      ※ 偶数ピンは出力が微弱なため非推奨（原因解明中）
     value : float
       1(ON) or 0(OFF)
     
