@@ -1,6 +1,0 @@
-ゾウ　右手　Dynamixel MAX開き 1350~2048 前ならえ
-　　　左手　Dynamixel 前ならえ　1900~2600 MAX開き
-
-USAGI ID1(右手):2500~3800(開) kakunou=2138  kai =3803 
-      chokkaku=3193   hoji=2922
-      ID2(左手):500(開)~1870  kakunou=2115  kai = 324 chokkaku=959  hoji=1252
