@@ -409,8 +409,11 @@ class Transmitter (serial.Serial):
     #mode等の初期設定
     self.reset_input_buffer()
     self.__write_all(self.__ADDR_MODE,mode)
+    time.sleep(0.2)
     self.__write_all(self.__ADDR_DIRECTION_CONFIG,direction_config)
+    time.sleep(0.2)
     self.__write_all(self.__ADDR_FORWARD_LEVEL,forward_level)
+    time.sleep(0.2)
     
     
   def __write_single(self,addr_direct,value):
@@ -438,6 +441,7 @@ class Transmitter (serial.Serial):
     self.write(packet)
     self.write(checksum.to_bytes(1,"little"))
     print(packet,checksum)
+    # print(str(addr_direct)+"->"+str(value))
     
     
     return data

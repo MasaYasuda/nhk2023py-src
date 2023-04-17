@@ -7,6 +7,7 @@ void setup(){
   Serial.begin(115200);
   timer_setup();
   Serial.print("BEGIN\n");
+  encoder_setup(2);
 }
 void loop(){
   serial_receive();
@@ -22,5 +23,12 @@ void loop(){
   */
   check_sw(0);
   output();
-  delay(2);
+  Serial.print(_output_pwm[2]);
+  Serial.print("->");
+  Serial.print(_current_velocity[2]);
+  Serial.print("::");
+  Serial.print(_output_pwm[1]);
+  Serial.print("->");
+  Serial.println(_current_velocity[1]);
+  delay(1);
 }

@@ -17,18 +17,19 @@ forward_level
  MAX_PWM=240
  FFPIDゲイン=0,0,0.01,0
  integral_speed_error_limit = 100000
- direction_config=[2,0]
+ direction_config=[3,1]
  設定:DiffDrive(127,254,0.4,30,28)　一応もっと出せるはず
  上設定推奨最大値:move=1 , rot=1
 
 射出ローラー
- [上、下]
+ [上、下]　(Pythonから同じ命令)
  速度型FFPID
  エンコーダー分解度＝256
  MAX_PWM=240
- FFPIDゲイン=?,?,?,?
- integral_speed_error_limit = 100000?
- direction_config=[?,?]  多分[3,0]
+ FFPIDゲイン=0.03,0,0.0003,0
+ (PWM120->2800)
+ integral_speed_error_limit = 500000
+ direction_config=[2,1]  
  設定:SingleDrive(100,10,2.77)
 
 昇降モーター

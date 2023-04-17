@@ -69,8 +69,9 @@ void serial_receive()
           tmp_buf[i] = buf[i + 2];
         }
         memcpy(&value, tmp_buf, sizeof(value));
-        //Serial.println(addr);
-        //Serial.println(value);
+        Serial.print(addr);
+        Serial.print(">");
+        Serial.println(value);
         if (addr>=0 && addr <12 ){
           //Serial.println("VALUE INPUT");
           int config_check=1;
@@ -97,8 +98,13 @@ void serial_receive()
           }
         }else if(addr>=210 && addr <216){//write _DIRECTION_CONFIG
           _DIRECTION_CONFIG[addr-210]=byte(value);
+          
         }else if(addr>=220 && addr <226){//write _FORWARD_LEVEL
           _FORWARD_LEVEL[addr-220]=byte(value);
+          Serial.print("F_L:");
+          Serial.print(addr-220);
+          Serial.print("=");
+          Serial.println(_FORWARD_LEVEL[addr-220]);
         }
       }
     }
