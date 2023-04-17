@@ -1,6 +1,6 @@
 # CORRECT
 
-import kbhit
+import used_testfiles.kbhit as kbhit
 
 kb=kbhit.KBHit()
 

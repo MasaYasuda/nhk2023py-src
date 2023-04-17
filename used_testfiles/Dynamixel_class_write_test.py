@@ -3,7 +3,7 @@
 import nhk23
 import time
 import os
-import kbhit
+import used_testfiles.kbhit as kbhit
 
 kb=kbhit.KBHit()
 
