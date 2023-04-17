@@ -248,17 +248,33 @@ void output(){
   }
 }
 
-void check_sw(byte num){//num:0~5
-  if(digitalRead(_PINNUM_INPUT_A[num])==0){
-    if(_sw_index[num]!=2){
-      _sw_index[num]=1;
-      Serial.println("index:1");
+void check_sw(byte num,byte swA_2){//num:0~5 //swAでindex2を立てたいときはswA_2を1とする(それ以外は0)
+  if(swA_2==0){
+    if(digitalRead(_PINNUM_INPUT_A[num])==0){
+      if(_sw_index[num]!=2){
+        _sw_index[num]=1;
+        Serial.println("index:1");//負回転のみ許可
+      }
     }
+    else if(digitalRead(_PINNUM_INPUT_B[num])==0){
+      if(_sw_index[num]!=1){
+        _sw_index[num]=2;
+        Serial.println("index:2");//正回転のみ許可
+      }
+    } 
   }
-  else if(digitalRead(_PINNUM_INPUT_B[num])==0){
-    if(_sw_index[num]!=1){
-      _sw_index[num]=2;
-      Serial.println("index:2");
+  else{
+    if(digitalRead(_PINNUM_INPUT_A[num])==0){
+      if(_sw_index[num]!=1){
+        _sw_index[num]=2;
+        Serial.println("index:2");//正回転のみ許可
+      }
     }
+    else if(digitalRead(_PINNUM_INPUT_B[num])==0){
+      if(_sw_index[num]!=2){
+        _sw_index[num]=1;
+        Serial.println("index:1");//負回転のみ許可
+      }
+    } 
   }
 }

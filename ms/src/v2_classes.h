@@ -31,7 +31,7 @@ void __calc_ffpid_speed();
 void output();
 void __clear_table(byte addr);
 
-void check_sw(byte num);
+void check_sw(byte num,byte swA_2);
 
 #endif // _V2_CLASSES_H_
 

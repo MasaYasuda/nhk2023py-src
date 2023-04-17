@@ -8,7 +8,7 @@ byte _PINNUM_INPUT_B[6]={2,3,18,19,20,21};//これはdigitalReadで使うとき�
 
 byte _PINNUM_OUTPUT_DIR[6] = {28, 29, 30, 31, 32, 33};
 byte _PINNUM_OUTPUT_PWM[6]{4, 5, 6, 7, 8, 9};
-int _RESOLUTION[6] = {256, 256, 256, 512, 2048, 2048};
+int _RESOLUTION[6] = {512, 512, 256, 256, 2048, 2048};
 byte __common_max_pwm = 240;
 byte _MAX_PWM[6] = {__common_max_pwm,__common_max_pwm ,__common_max_pwm ,__common_max_pwm ,__common_max_pwm ,__common_max_pwm};
 float __common_gain_position_pid[3] = {0.025, 0.01, 0.00};
@@ -23,12 +23,11 @@ float _GAIN_POSITION_PID[6][3] = {
 
 // rabit roller ffpid ... {0.10 / 1058, 0.0, 0.00002, 0.000}
 
-float __common_gain_speed_ffpid[4] = {0.02, 0.0, 0.0003, 0.000};
+float __common_gain_speed_ffpid[4] = {0.00, 0.0, 0.0000, 0.000};
 float _GAIN_SPEED_FFPID[6][4] = {
     {__common_gain_speed_ffpid[0], __common_gain_speed_ffpid[1], __common_gain_speed_ffpid[2], __common_gain_speed_ffpid[3]}, 
-    {0.022, 0.0,0.0003,0.0},
-    {0.032,0.0,0.0003,0.0}, 
-    {__common_gain_speed_ffpid[0], __common_gain_speed_ffpid[1], __common_gain_speed_ffpid[2], __common_gain_speed_ffpid[3]}, 
+    {__common_gain_speed_ffpid[0], __common_gain_speed_ffpid[1], __common_gain_speed_ffpid[2], __common_gain_speed_ffpid[3]},
+    {0.032,0,0.0003,0},{0.022,0,0.0003,0}, 
     {__common_gain_speed_ffpid[0], __common_gain_speed_ffpid[1], __common_gain_speed_ffpid[2], __common_gain_speed_ffpid[3]}, 
     {__common_gain_speed_ffpid[0], __common_gain_speed_ffpid[1], __common_gain_speed_ffpid[2], __common_gain_speed_ffpid[3]}
 };
