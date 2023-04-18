@@ -44,7 +44,7 @@ try:
     # ------------------------------------------------
     
     # Arduino (rappini Roller,Diff) setup ------------
-    roller=v1_nhk23.SingleDrive(100,10,2.77)
+    Roller=v1_nhk23.SingleDrive(100,10,2.77)
     Diff=v1_nhk23.OmniDrive(127,254,0.4,30,28)
     mode=[0,0,0,0,0,0]
     dir=[0,0,2,1,3,1]
@@ -54,6 +54,10 @@ try:
     
     # ANYTHING ELSE --------------------------------------------
     OP_MODE=0
+    RING_COUNT=10
+    dxl_r=0
+    dxl_l=0
+    
     Transmitter.reset_input_buffer()
     # ------------------------------------------------
     
@@ -65,40 +69,47 @@ try:
       
       # Arduino全出力無効
       Transmitter.reset_data_all()
+      
       # 高速送信======(この外は遅い送信)
       st=time.time()
-      while time.time()-st<0.1:
-        Transmitter.reset_input_buffer()
-        Transmitter.write_motor_single(2,0.25)
-        time.sleep(0.1)
-      # CHANGE MODE < 0 > -> < 1 >
-      if 1:
-        OP_MODE=1
-        Transmitter.reset_data_single(4,20)
-        Transmitter.reset_data_single(5,20)
-        time.sleep(0.05)
-      # CHANGE MODE < 0 > -> < 2 >
-      if 2:
-        OP_MODE=2
-        Transmitter.reset_data_single(1,100)
-        time.sleep(0.02)
-      # CHANGE MODE < 0 > -> < 3 >
-      if 3:
-        OP_MODE=3
-        Transmitter.reset_data_single(0,100)
-        Transmitter.reset_data_single(1,100)
-        Transmitter.reset_data_single(2,20)
-        Transmitter.reset_data_single(3,20)
-        Transmitter.reset_data_single(2,20)
-        Transmitter.reset_data_single(3,20)
-        time.sleep(0.12)
-        # MAX上昇
-        Transmitter.write_motor_single(1,-1) 
-        # ローラー回転開始
-        speed=roller.calc_speed(0.7) 
-        Transmitter.write_motor_single(2,speed)
-        Transmitter.write_motor_single(3,speed)
-        time.sleep(0.06)
+      while time.time()-st<0.12:
+        # CHANGE MODE < 0 > -> < 1 >
+        # 足回り起動
+        if 1:
+          OP_MODE=1
+          Transmitter.reset_data_single(4,20) 
+          Transmitter.reset_data_single(5,20)
+          time.sleep(0.05)
+          break
+        
+        # CHANGE MODE < 0 > -> < 2 >
+        # 昇降起動
+        if 2:
+          OP_MODE=2
+          Transmitter.reset_data_single(1,100)
+          time.sleep(0.02)
+          break
+        
+        # CHANGE MODE < 0 > -> < 3 >
+        # 引込、昇降、ローラー、足回り起動＆ローラー回転開始
+        if 3:
+          OP_MODE=3
+          Transmitter.reset_data_single(0,100)
+          Transmitter.reset_data_single(1,100)
+          Transmitter.reset_data_single(2,20)
+          Transmitter.reset_data_single(3,20)
+          Transmitter.reset_data_single(2,20)
+          Transmitter.reset_data_single(3,20)
+          time.sleep(0.12)
+          # MAX上昇
+          Transmitter.write_motor_single(1,-1) 
+          # ローラー回転開始
+          speed=Roller.calc_speed(0.7) 
+          Transmitter.write_motor_single(2,speed)
+          Transmitter.write_motor_single(3,speed)
+          time.sleep(0.06)
+          break
+        time.sleep(0.01)
       
       Transmitter.reset_input_buffer()
         
@@ -110,45 +121,59 @@ try:
       print("          OP_MODE < 1 > ")
       print("-----------------------------------")
         
-      ## Get Inputs
+      # 移動出力　ジョイスティックRL (R1,L1同時押し中で微調整モード)
       events = pygame.event.get()
       
-      ##### VECTOR CALCLATION
+      move=v1_nhk23.joy_threshold(j.get_axis(1)*(-1)*(1.0),0.2)
+      rot=v1_nhk23.joy_threshold(j.get_axis(3)*(1),0.2)
+      if j.get_button(4)==1 and j.get_button(5)==1 :
+        move=move/2
+        rot=rot/2
+      R_speed,L_speed=Diff.calc_speed(move,rot)
+      Transmitter.write_motor_single(4,R_speed)
+      Transmitter.write_motor_single(5,L_speed)
       
-      move=v1_nhk23.joy_threshold(j.get_axis(1)*(-1)*(1.0),0.4)
-      rot=v1_nhk23.joy_threshold(j.get_axis(3)*(1),0.4)
       
-      R_value,L_value=diffdrive.calc_speed(move,rot)
-      
-      R_speed,L_speed=Diff.calc_speed()
-      
-      # CHANGE MODE < 0 > -> < 1 >
-      if 1:
-        Transmitter.reset_data_single(4,20)
-        Transmitter.reset_data_single(5,20)
-        time.sleep(0.05)
-      # CHANGE MODE < 0 > -> < 2 >
-      if 2:
-        Transmitter.reset_data_single(1,100)
-        time.sleep(0.02)
-      # CHANGE MODE < 0 > -> < 3 >
-      if 3:
-        Transmitter.reset_data_single(0,100)
-        Transmitter.reset_data_single(1,100)
-        Transmitter.reset_data_single(2,20)
-        Transmitter.reset_data_single(3,20)
-        Transmitter.reset_data_single(2,20)
-        Transmitter.reset_data_single(3,20)
-        time.sleep(0.12)
-        # MAX上昇
-        Transmitter.write_motor_single(1,-1) 
-        # ローラー回転開始
-        speed=roller.calc_speed(0.7) 
-        Transmitter.write_motor_single(2,speed)
-        Transmitter.write_motor_single(3,speed)
-        time.sleep(0.06)
+      # 高速送信======(この外は遅い送信)
+      st=time.time()
+      while time.time()-st<0.04:
+        # CHANGE MODE < 1 > -> < 0 >
+        # 全出力無効
+        if 0:
+          OP_MODE=0
+          Transmitter.reset_data_all()
+          time.sleep(0.12)
+          break
+          
+        # CHANGE MODE < 1 > -> < 2 >
+        # 移動無効、昇降有効
+        if 2:
+          OP_MODE=2
+          Transmitter.reset_data_single(4,0)
+          Transmitter.reset_data_single(5,0)
+          Transmitter.reset_data_single(1,100)
+          time.sleep(0.06)
+          break
         
-        Transmitter.reset_input_buffer()
+        # CHANGE MODE < 1 > -> < 3 >]
+        # 引込、昇降、ローラー有効＆昇降上昇＆ローラー加速
+        if 3:
+          OP_MODE=3
+          Transmitter.reset_data_single(0,100)
+          Transmitter.reset_data_single(1,100)
+          Transmitter.reset_data_single(2,20)
+          Transmitter.reset_data_single(3,20)
+          time.sleep(0.12)
+          # MAX上昇
+          Transmitter.write_motor_single(1,-1) 
+          # ローラー回転開始
+          speed=Roller.calc_speed(0.7) 
+          Transmitter.write_motor_single(2,speed)
+          Transmitter.write_motor_single(3,speed)
+          time.sleep(0.06)
+          break
+          
+      Transmitter.reset_input_buffer()
       
     # ------------------------------------------------
     
@@ -157,6 +182,56 @@ try:
       print("-----------------------------------")
       print("          OP_MODE < 2 > ")
       print("-----------------------------------")
+      
+      # ハンド送信　ジョイスティックRL
+      events = pygame.event.get()
+      
+      
+      # 昇降　十字上下
+      
+      Transmitter.write_motor_single((j.get_hat(0))[1]*(-1)*0.5)
+      
+      # 高速送信======(この外は遅い送信)
+      st=time.time()
+      while time.time()-st<0.04:
+        # CHANGE MODE < 2 > -> < 0 >
+        # 全出力無効
+        if 0:
+          OP_MODE=0
+          Transmitter.reset_data_all()
+          time.sleep(0.12)
+          break
+          
+        # CHANGE MODE < 2 > -> < 1 >
+        # 昇降無効、移動有効
+        if 2:
+          OP_MODE=2
+          Transmitter.reset_data_single(1,0)
+          Transmitter.reset_data_single(4,20)
+          Transmitter.reset_data_single(5,20)
+          time.sleep(0.06)
+          break
+        
+        # CHANGE MODE < 2 > -> < 3 >]
+        # 引込、ローラー、移動有効＆昇降上昇＆ローラー加速
+        if 3:
+          OP_MODE=3
+          Transmitter.reset_data_single(0,100)
+          Transmitter.reset_data_single(2,20)
+          Transmitter.reset_data_single(3,20)
+          Transmitter.reset_data_single(4,20)
+          Transmitter.reset_data_single(5,20)
+          time.sleep(0.12)
+          # MAX上昇
+          Transmitter.write_motor_single(1,-1) 
+          # ローラー回転開始
+          speed=Roller.calc_speed(0.7) 
+          Transmitter.write_motor_single(2,speed)
+          Transmitter.write_motor_single(3,speed)
+          time.sleep(0.06)
+          break
+          
+      Transmitter.reset_input_buffer()
     # ------------------------------------------------
     
     # OP_MODE < 3 > ----------------------------------
@@ -165,6 +240,92 @@ try:
       print("          OP_MODE < 3 > ")
       print("-----------------------------------")
       
+      # 向き調整(移動)　(R1,L1同時押し中で微調整モード)
+      events = pygame.event.get()
+      
+      move=v1_nhk23.joy_threshold((j.get_hat(0))[1]*(-1)*(0.25),0.2)
+      rot=v1_nhk23.joy_threshold((j.get_hat(0))[0]*(0.25),0.2)
+      if j.get_button(4)==1 and j.get_button(5)==1 :
+        move=move/2
+        rot=rot/2
+      R_speed,L_speed=Diff.calc_speed(move,rot)
+      Transmitter.write_motor_single(4,R_speed)
+      Transmitter.write_motor_single(5,L_speed)
+      
+      
+        
+      # 高速送信======(この外は遅い送信)
+      st=time.time()
+      while time.time()-st<0.04:
+        
+        # 発射　xボタン　0.5秒長押し
+        if j.get_button(0)==1:
+          tmp_index=0
+          st2=time.time()
+          while time.time()-st2<0.5:
+            events = pygame.event.get()
+            if j.get_button(0)==0:
+              tmp_index=1
+              break
+          if tmp_index==0:
+            # 一発自動発射
+            if RING_COUNT>0:
+              #ラッピニ戻し
+              st=time.time()
+              while time.time()-st<1:
+                Transmitter.reset_input_buffer()
+                Transmitter.write_motor_single(0,-0.75)
+                time.sleep(0.1)
+              #ラッピニ引き込み
+              st=time.time()
+              while time.time()-st<2:
+                Transmitter.reset_input_buffer()
+                Transmitter.write_motor_single(0,0.75)
+                time.sleep(0.1)
+                
+              RING_COUNT=RING_COUNT-1
+              
+              if RING_COUNT>0:
+                #上昇
+                st=time.time()
+                while time.time()-st<1:
+                  Transmitter.reset_input_buffer()
+                  Transmitter.write_motor_single(1,-1)
+                  time.sleep(0.1)
+          
+        # CHANGE MODE < 3 > -> < 0 >
+        # 全出力無効
+        if 0:
+          OP_MODE=0
+          Transmitter.reset_data_all()
+          time.sleep(0.12)
+          break
+          
+        # CHANGE MODE < 3 > -> < 1 >
+        # 引込、昇降、ローラー無効＆ローラー回転停止
+        if 2:
+          OP_MODE=2
+          Transmitter.reset_data_single(0,0)
+          Transmitter.reset_data_single(1,0)
+          time.sleep(0.04)
+          Transmitter.write_motor_single(2,0)
+          Transmitter.write_motor_single(3,0)
+          break
+        
+        # CHANGE MODE < 3 > -> < 2 >]
+        # 引込、ローラー、足回り無効＆ローラー回転停止
+        if 3:
+          OP_MODE=3
+          Transmitter.reset_data_single(0,0)
+          Transmitter.reset_data_single(4,0)
+          Transmitter.reset_data_single(5,0)
+          time.sleep(0.06)
+          Transmitter.write_motor_single(2,0)
+          Transmitter.write_motor_single(3,0)
+          time.sleep(0.04)
+          break
+          
+      Transmitter.reset_input_buffer()
     # ------------------------------------------------
     
 

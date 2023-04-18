@@ -60,7 +60,6 @@ void serial_receive()
 
       if (buf[6]==tmp_sum)
       { // if checksum is correct
-        Serial.println("CORRECT CHECKSUM");
         byte addr = buf[1];  
         byte tmp_buf[4] = {0};  
         float value = 0;    
@@ -69,9 +68,6 @@ void serial_receive()
           tmp_buf[i] = buf[i + 2];
         }
         memcpy(&value, tmp_buf, sizeof(value));
-        Serial.print(addr);
-        Serial.print(">");
-        Serial.println(value);
         if (addr>=0 && addr <12 ){
           //Serial.println("VALUE INPUT");
           int config_check=1;
@@ -101,10 +97,6 @@ void serial_receive()
           
         }else if(addr>=220 && addr <226){//write _FORWARD_LEVEL
           _FORWARD_LEVEL[addr-220]=byte(value);
-          Serial.print("F_L:");
-          Serial.print(addr-220);
-          Serial.print("=");
-          Serial.println(_FORWARD_LEVEL[addr-220]);
         }
       }
     }
@@ -253,13 +245,13 @@ void check_sw(byte num,byte swA_2){//num:0~5 //swAでindex2を立てたいとき
     if(digitalRead(_PINNUM_INPUT_A[num])==0){
       if(_sw_index[num]!=2){
         _sw_index[num]=1;
-        Serial.println("index:1");//負回転のみ許可
+        //Serial.println("index:1");//負回転のみ許可
       }
     }
     else if(digitalRead(_PINNUM_INPUT_B[num])==0){
       if(_sw_index[num]!=1){
         _sw_index[num]=2;
-        Serial.println("index:2");//正回転のみ許可
+        //Serial.println("index:2");//正回転のみ許可
       }
     } 
   }
@@ -267,13 +259,13 @@ void check_sw(byte num,byte swA_2){//num:0~5 //swAでindex2を立てたいとき
     if(digitalRead(_PINNUM_INPUT_A[num])==0){
       if(_sw_index[num]!=1){
         _sw_index[num]=2;
-        Serial.println("index:2");//正回転のみ許可
+        //Serial.println("index:2");//正回転のみ許可
       }
     }
     else if(digitalRead(_PINNUM_INPUT_B[num])==0){
       if(_sw_index[num]!=2){
         _sw_index[num]=1;
-        Serial.println("index:1");//負回転のみ許可
+        //Serial.println("index:1");//負回転のみ許可
       }
     } 
   }
