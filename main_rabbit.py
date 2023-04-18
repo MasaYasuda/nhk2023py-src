@@ -163,7 +163,7 @@ try:
           break
         
         # CHANGE MODE < 1 > -> < 3 >]
-        # 引込、昇降、ローラー有効＆昇降上昇＆ローラー加速
+        # 引込、昇降、ローラー有効＆ローラー加速
         if 3:
           OP_MODE=3
           Transmitter.reset_data_single(P_DRAWIN,100)
@@ -171,8 +171,6 @@ try:
           Transmitter.reset_data_single(P_ROLLER1,20)
           Transmitter.reset_data_single(P_ROLLER2,20)
           time.sleep(0.12)
-          # MAX上昇
-          Transmitter.write_motor_single(P_LIFT,-1) 
           # ローラー回転開始
           speed=Roller.calc_speed(0.7) 
           Transmitter.write_motor_single(P_ROLLER1,speed)
@@ -219,7 +217,7 @@ try:
           break
         
         # CHANGE MODE < 2 > -> < 3 >]
-        # 引込、ローラー、移動有効＆昇降上昇＆ローラー加速
+        # 引込、ローラー、移動有効＆ローラー加速
         if 3:
           OP_MODE=3
           Transmitter.reset_data_single(P_DRAWIN,100)
@@ -228,8 +226,6 @@ try:
           Transmitter.reset_data_single(P_RWHEEL,20)
           Transmitter.reset_data_single(P_LWHEEL,20)
           time.sleep(0.12)
-          # MAX上昇
-          Transmitter.write_motor_single(P_LIFT,-1) 
           # ローラー回転開始
           speed=Roller.calc_speed(0.7) 
           Transmitter.write_motor_single(P_ROLLER1,speed)
@@ -249,8 +245,8 @@ try:
       # 向き調整(移動)　(R1,L1同時押し中で微調整モード)
       events = pygame.event.get()
       
-      move=v1_nhk23.joy_threshold((j.get_hat(0))[1]*(-1)*(0.25),0.2)
-      rot=v1_nhk23.joy_threshold((j.get_hat(0))[0]*(0.25),0.2)
+      move=v1_nhk23.joy_threshold(j.get_axis(1)*(-1)*(0.5),0.1)
+      rot=v1_nhk23.joy_threshold(j.get_axis(3)*(0.5),0.1)
       if j.get_button(4)==1 and j.get_button(5)==1 :
         move=move/2
         rot=rot/2
@@ -258,8 +254,28 @@ try:
       Transmitter.write_motor_single(P_RWHEEL,R_speed)
       Transmitter.write_motor_single(P_LWHEEL,L_speed)
       
-      
+      # 自動上昇　十字上２回押し
+      if (j.get_hat(0)[1]==1):
+        st=time.time()
+        while time.time()-st<0.5:
+          events = pygame.event.get()
+          if (j.get_hat(0)[1]==0):
+            st2=time.time()
+            while time.time()-st2<0.5:
+              events = pygame.event.get()
+              if (j.get_hat(0)[1]==1):
+                # 上昇
+                Transmitter.write_motor_single(P_LIFT,-1)
+                break
+              time.sleep(0.05)
+          time.sleep(0.05)
         
+      
+      # 自動上昇停止
+      if (j.get_hat(0)[1]==0):
+        Transmitter.write_motor_single(P_LIFT,0)
+            
+            
       # 高速送信======(この外は遅い送信)
       st=time.time()
       while time.time()-st<0.04:
@@ -273,6 +289,7 @@ try:
             if j.get_button(0)==0:
               tmp_index=1
               break
+            
           if tmp_index==0:
             # 一発自動発射
             if RING_COUNT>0:
