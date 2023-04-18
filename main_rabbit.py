@@ -53,6 +53,13 @@ try:
     # ------------------------------------------------
     
     # ANYTHING ELSE --------------------------------------------
+    P_DRAWIN=0
+    P_LIFT=1
+    P_ROLLER1=2
+    P_ROLLER2=3
+    P_RWHEEL=4
+    P_LWHEEL=5
+    
     OP_MODE=0
     RING_COUNT=10
     dxl_r=0
@@ -77,8 +84,8 @@ try:
         # 足回り起動
         if 1:
           OP_MODE=1
-          Transmitter.reset_data_single(4,20) 
-          Transmitter.reset_data_single(5,20)
+          Transmitter.reset_data_single(P_RWHEEL,20) 
+          Transmitter.reset_data_single(P_LWHEEL,20)
           time.sleep(0.05)
           break
         
@@ -86,7 +93,7 @@ try:
         # 昇降起動
         if 2:
           OP_MODE=2
-          Transmitter.reset_data_single(1,100)
+          Transmitter.reset_data_single(P_LIFT,100)
           time.sleep(0.02)
           break
         
@@ -94,19 +101,19 @@ try:
         # 引込、昇降、ローラー、足回り起動＆ローラー回転開始
         if 3:
           OP_MODE=3
-          Transmitter.reset_data_single(0,100)
-          Transmitter.reset_data_single(1,100)
-          Transmitter.reset_data_single(2,20)
-          Transmitter.reset_data_single(3,20)
-          Transmitter.reset_data_single(2,20)
-          Transmitter.reset_data_single(3,20)
+          Transmitter.reset_data_single(P_DRAWIN,100)
+          Transmitter.reset_data_single(P_LIFT,100)
+          Transmitter.reset_data_single(P_ROLLER1,20)
+          Transmitter.reset_data_single(P_ROLLER2,20)
+          Transmitter.reset_data_single(P_RWHEEL,20)
+          Transmitter.reset_data_single(P_LWHEEL,20)
           time.sleep(0.12)
           # MAX上昇
-          Transmitter.write_motor_single(1,-1) 
+          Transmitter.write_motor_single(P_LIFT,-1) 
           # ローラー回転開始
           speed=Roller.calc_speed(0.7) 
-          Transmitter.write_motor_single(2,speed)
-          Transmitter.write_motor_single(3,speed)
+          Transmitter.write_motor_single(P_ROLLER1,speed)
+          Transmitter.write_motor_single(P_ROLLER2,speed)
           time.sleep(0.06)
           break
         time.sleep(0.01)
@@ -130,8 +137,8 @@ try:
         move=move/2
         rot=rot/2
       R_speed,L_speed=Diff.calc_speed(move,rot)
-      Transmitter.write_motor_single(4,R_speed)
-      Transmitter.write_motor_single(5,L_speed)
+      Transmitter.write_motor_single(P_RWHEEL,R_speed)
+      Transmitter.write_motor_single(P_LWHEEL,L_speed)
       
       
       # 高速送信======(この外は遅い送信)
@@ -149,9 +156,9 @@ try:
         # 移動無効、昇降有効
         if 2:
           OP_MODE=2
-          Transmitter.reset_data_single(4,0)
-          Transmitter.reset_data_single(5,0)
-          Transmitter.reset_data_single(1,100)
+          Transmitter.reset_data_single(P_RWHEEL,0)
+          Transmitter.reset_data_single(P_LWHEEL,0)
+          Transmitter.reset_data_single(P_LIFT,100)
           time.sleep(0.06)
           break
         
@@ -159,17 +166,17 @@ try:
         # 引込、昇降、ローラー有効＆昇降上昇＆ローラー加速
         if 3:
           OP_MODE=3
-          Transmitter.reset_data_single(0,100)
-          Transmitter.reset_data_single(1,100)
-          Transmitter.reset_data_single(2,20)
-          Transmitter.reset_data_single(3,20)
+          Transmitter.reset_data_single(P_DRAWIN,100)
+          Transmitter.reset_data_single(P_LIFT,100)
+          Transmitter.reset_data_single(P_ROLLER1,20)
+          Transmitter.reset_data_single(P_ROLLER2,20)
           time.sleep(0.12)
           # MAX上昇
-          Transmitter.write_motor_single(1,-1) 
+          Transmitter.write_motor_single(P_LIFT,-1) 
           # ローラー回転開始
           speed=Roller.calc_speed(0.7) 
-          Transmitter.write_motor_single(2,speed)
-          Transmitter.write_motor_single(3,speed)
+          Transmitter.write_motor_single(P_ROLLER1,speed)
+          Transmitter.write_motor_single(P_ROLLER2,speed)
           time.sleep(0.06)
           break
           
@@ -188,8 +195,7 @@ try:
       
       
       # 昇降　十字上下
-      
-      Transmitter.write_motor_single((j.get_hat(0))[1]*(-1)*0.5)
+      Transmitter.write_motor_single(P_LIFT,(j.get_hat(0))[1]*(-1)*0.5)
       
       # 高速送信======(この外は遅い送信)
       st=time.time()
@@ -206,9 +212,9 @@ try:
         # 昇降無効、移動有効
         if 2:
           OP_MODE=2
-          Transmitter.reset_data_single(1,0)
-          Transmitter.reset_data_single(4,20)
-          Transmitter.reset_data_single(5,20)
+          Transmitter.reset_data_single(P_LIFT,0)
+          Transmitter.reset_data_single(P_RWHEEL,20)
+          Transmitter.reset_data_single(P_LWHEEL,20)
           time.sleep(0.06)
           break
         
@@ -216,18 +222,18 @@ try:
         # 引込、ローラー、移動有効＆昇降上昇＆ローラー加速
         if 3:
           OP_MODE=3
-          Transmitter.reset_data_single(0,100)
-          Transmitter.reset_data_single(2,20)
-          Transmitter.reset_data_single(3,20)
-          Transmitter.reset_data_single(4,20)
-          Transmitter.reset_data_single(5,20)
+          Transmitter.reset_data_single(P_DRAWIN,100)
+          Transmitter.reset_data_single(P_ROLLER1,20)
+          Transmitter.reset_data_single(P_ROLLER2,20)
+          Transmitter.reset_data_single(P_RWHEEL,20)
+          Transmitter.reset_data_single(P_LWHEEL,20)
           time.sleep(0.12)
           # MAX上昇
-          Transmitter.write_motor_single(1,-1) 
+          Transmitter.write_motor_single(P_LIFT,-1) 
           # ローラー回転開始
           speed=Roller.calc_speed(0.7) 
-          Transmitter.write_motor_single(2,speed)
-          Transmitter.write_motor_single(3,speed)
+          Transmitter.write_motor_single(P_ROLLER1,speed)
+          Transmitter.write_motor_single(P_ROLLER2,speed)
           time.sleep(0.06)
           break
           
@@ -249,8 +255,8 @@ try:
         move=move/2
         rot=rot/2
       R_speed,L_speed=Diff.calc_speed(move,rot)
-      Transmitter.write_motor_single(4,R_speed)
-      Transmitter.write_motor_single(5,L_speed)
+      Transmitter.write_motor_single(P_RWHEEL,R_speed)
+      Transmitter.write_motor_single(P_LWHEEL,L_speed)
       
       
         
@@ -274,13 +280,13 @@ try:
               st=time.time()
               while time.time()-st<1:
                 Transmitter.reset_input_buffer()
-                Transmitter.write_motor_single(0,-0.75)
+                Transmitter.write_motor_single(P_DRAWIN,-0.75)
                 time.sleep(0.1)
               #ラッピニ引き込み
               st=time.time()
-              while time.time()-st<2:
+              while time.time()-st<1:
                 Transmitter.reset_input_buffer()
-                Transmitter.write_motor_single(0,0.75)
+                Transmitter.write_motor_single(P_DRAWIN,0.75)
                 time.sleep(0.1)
                 
               RING_COUNT=RING_COUNT-1
@@ -290,7 +296,7 @@ try:
                 st=time.time()
                 while time.time()-st<1:
                   Transmitter.reset_input_buffer()
-                  Transmitter.write_motor_single(1,-1)
+                  Transmitter.write_motor_single(P_LIFT,-1)
                   time.sleep(0.1)
           
         # CHANGE MODE < 3 > -> < 0 >
@@ -305,23 +311,23 @@ try:
         # 引込、昇降、ローラー無効＆ローラー回転停止
         if 2:
           OP_MODE=2
-          Transmitter.reset_data_single(0,0)
-          Transmitter.reset_data_single(1,0)
+          Transmitter.reset_data_single(P_DRAWIN,0)
+          Transmitter.reset_data_single(P_LIFT,0)
           time.sleep(0.04)
-          Transmitter.write_motor_single(2,0)
-          Transmitter.write_motor_single(3,0)
+          Transmitter.write_motor_single(P_ROLLER1,0)
+          Transmitter.write_motor_single(P_ROLLER2,0)
           break
         
         # CHANGE MODE < 3 > -> < 2 >]
         # 引込、ローラー、足回り無効＆ローラー回転停止
         if 3:
           OP_MODE=3
-          Transmitter.reset_data_single(0,0)
-          Transmitter.reset_data_single(4,0)
-          Transmitter.reset_data_single(5,0)
+          Transmitter.reset_data_single(P_DRAWIN,0)
+          Transmitter.reset_data_single(P_RWHEEL,0)
+          Transmitter.reset_data_single(P_LWHEEL,0)
           time.sleep(0.06)
-          Transmitter.write_motor_single(2,0)
-          Transmitter.write_motor_single(3,0)
+          Transmitter.write_motor_single(P_ROLLER1,0)
+          Transmitter.write_motor_single(P_ROLLER2,0)
           time.sleep(0.04)
           break
           
