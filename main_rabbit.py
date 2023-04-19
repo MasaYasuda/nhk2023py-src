@@ -51,8 +51,8 @@ try:
     Dxl=v1_dxl.Dynamixel("/dev/ttyusb0",57600)
     Dxl.set_mode_position(ID_RHAND)
     Dxl.set_mode_position(ID_LHAND)
-    Dxl.set_min_max_position(ID_RHAND,2500,3800)
-    Dxl.set_min_max_position(ID_LHAND,500,1870)
+    Dxl.set_min_max_position(ID_RHAND,RHAND_LIMIT[0],RHAND_LIMIT[1])
+    Dxl.set_min_max_position(ID_LHAND,LHAND_LIMIT[0],LHAND_LIMIT[0])
     # トルクオン
     Dxl.enable_torque(ID_RHAND)
     Dxl.enable_torque(ID_LHAND)
@@ -285,15 +285,16 @@ try:
         Transmitter.write_motor_single(P_LIFT,(j.get_hat(0))[1]*(-1)*0.5)
         
         # ハンド開閉
-        tmp_r=int(v1_nhk23.joy_threshold(j.get_axis(3)*(1),0.2)*20)
-        tmp_l=int(v1_nhk23.joy_threshold(j.get_axis(0)*(1),0.2)*20)
+        tmp_r=int(v1_nhk23.joy_threshold(j.get_axis(3)*(1),0.2)*50)
+        tmp_l=int(v1_nhk23.joy_threshold(j.get_axis(0)*(1),0.2)*50)
         if j.get_button(4)==1 and j.get_button(5)==1 :
           tmp_r=tmp_r/2
           tmp_l=tmp_l/2
-        dxl_r=dxl_r+tmp_r
-        dxl_l=dxl_l+tmp_l
+        dxl_r=max(RHAND_LIMIT[0],min(RHAND_LIMIT[1],dxl_r+tmp_r)) 
+        dxl_l=max(LHAND_LIMIT[0],min(LHAND_LIMIT[1],dxl_l+tmp_l)) 
+        Dxl.write_position(ID_RHAND,dxl_r)
+        Dxl.write_position(ID_LHAND,dxl_l)
 
-        
         # 高速送信======(この外は遅い送信)
         st=time.time()
         while time.time()-st<0.1:
@@ -449,6 +450,7 @@ try:
 
                     dxl_r=Dxl.read_position(ID_RHAND)
                     dxl_l=Dxl.read_position(ID_LHAND)
+                    time.sleep(0.1)
                     break
                   time.sleep(0.05)
               time.sleep(0.05)
@@ -528,9 +530,15 @@ try:
 
 except KeyboardInterrupt:
     print("プログラムを終了します")
+    j.quit()
+    
     Transmitter.reset_data_all()
     Transmitter.reset_data_all()
     time.sleep(1)
     Transmitter.close()
-    
+
+    Dxl.disable_torque(ID_RHAND)
+    Dxl.disable_torque(ID_LHAND)
+    time.sleep(0.3)
+    Dxl.close_port()
 

@@ -320,7 +320,7 @@ class Dynamixel:  # This class is specified in X_series
             IDを指定
         pos : int
             目標位置 ( ex. 0 ~ 4095 )
-            0(MinPositionLimit)~1(MaxPositionLimit)で示される位置の値
+            (MinPositionLimit)~(MaxPositionLimit)で示される位置の値
         """
         dxl_comm_result, dxl_error = self.__packetHandler.write4ByteTxRx(self.__portHandler, id, self.__ADDR_GOAL_POSITION, pos)
         if dxl_comm_result != COMM_SUCCESS:
