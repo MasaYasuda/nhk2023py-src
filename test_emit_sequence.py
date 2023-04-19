@@ -1,7 +1,8 @@
 """自動射出のプログラム
-昇降（上昇）→ローラー加速→引き込み→上昇の繰り返し
-"""
 
+昇降（上昇）→ローラー加速→引き込み→上昇の繰り返し
+
+"""
 
 import v1_nhk23
 import time
@@ -21,10 +22,10 @@ try:
       Transmitter.write_motor_single(1,-0.75)
       time.sleep(0.1)
     
-    speed=roller.calc_speed(0.5)
+    speed=roller.calc_speed(0.4)
     Transmitter.write_motor_single(2,speed)
     Transmitter.write_motor_single(2,speed)
-    time.sleep(0.5)
+    time.sleep(0.3)
     Transmitter.write_motor_single(3,speed)
     Transmitter.write_motor_single(3,speed)
     
@@ -42,18 +43,24 @@ try:
       while time.time()-st<2:
         Transmitter.reset_input_buffer()
         Transmitter.write_motor_single(1,-0.75)
+        Transmitter.write_motor_single(1,-0.75)
+        Transmitter.write_motor_single(1,-0.75)
         time.sleep(0.1)
       #戻し
       st=time.time()
       while time.time()-st<1:
         Transmitter.reset_input_buffer()
         Transmitter.write_motor_single(0,-0.75)
+        Transmitter.write_motor_single(0,-0.75)
+        Transmitter.write_motor_single(0,-0.75)
         time.sleep(0.1)
       #引き込み
       st=time.time()
       while time.time()-st<2:
         Transmitter.reset_input_buffer()
-        Transmitter.write_motor_single(0,0.75)
+        Transmitter.write_motor_single(0,1)
+        Transmitter.write_motor_single(0,1)
+        Transmitter.write_motor_single(0,1)
         time.sleep(0.1)
       
     #停止

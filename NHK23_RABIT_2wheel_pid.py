@@ -30,8 +30,8 @@ try:
         
         move=v1_nhk23.joy_threshold(j.get_axis(1)*(-1)*(1.0),0.4)
         rot=v1_nhk23.joy_threshold(j.get_axis(3)*(1),0.4)
-        
         R_value,L_value=diffdrive.calc_speed(move,rot)
+        
         print(move,rot)
         # print(R_value,L_value)
         ##### TRANSMIT 

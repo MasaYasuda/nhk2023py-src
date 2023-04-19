@@ -68,6 +68,10 @@ void serial_receive()
           tmp_buf[i] = buf[i + 2];
         }
         memcpy(&value, tmp_buf, sizeof(value));
+        Serial.print(addr);
+        Serial.print(" > ");
+        Serial.println(value);
+
         if (addr>=0 && addr <12 ){
           //Serial.println("VALUE INPUT");
           int config_check=1;

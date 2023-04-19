@@ -27,7 +27,7 @@ float __common_gain_speed_ffpid[4] = {0.00, 0.0, 0.0000, 0.000};
 float _GAIN_SPEED_FFPID[6][4] = {
     {__common_gain_speed_ffpid[0], __common_gain_speed_ffpid[1], __common_gain_speed_ffpid[2], __common_gain_speed_ffpid[3]}, 
     {__common_gain_speed_ffpid[0], __common_gain_speed_ffpid[1], __common_gain_speed_ffpid[2], __common_gain_speed_ffpid[3]},
-    {0.032,0,0.0003,0},{0.022,0,0.0003,0}, 
+    {0.032,0,0.0003,0},{0.025,0,0.0003,0}, 
     {__common_gain_speed_ffpid[0], __common_gain_speed_ffpid[1], __common_gain_speed_ffpid[2], __common_gain_speed_ffpid[3]}, 
     {__common_gain_speed_ffpid[0], __common_gain_speed_ffpid[1], __common_gain_speed_ffpid[2], __common_gain_speed_ffpid[3]}
 };
