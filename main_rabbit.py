@@ -4,7 +4,7 @@
 
 import v1_nhk23
 import pygame
-import v1_nhk23_dxl
+import v1_dxl
 import time
 import os
 
@@ -22,6 +22,24 @@ try:
       any,any,500000,500000,100000,100000
     PWM all MAX=240
     """
+    # ANYTHING ELSE --------------------------------------------
+    P_DRAWIN=0
+    P_LIFT=1
+    P_ROLLER1=2
+    P_ROLLER2=3
+    P_RWHEEL=4
+    P_LWHEEL=5
+    ID_RHAND=1
+    ID_LHAND=2
+    RHAND_LIMIT=[2500,3800]
+    LHAND_LIMIT=[500,1870]
+    
+    OP_MODE=0
+    RING_COUNT=10
+    dxl_r=0
+    dxl_l=0
+    # ------------------------------------------------
+
     # joystick setup ---------------------------------
     os.environ['SDL_VIDEODRIVER'] = 'dummy'
     pygame.init()
@@ -30,7 +48,14 @@ try:
     # ------------------------------------------------
     
     # Dyamixel setup ---------------------------------
+    Dxl=v1_dxl.Dynamixel("/dev/ttyusb0",57600)
+    Dxl.set_mode_position(ID_RHAND)
+    Dxl.set_mode_position(ID_LHAND)
+    Dxl.set_min_max_position(ID_RHAND,2500,3800)
+    Dxl.set_min_max_position(ID_LHAND,500,1870)
     # トルクオン
+    Dxl.enable_torque(ID_RHAND)
+    Dxl.enable_torque(ID_LHAND)
     # ------------------------------------------------
     
     # Arduino (rappini Roller,Diff) setup ------------
@@ -42,21 +67,8 @@ try:
     Transmitter=v1_nhk23.Transmitter("/dev/ArduinoMega1",115200,mode,dir,lev)
     # ------------------------------------------------
     
-    # ANYTHING ELSE --------------------------------------------
-    P_DRAWIN=0
-    P_LIFT=1
-    P_ROLLER1=2
-    P_ROLLER2=3
-    P_RWHEEL=4
-    P_LWHEEL=5
-    
-    OP_MODE=0
-    RING_COUNT=10
-    dxl_r=0
-    dxl_l=0
     
     Transmitter.reset_input_buffer()
-    # ------------------------------------------------
     while 1:
       # OP_MODE < 0 > ----------------------------------
       while OP_MODE==0:
@@ -78,7 +90,6 @@ try:
           足回り起動
           """
           if j.get_button(3)==1:
-            print("SHIKAKU_TOUCH")
             st2=time.time()
             while time.time()-st2<0.3:
               events = pygame.event.get()
@@ -114,7 +125,9 @@ try:
                     OP_MODE=2
                     Transmitter.reset_data_single(P_LIFT,100)
 
-                    time.sleep(0.3)
+                    dxl_r=Dxl.read_position(ID_RHAND)
+                    dxl_l=Dxl.read_position(ID_LHAND)
+                    time.sleep(0.5)
                     break
                   time.sleep(0.05)
               time.sleep(0.05)
@@ -215,6 +228,9 @@ try:
                     Transmitter.reset_data_single(P_RWHEEL,0)
                     Transmitter.reset_data_single(P_LWHEEL,0)
                     Transmitter.reset_data_single(P_LIFT,100)
+
+                    dxl_r=Dxl.read_position(ID_RHAND)
+                    dxl_l=Dxl.read_position(ID_LHAND)
                     time.sleep(0.3)
                     break
                   time.sleep(0.05)
@@ -268,6 +284,15 @@ try:
         # 昇降　十字上下
         Transmitter.write_motor_single(P_LIFT,(j.get_hat(0))[1]*(-1)*0.5)
         
+        # ハンド開閉
+        tmp_r=int(v1_nhk23.joy_threshold(j.get_axis(3)*(1),0.2)*20)
+        tmp_l=int(v1_nhk23.joy_threshold(j.get_axis(0)*(1),0.2)*20)
+        if j.get_button(4)==1 and j.get_button(5)==1 :
+          tmp_r=tmp_r/2
+          tmp_l=tmp_l/2
+        dxl_r=dxl_r+tmp_r
+        dxl_l=dxl_l+tmp_l
+
         
         # 高速送信======(この外は遅い送信)
         st=time.time()
@@ -421,6 +446,9 @@ try:
                     print("三角二回押し")
                     OP_MODE=2
                     time.sleep(0.3)
+
+                    dxl_r=Dxl.read_position(ID_RHAND)
+                    dxl_l=Dxl.read_position(ID_LHAND)
                     break
                   time.sleep(0.05)
               time.sleep(0.05)
@@ -430,7 +458,7 @@ try:
           """
           自動上昇 十字上２回押し
           """
-          if (j.get_hat(0)[1]==1):
+          if (j.get_hat(0))[1]==1:
             st2=time.time()
             while time.time()-st2<0.3:
               events = pygame.event.get()
@@ -449,8 +477,11 @@ try:
           """"
           自動上昇停止
           """
-          if (j.get_hat(0)[0]==0):
+          if (j.get_hat(0))[1]==-1:
+            print("HAT UNDER")
             Transmitter.write_motor_single(P_LIFT,0)
+            time.sleep(0.2)
+            
             
           """
           xボタン長押し発射
