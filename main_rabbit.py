@@ -489,55 +489,58 @@ try:
             Transmitter.write_motor_single(P_LIFT,0)
             time.sleep(0.2)
             
-            
+          
           """
-          xボタン長押し発射
+          xボタン 二回押し発射
           """
           if j.get_button(0)==1:
-            tmp_index=0
             st2=time.time()
-            while time.time()-st2<0.5:
+            while time.time()-st2<0.3:
               events = pygame.event.get()
               if j.get_button(0)==0:
-                tmp_index=1
-                break
+                st3=time.time()
+                while time.time()-st3<0.3:
+                  events = pygame.event.get()
+                  if (j.get_button(0)==1):
+                    print("×ボタン二回押し")
+                    if RING_COUNT>0:
+                      
+                      if RING_COUNT==RING_NUM:
+                        #ラッピニ戻し
+                        st=time.time()
+                        while time.time()-st<1:
+                          Transmitter.reset_input_buffer()
+                          Transmitter.write_motor_single(P_DRAWIN,-0.75)
+                          time.sleep(0.1)
+                        
+                      
+                      #ラッピニ引き込み
+                      st=time.time()
+                      while time.time()-st<2:
+                        Transmitter.reset_input_buffer()
+                        Transmitter.write_motor_single(P_DRAWIN,0.75)
+                        time.sleep(0.1)
+                        
+                      #ラッピニ戻し
+                      st=time.time()
+                      while time.time()-st<1:
+                        Transmitter.reset_input_buffer()
+                        Transmitter.write_motor_single(P_DRAWIN,-0.75)
+                        time.sleep(0.1)
+                        
+                      RING_COUNT=RING_COUNT-1
+                      
+                      if RING_COUNT>0:
+                        #上昇
+                        st=time.time()
+                        while time.time()-st<1:
+                          Transmitter.reset_input_buffer()
+                          Transmitter.write_motor_single(P_LIFT,-1)
+                          time.sleep(0.1)
+                    break
+                  time.sleep(0.05)
               time.sleep(0.05)
-            if tmp_index==0:
-              print("LONG PRESS")
-              if RING_COUNT>0:
-                
-                if RING_COUNT==RING_NUM:
-                  #ラッピニ戻し
-                  st=time.time()
-                  while time.time()-st<1:
-                    Transmitter.reset_input_buffer()
-                    Transmitter.write_motor_single(P_DRAWIN,-0.75)
-                    time.sleep(0.1)
-                  
-                
-                #ラッピニ引き込み
-                st=time.time()
-                while time.time()-st<2:
-                  Transmitter.reset_input_buffer()
-                  Transmitter.write_motor_single(P_DRAWIN,0.75)
-                  time.sleep(0.1)
-                  
-                #ラッピニ戻し
-                st=time.time()
-                while time.time()-st<1:
-                  Transmitter.reset_input_buffer()
-                  Transmitter.write_motor_single(P_DRAWIN,-0.75)
-                  time.sleep(0.1)
-                  
-                RING_COUNT=RING_COUNT-1
-                
-                if RING_COUNT>0:
-                  #上昇
-                  st=time.time()
-                  while time.time()-st<1:
-                    Transmitter.reset_input_buffer()
-                    Transmitter.write_motor_single(P_LIFT,-1)
-                    time.sleep(0.1)
+            time.sleep(0.05)
           
           time.sleep(0.01)          
         Transmitter.reset_input_buffer()
