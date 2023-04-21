@@ -179,7 +179,7 @@ try:
     Dxl.set_mode_position(ID_RHAND)
     Dxl.set_mode_position(ID_LHAND)
     Dxl.set_min_max_position(ID_RHAND,RHAND_LIMIT[0],RHAND_LIMIT[1])
-    Dxl.set_min_max_position(ID_LHAND,LHAND_LIMIT[0],LHAND_LIMIT[0])
+    Dxl.set_min_max_position(ID_LHAND,LHAND_LIMIT[0],LHAND_LIMIT[1])
     # トルクオン
     Dxl.enable_torque(ID_RHAND)
     Dxl.enable_torque(ID_LHAND)
@@ -190,7 +190,7 @@ try:
     Diff=v1_nhk23.DiffDrive(127,254,0.4,30,28)
     mode=[0,0,0,0,0,0]
     dir=[0,0,2,1,3,1]
-    lev=[1,1,1,1,1,1]
+    lev=[0,1,0,0,0,1]
     Transmitter=v1_nhk23.Transmitter("/dev/ArduinoMega1",115200,mode,dir,lev)
     # ------------------------------------------------
     
@@ -333,6 +333,10 @@ try:
                   if j.get_button(3)==1:
                     print("四角二回押し")
                     OP_MODE=1
+                    time.sleep(2)
+                    Transmitter.reset_data_single(P_RWHEEL,20) 
+                    Transmitter.reset_data_single(P_LWHEEL,20)
+                    time.sleep(0.3)
                     Transmitter.reset_data_single(P_RWHEEL,20) 
                     Transmitter.reset_data_single(P_LWHEEL,20)
                     time.sleep(0.3)
@@ -356,6 +360,11 @@ try:
                   if j.get_button(2)==1:
                     print("三角二回押し")
                     OP_MODE=2
+                    Transmitter.reset_data_single(P_LIFT,100)
+
+                    dxl_r=Dxl.read_position(ID_RHAND)
+                    dxl_l=Dxl.read_position(ID_LHAND)
+                    time.sleep(0.5)
                     Transmitter.reset_data_single(P_LIFT,100)
 
                     dxl_r=Dxl.read_position(ID_RHAND)
@@ -389,16 +398,22 @@ try:
                     Transmitter.reset_data_single(P_RWHEEL,20)
                     Transmitter.reset_data_single(P_LWHEEL,20)
                     time.sleep(0.12)
-                    # MAX上昇
-                    Transmitter.write_motor_single(P_LIFT,-1) 
+                    Transmitter.reset_data_single(P_DRAWIN,100)
+                    Transmitter.reset_data_single(P_LIFT,100)
+                    Transmitter.reset_data_single(P_ROLLER1,20)
+                    Transmitter.reset_data_single(P_ROLLER2,20)
+                    Transmitter.reset_data_single(P_RWHEEL,20)
+                    Transmitter.reset_data_single(P_LWHEEL,20)
+                    time.sleep(0.12)
+                    
                     # ローラー回転開始
                     speed=Roller.calc_speed(0.7) 
                     Transmitter.write_motor_single(P_ROLLER1,speed)
                     Transmitter.write_motor_single(P_ROLLER2,speed)
+                    speed=Roller.calc_speed(0.7) 
+                    Transmitter.write_motor_single(P_ROLLER1,speed)
+                    Transmitter.write_motor_single(P_ROLLER2,speed)
                     
-                    #画面表示
-
-
                     time.sleep(0.3)
                     break
                   time.sleep(0.05)
@@ -465,7 +480,13 @@ try:
                     Transmitter.reset_data_single(P_RWHEEL,0)
                     Transmitter.reset_data_single(P_LWHEEL,0)
                     Transmitter.reset_data_single(P_LIFT,100)
+                    Transmitter.reset_data_single(P_RWHEEL,0)
+                    Transmitter.reset_data_single(P_LWHEEL,0)
+                    Transmitter.reset_data_single(P_LIFT,100)
 
+                    dxl_r=Dxl.read_position(ID_RHAND)
+                    dxl_l=Dxl.read_position(ID_LHAND)
+                    time.sleep(0.3)
                     dxl_r=Dxl.read_position(ID_RHAND)
                     dxl_l=Dxl.read_position(ID_LHAND)
                     time.sleep(0.3)
@@ -495,8 +516,17 @@ try:
                     Transmitter.reset_data_single(P_ROLLER1,20)
                     Transmitter.reset_data_single(P_ROLLER2,20)
                     time.sleep(0.12)
+                    Transmitter.reset_data_single(P_DRAWIN,100)
+                    Transmitter.reset_data_single(P_LIFT,100)
+                    Transmitter.reset_data_single(P_ROLLER1,20)
+                    Transmitter.reset_data_single(P_ROLLER2,20)
+                    time.sleep(0.12)
+                    
                     # ローラー回転開始
                     speed=Roller.calc_speed(0.7) 
+                    Transmitter.write_motor_single(P_ROLLER1,speed)
+                    Transmitter.write_motor_single(P_ROLLER2,speed)
+                    time.sleep(0.3)
                     Transmitter.write_motor_single(P_ROLLER1,speed)
                     Transmitter.write_motor_single(P_ROLLER2,speed)
                     time.sleep(0.3)
@@ -522,19 +552,20 @@ try:
         Transmitter.write_motor_single(P_LIFT,(j.get_hat(0))[1]*(-1)*0.5)
         
         # ハンド開閉
-        tmp_r=int(v1_nhk23.joy_threshold(j.get_axis(3)*(1),0.2)*50)
-        tmp_l=int(v1_nhk23.joy_threshold(j.get_axis(0)*(1),0.2)*50)
+        tmp_r=(v1_nhk23.joy_threshold(j.get_axis(3)*(1),0.2))*50
+        tmp_l=(v1_nhk23.joy_threshold(j.get_axis(0)*(1),0.2))*50
         if j.get_button(4)==1 and j.get_button(5)==1 :
           tmp_r=tmp_r/2
           tmp_l=tmp_l/2
-        dxl_r=max(RHAND_LIMIT[0],min(RHAND_LIMIT[1],dxl_r+tmp_r)) 
-        dxl_l=max(LHAND_LIMIT[0],min(LHAND_LIMIT[1],dxl_l+tmp_l)) 
+        dxl_r=int(max(RHAND_LIMIT[0],min(RHAND_LIMIT[1],dxl_r+tmp_r)) )
+        dxl_l=int(max(LHAND_LIMIT[0],min(LHAND_LIMIT[1],dxl_l+tmp_l)) )
         Dxl.write_position(ID_RHAND,dxl_r)
+        time.sleep(0.02)
         Dxl.write_position(ID_LHAND,dxl_l)
 
         # 高速送信======(この外は遅い送信)
         st=time.time()
-        while time.time()-st<0.1:
+        while time.time()-st<0.05:
           ## Get Inputs
           events = pygame.event.get()
           """
@@ -567,6 +598,10 @@ try:
                     Transmitter.reset_data_single(P_RWHEEL,20)
                     Transmitter.reset_data_single(P_LWHEEL,20)
                     time.sleep(0.3)
+                    Transmitter.reset_data_single(P_LIFT,0)
+                    Transmitter.reset_data_single(P_RWHEEL,20)
+                    Transmitter.reset_data_single(P_LWHEEL,20)
+                    time.sleep(0.3)
                     break
                   time.sleep(0.05)
               time.sleep(0.05)
@@ -593,8 +628,17 @@ try:
                     Transmitter.reset_data_single(P_RWHEEL,20)
                     Transmitter.reset_data_single(P_LWHEEL,20)
                     time.sleep(0.12)
+                    Transmitter.reset_data_single(P_DRAWIN,100)
+                    Transmitter.reset_data_single(P_ROLLER1,20)
+                    Transmitter.reset_data_single(P_ROLLER2,20)
+                    Transmitter.reset_data_single(P_RWHEEL,20)
+                    Transmitter.reset_data_single(P_LWHEEL,20)
+                    time.sleep(0.12)
                     # ローラー回転開始
                     speed=Roller.calc_speed(0.7) 
+                    Transmitter.write_motor_single(P_ROLLER1,speed)
+                    Transmitter.write_motor_single(P_ROLLER2,speed)
+                    time.sleep(0.06)
                     Transmitter.write_motor_single(P_ROLLER1,speed)
                     Transmitter.write_motor_single(P_ROLLER2,speed)
                     time.sleep(0.06)
@@ -704,6 +748,15 @@ try:
                   if j.get_button(3)==1:
                     print("四角二回押し")
                     OP_MODE=1
+                    Transmitter.write_motor_single(P_ROLLER1,0)
+                    Transmitter.write_motor_single(P_ROLLER2,0)
+                    Transmitter.reset_data_single(P_DRAWIN,0)
+                    Transmitter.reset_data_single(P_LIFT,0)
+                    time.sleep(0.3)
+                    Transmitter.write_motor_single(P_ROLLER1,0)
+                    Transmitter.write_motor_single(P_ROLLER2,0)
+                    Transmitter.reset_data_single(P_DRAWIN,0)
+                    Transmitter.reset_data_single(P_LIFT,0)
                     time.sleep(0.3)
                     break
                   time.sleep(0.05)
@@ -726,8 +779,21 @@ try:
                   if j.get_button(2)==1:
                     print("三角二回押し")
                     OP_MODE=2
+                    Transmitter.write_motor_single(P_ROLLER1,0)
+                    Transmitter.write_motor_single(P_ROLLER2,0)
+                    Transmitter.reset_data_single(P_DRAWIN,0)
+                    Transmitter.reset_data_single(P_RWHEEL,0)
+                    Transmitter.reset_data_single(P_LWHEEL,0)
                     time.sleep(0.3)
-
+                    
+                    Transmitter.write_motor_single(P_ROLLER1,0)
+                    Transmitter.write_motor_single(P_ROLLER2,0)
+                    Transmitter.reset_data_single(P_DRAWIN,0)
+                    Transmitter.reset_data_single(P_RWHEEL,0)
+                    Transmitter.reset_data_single(P_LWHEEL,0)
+                    time.sleep(0.3)
+                    Dxl.enable_torque(ID_RHAND)
+                    Dxl.enable_torque(ID_LHAND)
                     dxl_r=Dxl.read_position(ID_RHAND)
                     dxl_l=Dxl.read_position(ID_LHAND)
                     time.sleep(0.1)
@@ -751,6 +817,7 @@ try:
                   if (j.get_hat(0)[1]==1):
                     print("HAT DOUBLE TOUCH")
                     Transmitter.write_motor_single(P_LIFT,-1)
+                    Transmitter.write_motor_single(P_LIFT,-1)
                     break
                   time.sleep(0.05)
               time.sleep(0.05)
@@ -762,8 +829,9 @@ try:
           if (j.get_hat(0))[1]==-1:
             print("HAT UNDER")
             Transmitter.write_motor_single(P_LIFT,0)
+            Transmitter.write_motor_single(P_LIFT,0)
+            Transmitter.write_motor_single(P_LIFT,0)
             time.sleep(0.2)
-            
           
           
           
@@ -818,25 +886,7 @@ try:
                   time.sleep(0.05)
               time.sleep(0.05)
             time.sleep(0.05)
-          
-          """
-          xボタン長押し 自動射出調節
-          """
-          if j.get_button(0)==1:
-            tmp_index=0
-            st2=time.time()
-            while time.time()-st2<1:
-              events = pygame.event.get()
-              if j.get_button(0)==0:
-                tmp_index=1
-                break
-              time.sleep(0.05)
-            if tmp_index==0:
-              print("xボタン長押し")
-              # ここに自動調節のプログラムを書く
               
-              break
-    
           time.sleep(0.01)          
         Transmitter.reset_input_buffer()
     # ------------------------------------------------
