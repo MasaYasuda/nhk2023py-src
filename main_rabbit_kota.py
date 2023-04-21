@@ -11,6 +11,21 @@ import v1_dxl
 import time
 import os
 
+#画像用
+import pyrealsense2 as rs
+import numpy as np
+import cv2
+from for_image import images4 as images3
+import defs.H_change as H_c
+from for_image import ReachAndPhase as RAP
+import copy
+from defs import movement as moves
+from defs import IandD
+from defs import go
+from defs import lock_on
+from for_image import set_X
+
+
 try:
     """ MEMOS
     [引込み、昇降、発射上、発射下,右足回り、左足回り]
@@ -43,7 +58,103 @@ try:
     
     dxl_r=0
     dxl_l=0
+
+    #image setup--------------------------------
+    Hue=19
+    Hue_wide=2
+    pole_num=80
+    ONOOF=0
+    checkdef=[0,0,0]
+    typeofnow=0
+    Target=[0]
+    Target_Type=[1]
+
+    #コールバック用関数
+    def Hue_center_def(X):
+        global Hue
+        global checkdef
+        Hue=X
+        checkdef[0]=1
+    """
+    def ON_OFF_def(X):
+        global ONOOF
+        ONOOF=X
+    """
+    def Hue_wide_def(X):
+        global Hue_wide
+        global checkdef
+        Hue_wide=X
+        checkdef[1]=1
+
+    def pole_num_def(X):
+        global pole_num
+        global checkdef
+        pole_num=X
+        checkdef[2]=1
+
+    def types(X):
+        global typeofnow
+        typeofnow=X
+
+    def go_def(X):
+        global mode
+        mode=X
+
+    def targets(event,x,y,flags,param):
+        global stats
+        global Target
+        global Target_Type
+        global typeofnow
+
+        if event==cv2.EVENT_LBUTTONDOWN:    
+            Target,Target_Type=lock_on.lock_on(stats[1:],Target,Target_Type,typeofnow,x,y)
+
+
+
+    #画像インポートまではネット上のサンプルコードを流用して行いました
+    # カメラの設定
+    conf = rs.config()
+    conf.enable_stream(rs.stream.color, 1280, 720, rs.format.bgr8, 30)
+    pipe = rs.pipeline()
+    profile = pipe.start(conf)
+    cnt = 0
+    CON_PID_control=[0,0,0]
+
+
+
+
+    #windowの設定
+    cv2.namedWindow("view1", cv2.WINDOW_NORMAL)
+    cv2.resizeWindow("view1", 640, 480)
+
+    """
+    cv2.createTrackbar("ON/OFF",
+                      "view1",
+                        0,
+                        1,
+                        ON_OFF_def)
+    """
+    cv2.createTrackbar("Hue_center",
+                      "view1",
+                        19,
+                        30,
+                        Hue_center_def)
+    cv2.createTrackbar("Hue_wide",
+                      "view1",
+                        2,
+                        10,
+                        Hue_wide_def)                      "view1",
+    cv2.createTrackbar("Type",
+                      "view1",
+                        2,
+                        3,
+                        types)
+    cv2.setMouseCallback("view1",
+                        targets)
+
     # ------------------------------------------------
+
+
 
     # joystick setup ---------------------------------
     os.environ['SDL_VIDEODRIVER'] = 'dummy'
@@ -168,6 +279,9 @@ try:
                     Transmitter.write_motor_single(P_ROLLER1,speed)
                     Transmitter.write_motor_single(P_ROLLER2,speed)
                     
+                    #画面表示
+
+
                     time.sleep(0.3)
                     break
                   time.sleep(0.05)
