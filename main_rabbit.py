@@ -1,5 +1,8 @@
 """自動射出のプログラム
 昇降（上昇）→ローラー加速→引き込み→上昇の繰り返し
+
+
+
 """
 
 import v1_nhk23
@@ -35,7 +38,9 @@ try:
     LHAND_LIMIT=[500,1870]
     
     OP_MODE=0
-    RING_COUNT=10
+    RING_NUM=10 #最初の数
+    RING_COUNT=10 #現在の数（※　RINGCNUMと同じ値にする。）
+    
     dxl_r=0
     dxl_l=0
     # ------------------------------------------------
@@ -500,17 +505,28 @@ try:
             if tmp_index==0:
               print("LONG PRESS")
               if RING_COUNT>0:
+                
+                if RING_COUNT==RING_NUM:
+                  #ラッピニ戻し
+                  st=time.time()
+                  while time.time()-st<1:
+                    Transmitter.reset_input_buffer()
+                    Transmitter.write_motor_single(P_DRAWIN,-0.75)
+                    time.sleep(0.1)
+                  
+                
+                #ラッピニ引き込み
+                st=time.time()
+                while time.time()-st<2:
+                  Transmitter.reset_input_buffer()
+                  Transmitter.write_motor_single(P_DRAWIN,0.75)
+                  time.sleep(0.1)
+                  
                 #ラッピニ戻し
                 st=time.time()
                 while time.time()-st<1:
                   Transmitter.reset_input_buffer()
                   Transmitter.write_motor_single(P_DRAWIN,-0.75)
-                  time.sleep(0.1)
-                #ラッピニ引き込み
-                st=time.time()
-                while time.time()-st<1:
-                  Transmitter.reset_input_buffer()
-                  Transmitter.write_motor_single(P_DRAWIN,0.75)
                   time.sleep(0.1)
                   
                 RING_COUNT=RING_COUNT-1
