@@ -6,7 +6,8 @@ import math
 import phase
 import movement as moves
 import IandD
-def shot_jyunbi(Center_X,Center_Y,pipe,border_Phase,CON_PID):
+import time
+def shot_jyunbi(Center_X,Center_Y,pipe,border_Phase,border_PID,CON_PID):
     global H_fil
     global Hue
     global Hue_wide
@@ -19,7 +20,8 @@ def shot_jyunbi(Center_X,Center_Y,pipe,border_Phase,CON_PID):
     L_D=0
     R_D=0
     count=0
-    while True:
+    st=time.time()
+    while time.time()-st<10:
         count+=1
 
         #PhaseX to Zero
@@ -85,7 +87,7 @@ def shot_jyunbi(Center_X,Center_Y,pipe,border_Phase,CON_PID):
             gosa=Reach*phase_X#[mm]
             #しきい値は調整すること！
             if gosa<30 & I<0.5 & D<0.5:
-                return 2
+                return 2,phase_Y
         
 
             
@@ -99,3 +101,5 @@ def shot_jyunbi(Center_X,Center_Y,pipe,border_Phase,CON_PID):
 
 
         """
+
+

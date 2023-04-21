@@ -24,6 +24,9 @@ from defs import IandD
 from defs import go
 from defs import lock_on
 from for_image import set_X
+from defs import phase
+import math
+from defs import sokudo
 
 
 try:
@@ -65,9 +68,16 @@ try:
     pole_num=80
     ONOOF=0
     checkdef=[0,0,0]
-    typeofnow=0
+    typeofnow=1
     Target=[0]
     Target_Type=[1]
+    #定数
+    Y_max_half=0.674#デフォルトで半分の値
+    X_max_half=1.19822#デフォルトで半分の値
+    border_PID=[1000.0,1.0,1.0]
+    CON_PID=[0.1,0.1,0.1]
+    phase_or_shoot=0
+    camera_takasa=aaa
 
     #コールバック用関数
     def Hue_center_def(X):
@@ -108,7 +118,7 @@ try:
 
         if event==cv2.EVENT_LBUTTONDOWN:    
             Target,Target_Type=lock_on.lock_on(stats[1:],Target,Target_Type,typeofnow,x,y)
-
+  
 
 
     #画像インポートまではネット上のサンプルコードを流用して行いました
@@ -129,23 +139,24 @@ try:
 
     """
     cv2.createTrackbar("ON/OFF",
-                      "view1",
+                        "view1",
                         0,
                         1,
                         ON_OFF_def)
     """
     cv2.createTrackbar("Hue_center",
-                      "view1",
+                        "view1",
                         19,
                         30,
                         Hue_center_def)
+    
     cv2.createTrackbar("Hue_wide",
-                      "view1",
+                        "view1",
                         2,
                         10,
-                        Hue_wide_def)                      "view1",
+                        Hue_wide_def)
     cv2.createTrackbar("Type",
-                      "view1",
+                        "view1",
                         2,
                         3,
                         types)
@@ -183,7 +194,113 @@ try:
     Transmitter=v1_nhk23.Transmitter("/dev/ArduinoMega1",115200,mode,dir,lev)
     # ------------------------------------------------
     
-    
+    def shot_jyunbi(Center_X,Center_Y,pipe,border_Phase,border_PID,CON_PID):
+        global H_fil
+        global Hue
+        global Hue_wide
+        global h,w
+        global Y
+        global Transmitter
+        Diff_for_X=v1_nhk23.DiffDrive(127,254,0.4,30,28)
+        L_log=0
+        R_log=0
+        L_I=0
+        R_I=0
+        L_D=0
+        R_D=0
+
+        speed=Roller.calc_speed(0.7) 
+        st=time.time()
+        while time.time()-st<10:
+            #PhaseX to Zero
+
+            #インポート
+            frames = pipe.wait_for_frames()
+            color_frame = frames.get_color_frame()
+            img = np.asanyarray(color_frame.get_data())
+
+            #定数
+            Y_max_half=0.674#デフォルトで半分の値
+            X_max_half=1.19822#デフォルトで半分の値
+
+
+            #画像処理
+            img2, lines ,stats_nonuse,centroids_nonuse = images3.images_4return(img,H_fil,Hue,Hue_wide)
+            #画面全体の塊認識をなくす
+            stats=stats_nonuse
+            centroids=centroids_nonuse
+            kazu_of_blob=centroids.shape[0]
+
+            if kazu_of_blob!=0:
+                #狙うべきポールを特定 kouho_numに格納
+                i=0
+                Center_X_short=centroids[0][0]
+                Center_Y_short=centroids[0][1]
+                Center_X_gosa=Center_X_short-Center_X
+                Center_Y_gosa=Center_Y_short-Center_Y
+                gosa=math.sqrt( ( (Center_X_gosa)**2+(Center_Y_gosa)**2 )/2 )
+                gosa_log=gosa
+                kouho_num=i
+                i=1
+
+                while i<kazu_of_blob:
+                    Center_X_short=centroids[i][0]
+                    Center_Y_short=centroids[i][1]
+                    Center_X_gosa=Center_X_short-Center_X
+                    Center_Y_gosa=Center_Y_short-Center_Y
+                    gosa=math.sqrt( ( (Center_X_gosa)**2+(Center_Y_gosa)**2 )/2 )
+
+                    if gosa<gosa_log:
+                        gosa_log=gosa
+                        kouho_num=i
+                    i+=1
+                #横位置を揃える
+                phase_X=phase.HighToTheta((centroids[kouho_num][0]),int(w/2),Y_max_half)
+                phase_X/=X_max_half
+                L_move,R_move=moves.phase(phase_X,border_Phase,CON_PID,L_I,R_I,L_D,R_D)
+                
+                
+
+
+                Transmitter.write_motor_single(P_RWHEEL,R_move)
+                Transmitter.write_motor_single(P_LWHEEL,L_move)
+
+
+
+                #終了判定
+                            
+                L_I,R_I,L_D,R_D=IandD.IAndD(L_move,R_move,L_log,R_log,L_I,R_I)
+                L_log=L_move
+                R_log=R_move
+                
+                I=(abs(L_I)+abs(R_I))/2
+                D=(abs(L_D)+abs(R_D))/2
+                
+                phase_Y=phase.HighToTheta((stats[kouho_num][1]),int(h/2),Y_max_half)
+
+                Reach=Y/(math.cos(phase_X)*math.tan(phase_Y))
+
+                gosa=Reach*phase_X#[mm]
+                #しきい値は調整すること！
+                if gosa<30 & I<0.5 & D<0.5:
+                    return 2
+            
+
+                
+            """
+
+            stats_T=np.array(stats.T,dtype=int)
+            centroids_T=np.array(centroids.T,dtype=int)
+            Stats_Centroids_T=np.array((centroids_T[0],stats_T[1]),dtype=int)
+            Stats_Centroids=np.array(Stats_Centroids_T.T,dtype=int)
+
+
+
+            """
+
+
+
+
     Transmitter.reset_input_buffer()
     while 1:
       # OP_MODE < 0 > ----------------------------------
@@ -311,6 +428,7 @@ try:
         Transmitter.write_motor_single(P_RWHEEL,R_speed)
         Transmitter.write_motor_single(P_LWHEEL,L_speed)
         
+
         # 高速送信======(この外は遅い送信)
         st=time.time()
         while time.time()-st<0.1:
@@ -510,6 +628,49 @@ try:
         Transmitter.write_motor_single(P_RWHEEL,R_speed)
         Transmitter.write_motor_single(P_LWHEEL,L_speed)
         
+
+
+        #画像処理と照準
+        #インポート
+        frames = pipe.wait_for_frames()
+        color_frame = frames.get_color_frame()
+        img = np.asanyarray(color_frame.get_data())
+
+        #画像処理
+        img2, lines ,stats_nonuse,centroids_nonuse = images3.images_4return(img,H_fil,Hue,Hue_wide)
+        #画面全体の塊認識をなくす
+        stats=stats_nonuse
+        centroids=centroids_nonuse
+        kazu_of_blob=centroids.shape[0]
+        
+        cv2.imshow("view1",img2)
+        if Target[0]!=0:
+            Center_X=centroids[Target[0]-1][0]
+            Center_Y=stats[Target[0]-1][1]
+
+            phase_or_shoot,Phase_Y=set_X.shot_jyunbi(Center_X,Center_Y,pipe,border_PID,CON_PID)
+            Target[0]=0
+            Target_Type[0]=0
+            print("Go shoot!")
+        
+        if phase_or_shoot==2:
+          #距離->速度
+          if Target_Type[0]==1:
+            takasa=1000-camera_takasa
+          if Target_Type[0]==2:
+            takasa=1200-camera_takasa
+          if Target_Type[0]==3:
+            takasa=1900-camera_takasa
+
+          kyori=takasa/math.tan(Phase_Y)
+
+          Go_sokudo=sokudo.sokudo(kyori,takasa)
+          speed=Roller.calc_speed(Go_sokudo) 
+          Transmitter.write_motor_single(P_ROLLER1,speed)
+          Transmitter.write_motor_single(P_ROLLER2,speed)
+
+
+
         
         # 高速送信======(この外は遅い送信)
         st=time.time()

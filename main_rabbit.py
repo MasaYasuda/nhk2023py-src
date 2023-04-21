@@ -57,7 +57,7 @@ try:
     Dxl.set_mode_position(ID_RHAND)
     Dxl.set_mode_position(ID_LHAND)
     Dxl.set_min_max_position(ID_RHAND,RHAND_LIMIT[0],RHAND_LIMIT[1])
-    Dxl.set_min_max_position(ID_LHAND,LHAND_LIMIT[0],LHAND_LIMIT[0])
+    Dxl.set_min_max_position(ID_LHAND,LHAND_LIMIT[0],LHAND_LIMIT[1])
     # トルクオン
     Dxl.enable_torque(ID_RHAND)
     Dxl.enable_torque(ID_LHAND)
