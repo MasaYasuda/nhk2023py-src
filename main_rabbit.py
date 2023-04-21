@@ -41,7 +41,7 @@ try:
     RING_NUM=10 #最初の数
     RING_COUNT=10 #現在の数（※　RINGCNUMと同じ値にする。）
     
-    roll_vel=0.7
+    roll_vel=0.3
 
     dxl_r=0
     dxl_l=0
@@ -109,7 +109,6 @@ try:
                   if j.get_button(3)==1:
                     print("四角二回押し")
                     OP_MODE=1
-                    time.sleep(2)
                     Transmitter.reset_data_single(P_RWHEEL,20) 
                     Transmitter.reset_data_single(P_LWHEEL,20)
                     time.sleep(0.3)
@@ -294,12 +293,16 @@ try:
                     Transmitter.reset_data_single(P_LIFT,100)
                     Transmitter.reset_data_single(P_ROLLER1,20)
                     Transmitter.reset_data_single(P_ROLLER2,20)
-                    time.sleep(0.12)
+                    Transmitter.reset_data_single(P_RWHEEL,0)
+                    Transmitter.reset_data_single(P_LWHEEL,0)
+                    time.sleep(0.2)
                     Transmitter.reset_data_single(P_DRAWIN,100)
                     Transmitter.reset_data_single(P_LIFT,100)
                     Transmitter.reset_data_single(P_ROLLER1,20)
                     Transmitter.reset_data_single(P_ROLLER2,20)
-                    time.sleep(0.12)
+                    Transmitter.reset_data_single(P_RWHEEL,0)
+                    Transmitter.reset_data_single(P_LWHEEL,0)
+                    time.sleep(0.2)
                     
                     # ローラー回転開始
                     speed=Roller.calc_speed(roll_vel) 
@@ -328,19 +331,24 @@ try:
         # ハンド送信　ジョイスティックRL
         events = pygame.event.get()
         # 昇降　十字上下
-        Transmitter.write_motor_single(P_LIFT,(j.get_hat(0))[1]*(-1)*0.5)
-        
+        tmp_lift=(j.get_hat(0))[1]*(-1)
         # ハンド開閉
         tmp_r=(v1_nhk23.joy_threshold(j.get_axis(3)*(1),0.2))*50
         tmp_l=(v1_nhk23.joy_threshold(j.get_axis(0)*(1),0.2))*50
         if j.get_button(4)==1 and j.get_button(5)==1 :
           tmp_r=tmp_r/2
           tmp_l=tmp_l/2
+          tmp_lift=tmp_lift/2
+        Transmitter.write_motor_single(P_LIFT,tmp_lift)
+        
         dxl_r=int(max(RHAND_LIMIT[0],min(RHAND_LIMIT[1],dxl_r+tmp_r)) )
         dxl_l=int(max(LHAND_LIMIT[0],min(LHAND_LIMIT[1],dxl_l+tmp_l)) )
+
         Dxl.write_position(ID_RHAND,dxl_r)
         time.sleep(0.02)
         Dxl.write_position(ID_LHAND,dxl_l)
+
+
 
         # 高速送信======(この外は遅い送信)
         st=time.time()
@@ -488,12 +496,16 @@ try:
                     Transmitter.reset_data_single(P_ROLLER2,0)
                     Transmitter.reset_data_single(P_DRAWIN,0)
                     Transmitter.reset_data_single(P_LIFT,0)
-                    time.sleep(0.3)
+                    Transmitter.reset_data_single(P_RWHEEL,0)
+                    Transmitter.reset_data_single(P_LWHEEL,0)
+                    time.sleep(0.2)
                     Transmitter.reset_data_single(P_ROLLER1,0)
                     Transmitter.reset_data_single(P_ROLLER2,0)
                     Transmitter.reset_data_single(P_DRAWIN,0)
                     Transmitter.reset_data_single(P_LIFT,0)
-                    time.sleep(0.3)
+                    Transmitter.reset_data_single(P_RWHEEL,0)
+                    Transmitter.reset_data_single(P_LWHEEL,0)
+                    time.sleep(0.2)
                     break
                   time.sleep(0.05)
               time.sleep(0.05)
@@ -589,6 +601,9 @@ try:
                       
                       if RING_COUNT==RING_NUM:
                         #ラッピニ戻し
+                        Transmitter.reset_data_single(P_DRAWIN,100)
+                        Transmitter.reset_data_single(P_DRAWIN,100)
+                        time.sleep(0.04)
                         st=time.time()
                         while time.time()-st<1:
                           Transmitter.reset_input_buffer()
@@ -614,6 +629,9 @@ try:
                       
                       if RING_COUNT>0:
                         #上昇
+                        Transmitter.reset_data_single(P_LIFT,100)
+                        Transmitter.reset_data_single(P_LIFT,100)
+                        time.sleep(0.04)
                         st=time.time()
                         while time.time()-st<1:
                           Transmitter.reset_input_buffer()
