@@ -41,6 +41,8 @@ try:
     RING_NUM=10 #最初の数
     RING_COUNT=10 #現在の数（※　RINGCNUMと同じ値にする。）
     
+    roll_vel=0.7
+
     dxl_r=0
     dxl_l=0
     
@@ -141,6 +143,8 @@ try:
                     time.sleep(0.5)
                     Transmitter.reset_data_single(P_LIFT,100)
 
+                    Dxl.enable_torque(ID_RHAND)
+                    Dxl.enable_torque(ID_LHAND)
                     dxl_r=Dxl.read_position(ID_RHAND)
                     dxl_l=Dxl.read_position(ID_LHAND)
                     time.sleep(0.5)
@@ -181,10 +185,10 @@ try:
                     time.sleep(0.12)
                     
                     # ローラー回転開始
-                    speed=Roller.calc_speed(0.7) 
+                    speed=Roller.calc_speed(roll_vel) 
                     Transmitter.write_motor_single(P_ROLLER1,speed)
                     Transmitter.write_motor_single(P_ROLLER2,speed)
-                    speed=Roller.calc_speed(0.7) 
+                    speed=Roller.calc_speed(roll_vel) 
                     Transmitter.write_motor_single(P_ROLLER1,speed)
                     Transmitter.write_motor_single(P_ROLLER2,speed)
                     
@@ -257,6 +261,8 @@ try:
                     Transmitter.reset_data_single(P_LWHEEL,0)
                     Transmitter.reset_data_single(P_LIFT,100)
 
+                    Dxl.enable_torque(ID_RHAND)
+                    Dxl.enable_torque(ID_LHAND)
                     dxl_r=Dxl.read_position(ID_RHAND)
                     dxl_l=Dxl.read_position(ID_LHAND)
                     time.sleep(0.3)
@@ -296,7 +302,7 @@ try:
                     time.sleep(0.12)
                     
                     # ローラー回転開始
-                    speed=Roller.calc_speed(0.7) 
+                    speed=Roller.calc_speed(roll_vel) 
                     Transmitter.write_motor_single(P_ROLLER1,speed)
                     Transmitter.write_motor_single(P_ROLLER2,speed)
                     time.sleep(0.3)
@@ -408,7 +414,7 @@ try:
                     Transmitter.reset_data_single(P_LWHEEL,20)
                     time.sleep(0.12)
                     # ローラー回転開始
-                    speed=Roller.calc_speed(0.7) 
+                    speed=Roller.calc_speed(roll_vel) 
                     Transmitter.write_motor_single(P_ROLLER1,speed)
                     Transmitter.write_motor_single(P_ROLLER2,speed)
                     time.sleep(0.06)
@@ -436,8 +442,8 @@ try:
         # 向き調整(移動)　(R1,L1同時押し中で微調整モード)
         events = pygame.event.get()
         
-        move=v1_nhk23.joy_threshold(j.get_axis(1)*(-1)*(0.5),0.1)
-        rot=v1_nhk23.joy_threshold(j.get_axis(3)*(0.5),0.1)
+        move=v1_nhk23.joy_threshold(j.get_axis(1)*(-1),0.1)*(0.5)
+        rot=v1_nhk23.joy_threshold(j.get_axis(3),0.1)*(0.5)
         if j.get_button(4)==1 and j.get_button(5)==1 :
           move=move/2
           rot=rot/2
@@ -478,13 +484,13 @@ try:
                   if j.get_button(3)==1:
                     print("四角二回押し")
                     OP_MODE=1
-                    Transmitter.write_motor_single(P_ROLLER1,0)
-                    Transmitter.write_motor_single(P_ROLLER2,0)
+                    Transmitter.reset_data_single(P_ROLLER1,0)
+                    Transmitter.reset_data_single(P_ROLLER2,0)
                     Transmitter.reset_data_single(P_DRAWIN,0)
                     Transmitter.reset_data_single(P_LIFT,0)
                     time.sleep(0.3)
-                    Transmitter.write_motor_single(P_ROLLER1,0)
-                    Transmitter.write_motor_single(P_ROLLER2,0)
+                    Transmitter.reset_data_single(P_ROLLER1,0)
+                    Transmitter.reset_data_single(P_ROLLER2,0)
                     Transmitter.reset_data_single(P_DRAWIN,0)
                     Transmitter.reset_data_single(P_LIFT,0)
                     time.sleep(0.3)
@@ -509,15 +515,17 @@ try:
                   if j.get_button(2)==1:
                     print("三角二回押し")
                     OP_MODE=2
-                    Transmitter.write_motor_single(P_ROLLER1,0)
-                    Transmitter.write_motor_single(P_ROLLER2,0)
+                    
+                    Transmitter.reset_data_single(P_ROLLER1,0)
+                    Transmitter.reset_data_single(P_ROLLER2,0)
                     Transmitter.reset_data_single(P_DRAWIN,0)
                     Transmitter.reset_data_single(P_RWHEEL,0)
                     Transmitter.reset_data_single(P_LWHEEL,0)
                     time.sleep(0.3)
                     
-                    Transmitter.write_motor_single(P_ROLLER1,0)
-                    Transmitter.write_motor_single(P_ROLLER2,0)
+                    
+                    Transmitter.reset_data_single(P_ROLLER1,0)
+                    Transmitter.reset_data_single(P_ROLLER2,0)
                     Transmitter.reset_data_single(P_DRAWIN,0)
                     Transmitter.reset_data_single(P_RWHEEL,0)
                     Transmitter.reset_data_single(P_LWHEEL,0)
@@ -584,7 +592,7 @@ try:
                         st=time.time()
                         while time.time()-st<1:
                           Transmitter.reset_input_buffer()
-                          Transmitter.write_motor_single(P_DRAWIN,-0.75)
+                          Transmitter.write_motor_single(P_DRAWIN,-0.6)
                           time.sleep(0.1)
                         
                       
@@ -592,14 +600,14 @@ try:
                       st=time.time()
                       while time.time()-st<2:
                         Transmitter.reset_input_buffer()
-                        Transmitter.write_motor_single(P_DRAWIN,0.75)
+                        Transmitter.write_motor_single(P_DRAWIN,0.6)
                         time.sleep(0.1)
                         
                       #ラッピニ戻し
                       st=time.time()
                       while time.time()-st<1:
                         Transmitter.reset_input_buffer()
-                        Transmitter.write_motor_single(P_DRAWIN,-0.75)
+                        Transmitter.write_motor_single(P_DRAWIN,-0.6)
                         time.sleep(0.1)
                         
                       RING_COUNT=RING_COUNT-1
