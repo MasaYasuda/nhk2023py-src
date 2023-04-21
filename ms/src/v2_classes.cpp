@@ -68,9 +68,9 @@ void serial_receive()
           tmp_buf[i] = buf[i + 2];
         }
         memcpy(&value, tmp_buf, sizeof(value));
-        Serial.print(addr);
-        Serial.print(" > ");
-        Serial.println(value);
+        //Serial.print(addr);
+        //Serial.print(" > ");
+        //Serial.println(value);
 
         if (addr>=0 && addr <12 ){
           //Serial.println("VALUE INPUT");
@@ -89,7 +89,7 @@ void serial_receive()
             _output_air[addr]=byte(value);
           }
         }else if(addr>=200 && addr <206){//write _MODE
-          //Serial.print("MODE:");
+          ///Serial.print("MODE:");
           //Serial.println(value);
           __clear_table(addr-200);
           _MODE[addr-200]=byte(value);

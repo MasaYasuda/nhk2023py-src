@@ -7,7 +7,6 @@ void setup(){
   Serial.begin(115200);
   timer_setup();
   Serial.print("BEGIN\n");
-  encoder_setup(2);
 }
 void loop(){
   serial_receive();

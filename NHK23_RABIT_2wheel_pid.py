@@ -11,11 +11,11 @@ try:
 
     ##### TRANSMITTER SETUP
     
-    mode=[20,20,0,0,0,0]
-    direction_config =[2,0,0,0,0,0] #回転が逆だったら3にする
-    forward_level=[1,1,1,1,1,1] 
+    mode=[20,20,0,0,20,20]
+    direction_config =[2,0,0,0,3,1] #回転が逆だったら3にする
+    forward_level=[1,1,1,1,0,1] 
     
-    transmitter = v1_nhk23.Transmitter("/dev/ttyACM0", 115200,mode,direction_config,forward_level)
+    transmitter = v1_nhk23.Transmitter("/dev/ArduinoMega2", 115200,mode,direction_config,forward_level)
     diffdrive=v1_nhk23.DiffDrive(127,254,0.4,10,28)
     time.sleep(2)
 
