@@ -1,9 +1,9 @@
 import cv2
-from defs import color_filter_X
-import defs.blob as blob
-from defs import shirushi
-import defs.line as line
 import numpy as np
+from defs import color_filter_X
+from defs import blob
+from defs import shirushi
+from defs import line
 
 def images_4return(img,H_fil,Hue,Hue_wide):
     #print(img.shape)
@@ -50,13 +50,13 @@ def images_4return(img,H_fil,Hue,Hue_wide):
 
     #塊検出
     nLabels, img_no_use, stats, centroids= blob.blobs(img_G,1000)
-    print("blob has ended")
+#    print("blob has ended")
 
     #img=line.lines(img,img3,h,w)
 
     #番号割り振り画像作成
     img = shirushi.shirushi(img,h,nLabels,stats,centroids)
-    print("shirushi has ended")
+#    print("shirushi has ended")
 
 
 #    cv2.imwrite("./filtered_images/img_lines2.png",img)

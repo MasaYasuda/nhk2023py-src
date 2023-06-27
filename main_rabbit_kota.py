@@ -15,18 +15,76 @@ import os
 import pyrealsense2 as rs
 import numpy as np
 import cv2
-from for_image import images4 as images3
-import defs.H_change as H_c
-from for_image import ReachAndPhase as RAP
 import copy
+import math
+
+from defs import images4 as images3
+from defs import H_change as H_c
+from defs import ReachAndPhase as RAP
 from defs import movement as moves
 from defs import IandD
-from defs import go
 from defs import lock_on
-from for_image import set_X
+from defs import set_X
 from defs import phase
-import math
 from defs import sokudo
+
+
+#X軸(横)調整用
+            
+"""
+
+        stats_T=np.array(stats.T,dtype=int)
+        centroids_T=np.array(centroids.T,dtype=int)
+        Stats_Centroids_T=np.array((centroids_T[0],stats_T[1]),dtype=int)
+        Stats_Centroids=np.array(Stats_Centroids_T.T,dtype=int)
+
+
+
+        """
+
+
+
+
+
+
+#コールバック用関数
+#コールバック用関数
+def Hue_center_def(X):
+    global Hue
+    global checkdef
+    Hue=X
+    checkdef[0]=1
+
+def Hue_wide_def(X):
+    global Hue_wide
+    global checkdef
+    Hue_wide=X
+    checkdef[1]=1
+
+def pole_num_def(X):
+    global pole_num
+    global checkdef
+    pole_num=X
+    checkdef[2]=1
+
+def types(X):
+    global typeofnow
+    typeofnow=X
+
+def go_def(X):
+    global mode
+    mode=X
+
+def targets(event,x,y,flags,param):
+    global stats
+    global Target
+    global Target_Type
+    global typeofnow
+
+    if event==cv2.EVENT_LBUTTONDOWN:    
+      Target,Target_Type=lock_on.lock_on(stats,Target,Target_Type,typeofnow,x,y)
+    print(Target)
+
 
 
 try:
@@ -52,17 +110,30 @@ try:
     P_LWHEEL=5
     ID_RHAND=1
     ID_LHAND=2
-    RHAND_LIMIT=[2500,3800]
-    LHAND_LIMIT=[500,1870]
+    RHAND_LIMIT=[2138,3800]
+    LHAND_LIMIT=[500,2115]
+
+    #RHAND_LIMIT=[2500,3800]
+    #LHAND_LIMIT=[500,1870]
+
+    #Dynamixelハンド
+    #ID1(右手):2500~3800(開) kakunou=2138  kai =3803 chokkaku=3193   hoji=2922
+    #ID2(左手):500(開)~1870  kakunou=2115  kai = 324 chokkaku=959  hoji=1252
+
+
     
     OP_MODE=0
-    RING_NUM=10 #最初の数
-    RING_COUNT=10 #現在の数（※　RINGCNUMと同じ値にする。）
+    RING_NUM=5 #最初の数
+    RING_COUNT=5 #現在の数（※　RINGCNUMと同じ値にする。）
     
-    roll_vel=0.7 #射出速度の強さ 0~1
+    roll_vel=0.63 #射出速度の強さ 0~1
 
     dxl_r=0
     dxl_l=0
+
+
+    border_phase=math.pi/6.0
+    Katamuki_realsense_Y=math.pi/12
 
     #image setup--------------------------------
     Hue=19
@@ -76,68 +147,25 @@ try:
     #定数
     Y_max_half=0.674#デフォルトで半分の値
     X_max_half=1.19822#デフォルトで半分の値
-    border_PID=[1000.0,1.0,1.0]
-    CON_PID=[0.1,0.1,0.1]
+    border_PID=[10,1.0,1.0]
+    CON_PID=[1.0,0.0,0.0]
     phase_or_shoot=0
-    camera_takasa=aaa
+    camera_takasa=365
+    h=720
+    w=1280
+    H_fil=H_c.change_H(h,w)
 
-    #コールバック用関数
-    def Hue_center_def(X):
-        global Hue
-        global checkdef
-        Hue=X
-        checkdef[0]=1
-    """
-    def ON_OFF_def(X):
-        global ONOOF
-        ONOOF=X
-    """
-    def Hue_wide_def(X):
-        global Hue_wide
-        global checkdef
-        Hue_wide=X
-        checkdef[1]=1
 
-    def pole_num_def(X):
-        global pole_num
-        global checkdef
-        pole_num=X
-        checkdef[2]=1
 
-    def types(X):
-        global typeofnow
-        typeofnow=X
-
-    def go_def(X):
-        global mode
-        mode=X
-
-    def targets(event,x,y,flags,param):
-        global stats
-        global Target
-        global Target_Type
-        global typeofnow
-
-        if event==cv2.EVENT_LBUTTONDOWN:    
-            Target,Target_Type=lock_on.lock_on(stats[1:],Target,Target_Type,typeofnow,x,y)
-  
 
 
     #画像インポートまではネット上のサンプルコードを流用して行いました
     # カメラの設定
-    conf = rs.config()
-    conf.enable_stream(rs.stream.color, 1280, 720, rs.format.bgr8, 30)
-    pipe = rs.pipeline()
-    profile = pipe.start(conf)
     cnt = 0
     CON_PID_control=[0,0,0]
 
 
 
-
-    #windowの設定
-    cv2.namedWindow("view1", cv2.WINDOW_NORMAL)
-    cv2.resizeWindow("view1", 640, 480)
 
     """
     cv2.createTrackbar("ON/OFF",
@@ -146,24 +174,6 @@ try:
                         1,
                         ON_OFF_def)
     """
-    cv2.createTrackbar("Hue_center",
-                        "view1",
-                        19,
-                        30,
-                        Hue_center_def)
-    
-    cv2.createTrackbar("Hue_wide",
-                        "view1",
-                        2,
-                        10,
-                        Hue_wide_def)
-    cv2.createTrackbar("Type",
-                        "view1",
-                        2,
-                        3,
-                        types)
-    cv2.setMouseCallback("view1",
-                        targets)
 
     # ------------------------------------------------
 
@@ -177,7 +187,7 @@ try:
     # ------------------------------------------------
     
     # Dyamixel setup ---------------------------------
-    Dxl=v1_dxl.Dynamixel("/dev/ttyusb0",57600)
+    Dxl=v1_dxl.Dynamixel("/dev/ttyUSB0",57600)
     Dxl.set_mode_position(ID_RHAND)
     Dxl.set_mode_position(ID_LHAND)
     Dxl.set_min_max_position(ID_RHAND,RHAND_LIMIT[0],RHAND_LIMIT[1])
@@ -193,112 +203,10 @@ try:
     mode=[0,0,0,0,0,0]
     dir=[0,0,2,1,3,1]
     lev=[0,1,0,0,0,1]
-    Transmitter=v1_nhk23.Transmitter("/dev/ArduinoMega1",115200,mode,dir,lev)
+    Transmitter=v1_nhk23.Transmitter("/dev/ArduinoMega2",115200,mode,dir,lev)
     # ------------------------------------------------
     
-    def shot_jyunbi(Center_X,Center_Y,pipe,border_Phase,border_PID,CON_PID):
-        global H_fil
-        global Hue
-        global Hue_wide
-        global h,w
-        global Y
-        global Transmitter
-        Diff_for_X=v1_nhk23.DiffDrive(127,254,0.4,30,28)
-        L_log=0
-        R_log=0
-        L_I=0
-        R_I=0
-        L_D=0
-        R_D=0
 
-        speed=Roller.calc_speed(0.7) 
-        st=time.time()
-        while time.time()-st<10:
-            #PhaseX to Zero
-
-            #インポート
-            frames = pipe.wait_for_frames()
-            color_frame = frames.get_color_frame()
-            img = np.asanyarray(color_frame.get_data())
-
-            #定数
-            Y_max_half=0.674#デフォルトで半分の値
-            X_max_half=1.19822#デフォルトで半分の値
-
-
-            #画像処理
-            img2, lines ,stats_nonuse,centroids_nonuse = images3.images_4return(img,H_fil,Hue,Hue_wide)
-            #画面全体の塊認識をなくす
-            stats=stats_nonuse
-            centroids=centroids_nonuse
-            kazu_of_blob=centroids.shape[0]
-
-            if kazu_of_blob!=0:
-                #狙うべきポールを特定 kouho_numに格納
-                i=0
-                Center_X_short=centroids[0][0]
-                Center_Y_short=centroids[0][1]
-                Center_X_gosa=Center_X_short-Center_X
-                Center_Y_gosa=Center_Y_short-Center_Y
-                gosa=math.sqrt( ( (Center_X_gosa)**2+(Center_Y_gosa)**2 )/2 )
-                gosa_log=gosa
-                kouho_num=i
-                i=1
-
-                while i<kazu_of_blob:
-                    Center_X_short=centroids[i][0]
-                    Center_Y_short=centroids[i][1]
-                    Center_X_gosa=Center_X_short-Center_X
-                    Center_Y_gosa=Center_Y_short-Center_Y
-                    gosa=math.sqrt( ( (Center_X_gosa)**2+(Center_Y_gosa)**2 )/2 )
-
-                    if gosa<gosa_log:
-                        gosa_log=gosa
-                        kouho_num=i
-                    i+=1
-                #横位置を揃える
-                phase_X=phase.HighToTheta((centroids[kouho_num][0]),int(w/2),Y_max_half)
-                phase_X/=X_max_half
-                L_move,R_move=moves.phase(phase_X,border_Phase,CON_PID,L_I,R_I,L_D,R_D)
-                
-                
-
-
-                Transmitter.write_motor_single(P_RWHEEL,R_move)
-                Transmitter.write_motor_single(P_LWHEEL,L_move)
-
-
-
-                #終了判定
-                            
-                L_I,R_I,L_D,R_D=IandD.IAndD(L_move,R_move,L_log,R_log,L_I,R_I)
-                L_log=L_move
-                R_log=R_move
-                
-                I=(abs(L_I)+abs(R_I))/2
-                D=(abs(L_D)+abs(R_D))/2
-                
-                phase_Y=phase.HighToTheta((stats[kouho_num][1]),int(h/2),Y_max_half)
-
-                Reach=Y/(math.cos(phase_X)*math.tan(phase_Y))
-
-                gosa=Reach*phase_X#[mm]
-                #しきい値は調整すること！
-                if gosa<30 & I<0.5 & D<0.5:
-                    return 2
-            
-
-                
-            """
-
-            stats_T=np.array(stats.T,dtype=int)
-            centroids_T=np.array(centroids.T,dtype=int)
-            Stats_Centroids_T=np.array((centroids_T[0],stats_T[1]),dtype=int)
-            Stats_Centroids=np.array(Stats_Centroids_T.T,dtype=int)
-
-
-
-            """
 
 
 
@@ -443,6 +351,8 @@ try:
           move=move/2
           rot=rot/2
         R_speed,L_speed=Diff.calc_speed(move,rot)
+        print(R_speed)
+        print(L_speed)
         Transmitter.write_motor_single(P_RWHEEL,R_speed)
         Transmitter.write_motor_single(P_LWHEEL,L_speed)
         
@@ -664,8 +574,37 @@ try:
         Transmitter.reset_input_buffer()
       # ------------------------------------------------
       
+      #カメラstream開始
+
+
+      conf = rs.config()
+      conf.enable_stream(rs.stream.color, 1280, 720, rs.format.bgr8, 30)
+      pipe = rs.pipeline()
+      profile = pipe.start(conf)
+      #windowの設定
+      cv2.namedWindow("view1", cv2.WINDOW_NORMAL)
+      cv2.resizeWindow("view1", 200, 300)
+
+      cv2.createTrackbar("Hue_center",
+                          "view1",
+                          19,
+                          30,
+                          Hue_center_def)
       
-      
+      cv2.createTrackbar("Hue_wide",
+                          "view1",
+                          2,
+                          10,
+                          Hue_wide_def)
+      cv2.createTrackbar("Type",
+                          "view1",
+                          1,
+                          3,
+                          types)
+      cv2.setMouseCallback("view1",
+                          targets)
+
+
       # OP_MODE < 3 > ----------------------------------
       while OP_MODE==3:
         print("-----------------------------------")
@@ -677,12 +616,14 @@ try:
         
         move=v1_nhk23.joy_threshold(j.get_axis(1)*(-1)*(0.5),0.1)
         rot=v1_nhk23.joy_threshold(j.get_axis(3)*(0.5),0.1)
+        print("rot="+str(rot))
         if j.get_button(4)==1 and j.get_button(5)==1 :
           move=move/2
           rot=rot/2
         R_speed,L_speed=Diff.calc_speed(move,rot)
         Transmitter.write_motor_single(P_RWHEEL,R_speed)
         Transmitter.write_motor_single(P_LWHEEL,L_speed)
+        time.sleep(0.04)
         
 
 
@@ -694,36 +635,149 @@ try:
 
         #画像処理
         img2, lines ,stats_nonuse,centroids_nonuse = images3.images_4return(img,H_fil,Hue,Hue_wide)
-        #画面全体の塊認識をなくす
+        #画面全体の塊認識をなくす<-無くす必要がなくなったので無視
         stats=stats_nonuse
         centroids=centroids_nonuse
         kazu_of_blob=centroids.shape[0]
-        
-        cv2.imshow("view1",img2)
+        print(Target)
+        cv2.imshow("view1",img)
+        time.sleep(0.0)
         if Target[0]!=0:
-            Center_X=centroids[Target[0]-1][0]
-            Center_Y=stats[Target[0]-1][1]
+          Center_X=centroids[Target[0]-1][0]
+          Center_Y=stats[Target[0]-1][1]
+          if Target_Type[0]==2:
+            takasa=1200-camera_takasa
+          elif Target_Type[0]==3:
+            takasa=1900-camera_takasa
+          else:#タイプ１扱い
+            takasa=1000-camera_takasa
 
-            phase_or_shoot,Phase_Y=set_X.shot_jyunbi(Center_X,Center_Y,pipe,border_PID,CON_PID)
-            Target[0]=0
-            Target_Type[0]=0
-            print("Go shoot!")
+          L_log=0.0
+          R_log=0.0
+          L_I=0.0
+          R_I=0.0
+          L_D=0.0
+          R_D=0.0
+          count=0
+          st=time.time()
+
+          Transmitter.reset_data_single(P_RWHEEL,20)
+          Transmitter.reset_data_single(P_LWHEEL,20)
+
+          while time.time()-st<4:
+              Transmitter.reset_input_buffer()
+              time.sleep(0.01)
+
+              #PhaseX to Zero
+
+              #インポート
+              frames = pipe.wait_for_frames()
+              color_frame = frames.get_color_frame()
+              img = np.asanyarray(color_frame.get_data())
+
+              #定数
+              Y_max_half=0.674#デフォルトで半分の値
+              X_max_half=1.19822#デフォルトで半分の値
+
+
+              #画像処理
+              img2, lines ,stats_nonuse,centroids_nonuse = images3.images_4return(img,H_fil,Hue,Hue_wide)
+              cv2.imshow("view1",img2)
+              cv2.waitKey(1)
+              #画面全体の塊認識をなくす
+              stats=stats_nonuse
+              centroids=centroids_nonuse
+              kazu_of_blob=centroids.shape[0]
+
+              if kazu_of_blob!=0:
+                  #狙うべきポールを特定 kouho_numに格納
+                  i=0
+                  Center_X_short=centroids[0][0]
+                  Center_Y_short=centroids[0][1]
+                  Center_X_gosa=Center_X_short-Center_X
+                  Center_Y_gosa=Center_Y_short-Center_Y
+                  gosa=math.sqrt( ( (Center_X_gosa)**2+(Center_Y_gosa)**2 )/2 )
+                  gosa_log=gosa
+                  kouho_num=i
+                  i=1
+
+                  while i<kazu_of_blob:
+                      Center_X_short=centroids[i][0]
+                      Center_Y_short=centroids[i][1]
+                      Center_X_gosa=Center_X_short-Center_X
+                      Center_Y_gosa=Center_Y_short-Center_Y
+                      gosa=math.sqrt( ( (Center_X_gosa)**2+(Center_Y_gosa)**2 )/2 )
+
+                      if gosa<gosa_log:
+                          gosa_log=gosa
+                          kouho_num=i
+                      i+=1
+                  #横位置を揃える
+                  phase_X=phase.HighToTheta((centroids[kouho_num][0]),int(w/2),Y_max_half)
+                  L_speed,R_speed=moves.phase(phase_X,border_phase,CON_PID,L_I,R_I,L_D,R_D)
+
+                  R_speed*=1600
+                  L_speed*=1600
+
+                  
+
+                  #R_speed,L_speed=Diff.calc_speed(0,0.9)
+                  print("L_move,R_move:"+str(L_speed)+","+str(R_speed))
+
+                  Transmitter.write_motor_single(P_RWHEEL,R_speed)
+
+                  Transmitter.write_motor_single(P_LWHEEL,L_speed)
+
+                  time.sleep(0.04)
+
+
+
+                  
+
+                  #終了判定
+                              
+                  L_I,R_I,L_D,R_D=IandD.IandD(L_speed,R_speed,L_log,R_log,L_I,R_I)
+                  L_log=L_speed
+                  R_log=R_speed
+                  
+                  I=(abs(L_I)+abs(R_I))/2
+                  D=(abs(L_D)+abs(R_D))/2
+                  
+                  phase_Y=phase.HighToTheta((stats[kouho_num][1]),int(h/2),Y_max_half)
+                  phase_Y+=Katamuki_realsense_Y
+
+                  Reach=takasa/(math.tan(phase_Y))
+
+                  gosa=Reach*phase_X#[mm]
+                  #しきい値は調整すること！
+                  if gosa<border_PID[0]:
+                      if I<border_PID[1]:
+                          if D<border_PID[2]:
+                              phase_or_shoot=2
+                  phase_or_shoot= 99
+                  Phase_Y=0
+                  time.sleep(0.05)
+
+
+          Target[0]=0                        
+          Target_Type[0]=0
+          print("Phase_Y:"+str(Phase_Y))
         
         if phase_or_shoot==2:
           #距離->速度
-          if Target_Type[0]==1:
-            takasa=1000-camera_takasa
-          if Target_Type[0]==2:
-            takasa=1200-camera_takasa
-          if Target_Type[0]==3:
-            takasa=1900-camera_takasa
 
           kyori=takasa/math.tan(Phase_Y)
+          print("kyori:"+str(kyori))
 
           Go_sokudo=sokudo.sokudo(kyori,takasa)
           speed=Roller.calc_speed(Go_sokudo) 
           Transmitter.write_motor_single(P_ROLLER1,speed)
           Transmitter.write_motor_single(P_ROLLER2,speed)
+          phase_or_shoot=0
+        
+        if phase_or_shoot==99:
+          print("Xhoukou might bad.")
+          phase_or_shoot=0
 
 
 
@@ -904,6 +958,11 @@ try:
                           Transmitter.reset_input_buffer()
                           Transmitter.write_motor_single(P_LIFT,-1)
                           time.sleep(0.1)
+                        Transmitter.write_motor_single(P_LIFT,0)
+                        Transmitter.write_motor_single(P_LIFT,0)
+                        time.sleep(0.1)
+                        Target[0]=0
+                        Target_Type[0]=0
                     break
                   time.sleep(0.05)
               time.sleep(0.05)
@@ -911,6 +970,10 @@ try:
               
           time.sleep(0.01)          
         Transmitter.reset_input_buffer()
+        keyboard=cv2.waitKey(1)
+
+      #カメラstream停止
+      cv2.destroyAllWindows
     # ------------------------------------------------
 
 

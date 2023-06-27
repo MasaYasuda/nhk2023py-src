@@ -1,11 +1,16 @@
 def lock_on(stats,Target,Target_type,typeofnow,x,y):
-    size=stats.shape[0]
+    size=len(stats)
+
+    print("lock start"+str(size))
 
     for i in range(size):
         x_min=stats[i][0]
         x_max=x_min+stats[i][2]
         y_min=stats[i][1]
         y_max=y_min+stats[i][3]
+        print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+        print(stats)
+        print("point:"+str(x)+","+str(y))
 
 
         if x_min<x & x<x_max:
@@ -23,6 +28,8 @@ def lock_on(stats,Target,Target_type,typeofnow,x,y):
 
                 Target[num]=i+1
                 Target_type[num]=typeofnow
+                print(Target)
+                print("直後")
                 print(str(i+1)+"を予約リストに入れました")
                 return Target,Target_type
     

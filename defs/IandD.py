@@ -1,4 +1,4 @@
-def IANdD(L_power,R_power,L_log,R_log,L_I,R_I):
+def IandD(L_power,R_power,L_log,R_log,L_I,R_I):
     L_D=L_power-L_log
     R_D=R_power-R_log
     L_I+=L_D

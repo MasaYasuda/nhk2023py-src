@@ -135,6 +135,10 @@ try:
                   if j.get_button(2)==1:
                     print("三角二回押し")
                     OP_MODE=2
+                    Transmitter.reset_data_single(P_RWHEEL,20) 
+                    Transmitter.reset_data_single(P_LWHEEL,20)
+                    Transmitter.reset_data_single(P_RWHEEL,20) 
+                    Transmitter.reset_data_single(P_LWHEEL,20)
                     Transmitter.reset_data_single(P_LIFT,100)
 
                     dxl_r=Dxl.read_position(ID_RHAND)
@@ -253,11 +257,9 @@ try:
                   if j.get_button(2)==1:
                     print("三角二回押し")
                     OP_MODE=2
-                    Transmitter.reset_data_single(P_RWHEEL,0)
-                    Transmitter.reset_data_single(P_LWHEEL,0)
+                    Transmitter.reset_data_single(P_RWHEEL,20)
+                    Transmitter.reset_data_single(P_LWHEEL,20)
                     Transmitter.reset_data_single(P_LIFT,100)
-                    Transmitter.reset_data_single(P_RWHEEL,0)
-                    Transmitter.reset_data_single(P_LWHEEL,0)
                     Transmitter.reset_data_single(P_LIFT,100)
 
                     Dxl.enable_torque(ID_RHAND)
@@ -330,11 +332,19 @@ try:
         
         # ハンド送信　ジョイスティックRL
         events = pygame.event.get()
+
+        #微調節移動
+        move=(j.get_button(2)-j.get_button(0))*0.2
+        rot=((j.get_hat(0))[0])*0.10
+        R_speed,L_speed=Diff.calc_speed(move,rot)
+        Transmitter.write_motor_single(P_RWHEEL,R_speed)
+        Transmitter.write_motor_single(P_LWHEEL,L_speed)
+
         # 昇降　十字上下
         tmp_lift=(j.get_hat(0))[1]*(-1)
         # ハンド開閉
-        tmp_r=(v1_nhk23.joy_threshold(j.get_axis(3)*(1),0.2))*50
-        tmp_l=(v1_nhk23.joy_threshold(j.get_axis(0)*(1),0.2))*50
+        tmp_r=(v1_nhk23.joy_threshold(j.get_axis(3)*(1),0.2))*30
+        tmp_l=(v1_nhk23.joy_threshold(j.get_axis(0)*(1),0.2))*30
         if j.get_button(4)==1 and j.get_button(5)==1 :
           tmp_r=tmp_r/2
           tmp_l=tmp_l/2
@@ -352,7 +362,7 @@ try:
 
         # 高速送信======(この外は遅い送信)
         st=time.time()
-        while time.time()-st<0.05:
+        while time.time()-st<0.03:
           ## Get Inputs
           events = pygame.event.get()
           """

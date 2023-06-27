@@ -1,24 +1,20 @@
 import numpy as np
-
-import images4 as images3
 import cv2
 import math
-import phase
-import movement as moves
-import IandD
 import time
-def shot_jyunbi(Center_X,Center_Y,pipe,border_Phase,border_PID,CON_PID):
-    global H_fil
-    global Hue
-    global Hue_wide
-    global h,w
-    global Y
-    L_log=0
-    R_log=0
-    L_I=0
-    R_I=0
-    L_D=0
-    R_D=0
+
+from defs import images4 as images3
+from defs import phase
+from defs import movement as moves
+from defs import IandD
+
+def shot_jyunbi(Transmitter,P_RWHEEL,P_LWHEEL,Katamuki_realsense_Y,takasa,Center_X,Center_Y,pipe,border_Phase,border_PID,CON_PID,H_fil,Hue,Hue_wide,h,w):
+    L_log=0.0
+    R_log=0.0
+    L_I=0.0
+    R_I=0.0
+    L_D=0.0
+    R_D=0.0
     count=0
     st=time.time()
     while time.time()-st<10:
@@ -69,11 +65,16 @@ def shot_jyunbi(Center_X,Center_Y,pipe,border_Phase,border_PID,CON_PID):
             #横位置を揃える
             phase_X=phase.HighToTheta((centroids[kouho_num][0]),int(w/2),Y_max_half)
             L_move,R_move=moves.phase(phase_X,border_Phase,CON_PID,L_I,R_I,L_D,R_D)
+            Transmitter.write_motor_single(P_RWHEEL,R_move)
+            Transmitter.write_motor_single(P_LWHEEL,L_move)
+
+            print("L_move,R_move:"+str(L_move)+","+str(R_move))
+
             
 
             #終了判定
                         
-            L_I,R_I,L_D,R_D=IandD.IAndD(L_move,R_move,L_log,R_log,L_I,R_I)
+            L_I,R_I,L_D,R_D=IandD.IandD(L_move,R_move,L_log,R_log,L_I,R_I)
             L_log=L_move
             R_log=R_move
             
@@ -81,13 +82,16 @@ def shot_jyunbi(Center_X,Center_Y,pipe,border_Phase,border_PID,CON_PID):
             D=(abs(L_D)+abs(R_D))/2
             
             phase_Y=phase.HighToTheta((stats[kouho_num][1]),int(h/2),Y_max_half)
+            phase_Y+=Katamuki_realsense_Y
 
-            Reach=Y/(math.cos(phase_X)*math.tan(phase_Y))
+            Reach=takasa/(math.tan(phase_Y))
 
             gosa=Reach*phase_X#[mm]
             #しきい値は調整すること！
-            if gosa<30 & I<0.5 & D<0.5:
-                return 2,phase_Y
+            if gosa<border_PID[0]:
+                if I<border_PID[1]:
+                    if D<border_PID[2]:
+                        return 2,phase_Y
         
 
             

@@ -12,6 +12,12 @@ def shirushi(img_num,h,nLabels,stats,centroids):
 
         hidariue = (stats[i][0],stats[i][1])
         migishita = (stats[i][0]+haba,stats[i][1]+takasa)
+        """
+        print("hidariue")
+        print(hidariue)
+        print("migishita")
+        print(migishita)
+        """
 
         xc = int(stats[i][0]+haba/2)
         yc = int(stats[i][1]+takasa/2)

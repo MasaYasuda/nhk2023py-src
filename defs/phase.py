@@ -19,13 +19,9 @@ def HighToTheta(High,
     #print(High.shape)
     High=Half_Highmax-High
     High2=np.zeros(High.shape,float)
-    HS=High.shape[0]
-    #print(High2.shape)
-    for i in range(1,HS):
-        #print(i)
-        #print(High[i])
-        High2[i]=math.atan2(High[i]*tanmax,Half_Highmax)
-        #print(math.degrees(High2[i]))
+    
+    High2=math.atan2(High*tanmax,Half_Highmax)
+    
     return High2
 
 
